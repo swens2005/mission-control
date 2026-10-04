@@ -10,6 +10,12 @@ issue, a commit or a file inside OneDrive.
 
 ---
 
+## 0. PHP extensions (cPanel → Select PHP Version → Extensions)
+
+With PHP 8.5 selected, make sure these are ticked: `bcmath`, `ctype`, `curl`,
+`dom`, `fileinfo`, `gd`, `intl`, `mbstring`, `openssl`, `pdo_mysql`,
+`tokenizer`, `xml`.
+
 ## 1. Database (cPanel → MySQL Databases)
 
 1. Create a database: `mission_control` (cPanel adds your prefix, e.g.
@@ -21,41 +27,40 @@ issue, a commit or a file inside OneDrive.
    `utf8mb4_unicode_ci`. (The server's default can be `latin1`, which breaks
    accents and emoji.)
 
-## 2. Production environment secret
+## 2. GitHub secrets (one script)
 
-1. Locally, generate the two secrets (these print to your own terminal only):
-    ```powershell
-    php artisan key:generate --show                 # APP_KEY
-    php -r "echo bin2hex(random_bytes(32)), PHP_EOL;"  # DEPLOY_TOKEN
-    ```
-2. Open `.env.production.example`, copy its contents into a **new, unsaved**
-   editor tab (don't save it inside the project or OneDrive), and fill in
-   `APP_KEY`, the database name, user and password, and `DEPLOY_TOKEN`.
+In your own terminal, from the repo root:
 
-## 3. GitHub secrets
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\set-production-secrets.ps1
+```
 
-GitHub → `swens2005/mission-control` → Settings → Secrets and variables →
-Actions → **New repository secret**:
+It asks for the database name, user and password (from step 1) and the FTP
+server, username and password (the same as the portfolio repo's). It
+generates `APP_KEY` and `DEPLOY_TOKEN`, fills in `.env.production.example`,
+and sets these five repository secrets. Passwords are typed hidden, and
+nothing is printed or saved to disk:
 
-| Secret                     | Value                                |
-| -------------------------- | ------------------------------------ |
-| `FTP_SERVER`               | Same as the portfolio repo           |
-| `FTP_USERNAME`             | Same as the portfolio repo           |
-| `FTP_PASSWORD`             | Same as the portfolio repo           |
-| `DEPLOY_TOKEN`             | The token from step 2                |
-| `ENV_MISSION_CONTROL_PROD` | The whole filled-in file from step 2 |
+| Secret                     | Value                                     |
+| -------------------------- | ----------------------------------------- |
+| `FTP_SERVER`               | Same as the portfolio repo                |
+| `FTP_USERNAME`             | Same as the portfolio repo                |
+| `FTP_PASSWORD`             | Same as the portfolio repo                |
+| `DEPLOY_TOKEN`             | Generated                                 |
+| `ENV_MISSION_CONTROL_PROD` | The filled-in production environment file |
 
-Close the unsaved editor tab without saving. Until all five secrets exist, the
-deploy job skips with a warning instead of failing.
+Until all five secrets exist, the deploy job skips with a warning instead of
+failing. Running the script again replaces `APP_KEY` (it asks first), which
+logs everyone out.
 
-## 4. First deploy
+## 3. First deploy
 
 Push to `main` (or run the workflow by hand: Actions → CI and deploy → Run
 workflow). The job uploads to `~/mission-control-app/` and
 `~/public_html/mission-control/`, runs migrations, and checks
 `https://codelaunch.nl/mission-control/up`.
 
-## 5. Cron (needed from Phase 1, for sandbox cleanup)
+## 4. Cron (needed from Phase 1, for sandbox cleanup)
 
 cPanel → Cron Jobs → every minute:
 
