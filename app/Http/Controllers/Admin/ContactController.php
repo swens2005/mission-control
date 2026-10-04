@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ContactRequest;
 use App\Models\Organization;
 use App\Models\User;
+use App\Support\Activity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -36,6 +37,11 @@ class ContactController extends Controller
         $contact->organization_id = $organization->id;
         $contact->email_verified_at = now();
         $contact->save();
+
+        Activity::record('contact.added', $contact, [
+            'name' => $contact->name,
+            'organization' => $organization->name,
+        ]);
 
         Inertia::flash('newContact', [
             'name' => $contact->name,

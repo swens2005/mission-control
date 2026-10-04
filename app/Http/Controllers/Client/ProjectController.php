@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Client;
 
 use App\Enums\ProjectPhase;
 use App\Http\Controllers\Controller;
+use App\Models\ActivityEntry;
 use App\Models\Project;
 use App\Models\User;
+use App\Support\ActivityFeed;
 use App\Support\Waiting\WaitingItem;
 use App\Support\Waiting\WaitingOnClient;
 use Illuminate\Http\Request;
@@ -45,6 +47,16 @@ class ProjectController extends Controller
         return Inertia::render('client/projects/show', [
             'project' => $this->present($project),
             'steps' => self::steps(),
+            // Only what the studio marked for clients.
+            'activity' => ActivityEntry::query()
+                ->visibleToClient()
+                ->with(['actor', 'project'])
+                ->where('project_id', $project->id)
+                ->latest('created_at')
+                ->latest('id')
+                ->limit(20)
+                ->get()
+                ->map(fn (ActivityEntry $entry) => ActivityFeed::present($entry)),
         ]);
     }
 

@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Building2, FolderKanban, LayoutGrid } from 'lucide-react';
+import { Activity, Building2, FolderKanban, LayoutGrid } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -13,6 +13,7 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { usePortal } from '@/hooks/use-portal';
+import { index as activity } from '@/routes/admin/activity';
 import { index as organizations } from '@/routes/admin/organizations';
 import { index as projects } from '@/routes/admin/projects';
 import type { NavItem } from '@/types';
@@ -31,6 +32,7 @@ export function AppSidebar() {
             ? [
                   { title: 'Clients', href: organizations(), icon: Building2 },
                   { title: 'Projects', href: projects(), icon: FolderKanban },
+                  { title: 'Activity', href: activity(), icon: Activity },
               ]
             : []),
     ];

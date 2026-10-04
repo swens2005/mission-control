@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\OrganizationRequest;
 use App\Models\Organization;
 use App\Models\Project;
 use App\Models\User;
+use App\Support\Activity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -56,6 +57,7 @@ class OrganizationController extends Controller
         Gate::authorize('create', Organization::class);
 
         $organization = Organization::create($request->validated());
+        Activity::record('organization.created', $organization, ['name' => $organization->name]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$organization->name} added."]);
 
@@ -94,6 +96,10 @@ class OrganizationController extends Controller
 
         $organization->update($request->validated());
 
+        if ($organization->wasChanged()) {
+            Activity::record('organization.updated', $organization, ['name' => $organization->name]);
+        }
+
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Changes saved.']);
 
         return to_route('admin.organizations.show', $organization);
@@ -104,6 +110,7 @@ class OrganizationController extends Controller
         Gate::authorize('update', $organization);
 
         $organization->forceFill(['archived_at' => now()])->save();
+        Activity::record('organization.archived', $organization, ['name' => $organization->name]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$organization->name} archived."]);
 
@@ -115,6 +122,7 @@ class OrganizationController extends Controller
         Gate::authorize('update', $organization);
 
         $organization->forceFill(['archived_at' => null])->save();
+        Activity::record('organization.restored', $organization, ['name' => $organization->name]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$organization->name} restored."]);
 

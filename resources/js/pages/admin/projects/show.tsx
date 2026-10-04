@@ -1,15 +1,22 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import OrganizationController from '@/actions/App/Http/Controllers/Admin/OrganizationController';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
+import { ActivityList } from '@/components/activity-list';
 import { PageHeader } from '@/components/page-header';
 import { PhaseBadge } from '@/components/phase-badge';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { formatDate } from '@/lib/format';
 import { index, show } from '@/routes/admin/projects';
-import type { Project } from '@/types';
+import type { ActivityItem, Project } from '@/types';
 
-export default function ShowProject({ project }: { project: Project }) {
+export default function ShowProject({
+    project,
+    activity,
+}: {
+    project: Project;
+    activity: ActivityItem[];
+}) {
     useBreadcrumbs([
         { title: 'Projects', href: index() },
         { title: project.name, href: show(project.id) },
@@ -82,6 +89,16 @@ export default function ShowProject({ project }: { project: Project }) {
                         {project.description || 'None yet.'}
                     </dd>
                 </dl>
+
+                <section
+                    aria-labelledby="activity-heading"
+                    className="max-w-2xl space-y-3"
+                >
+                    <h2 id="activity-heading" className="text-lg font-bold">
+                        Activity
+                    </h2>
+                    <ActivityList entries={activity} />
+                </section>
             </div>
         </>
     );

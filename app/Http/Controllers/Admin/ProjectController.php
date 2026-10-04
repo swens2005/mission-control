@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ProjectPhase;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ProjectRequest;
+use App\Models\ActivityEntry;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Support\Activity;
+use App\Support\ActivityFeed;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -65,6 +68,7 @@ class ProjectController extends Controller
         Gate::authorize('create', Project::class);
 
         $project = Project::create($request->validated());
+        Activity::record('project.created', $project, ['name' => $project->name], visibleToClient: true);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$project->name} created."]);
 
@@ -77,6 +81,14 @@ class ProjectController extends Controller
 
         return Inertia::render('admin/projects/show', [
             'project' => self::present($project),
+            'activity' => ActivityEntry::query()
+                ->with(['actor', 'project'])
+                ->where('project_id', $project->id)
+                ->latest('created_at')
+                ->latest('id')
+                ->limit(20)
+                ->get()
+                ->map(fn (ActivityEntry $entry) => ActivityFeed::present($entry)),
         ]);
     }
 
@@ -95,7 +107,20 @@ class ProjectController extends Controller
     {
         Gate::authorize('update', $project);
 
+        $phaseBefore = $project->phase;
         $project->update($request->validated());
+
+        if ($project->wasChanged('phase')) {
+            Activity::record('project.phase_changed', $project, [
+                'name' => $project->name,
+                'from' => $phaseBefore->label(),
+                'to' => $project->phase->label(),
+            ], visibleToClient: true);
+        }
+
+        if (array_diff(array_keys($project->getChanges()), ['phase', 'updated_at']) !== []) {
+            Activity::record('project.updated', $project, ['name' => $project->name]);
+        }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Changes saved.']);
 
@@ -107,6 +132,7 @@ class ProjectController extends Controller
         Gate::authorize('update', $project);
 
         $project->forceFill(['archived_at' => now()])->save();
+        Activity::record('project.archived', $project, ['name' => $project->name]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$project->name} archived."]);
 
@@ -118,6 +144,7 @@ class ProjectController extends Controller
         Gate::authorize('update', $project);
 
         $project->forceFill(['archived_at' => null])->save();
+        Activity::record('project.restored', $project, ['name' => $project->name]);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$project->name} restored."]);
 

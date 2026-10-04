@@ -1,15 +1,18 @@
 import { Head, Link } from '@inertiajs/react';
+import { ActivityList } from '@/components/activity-list';
 import { PhaseSteps } from '@/components/phase-steps';
 import { formatDate } from '@/lib/format';
 import { home } from '@/routes/client';
-import type { ClientProject, Option } from '@/types';
+import type { ActivityItem, ClientProject, Option } from '@/types';
 
 export default function ShowProject({
     project,
     steps,
+    activity,
 }: {
     project: ClientProject;
     steps: Option[];
+    activity: ActivityItem[];
 }) {
     return (
         <>
@@ -48,6 +51,19 @@ export default function ShowProject({
                         {project.description || 'No description yet.'}
                     </dd>
                 </dl>
+
+                <section
+                    aria-labelledby="updates-heading"
+                    className="max-w-2xl space-y-3"
+                >
+                    <h2 id="updates-heading" className="text-xl font-extrabold">
+                        Updates
+                    </h2>
+                    <ActivityList
+                        entries={activity}
+                        emptyText="No updates yet."
+                    />
+                </section>
             </div>
         </>
     );

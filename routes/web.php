@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProjectController;
@@ -27,6 +28,8 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::resource('projects', ProjectController::class)->except('destroy');
     Route::post('projects/{project}/archive', [ProjectController::class, 'archive'])->name('projects.archive');
     Route::delete('projects/{project}/archive', [ProjectController::class, 'unarchive'])->name('projects.unarchive');
+
+    Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
 });
 
 // Launchpad: the client's portal.

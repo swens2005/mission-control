@@ -66,3 +66,12 @@ export type WaitingItem = {
     url: string;
     dueOn: string | null;
 };
+
+/** One line of the shared activity log. */
+export type ActivityItem = {
+    id: number;
+    actor: string;
+    description: string;
+    createdAt: string;
+    project: { id: number; name: string } | null;
+};
