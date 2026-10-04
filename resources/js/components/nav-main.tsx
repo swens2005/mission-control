@@ -10,14 +10,16 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavItem } from '@/types';
 
 export function NavMain({ items }: { items: NavItem[] }) {
-    const { isCurrentUrl } = useCurrentUrl();
+    const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
 
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarGroupLabel>Studio</SidebarGroupLabel>
             <SidebarMenu>
                 {items.map((item) => {
-                    const active = isCurrentUrl(item.href);
+                    const active = item.exact
+                        ? isCurrentUrl(item.href)
+                        : isCurrentOrParentUrl(item.href);
 
                     return (
                         <SidebarMenuItem key={item.title}>

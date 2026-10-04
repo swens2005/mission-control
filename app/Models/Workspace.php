@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use Carbon\CarbonImmutable;
 use Database\Factories\WorkspaceFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Auth;
  * @property int $id
  * @property string $name
  * @property bool $is_sandbox
- * @property Carbon|null $expires_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $expires_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  */
 #[Fillable(['name', 'is_sandbox', 'expires_at'])]
 class Workspace extends Model

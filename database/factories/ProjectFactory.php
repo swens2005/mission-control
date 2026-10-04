@@ -13,14 +13,15 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ProjectFactory extends Factory
 {
     /**
-     * The workspace is inherited from the organization (see Project::booted).
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
     {
         return [
             'organization_id' => Organization::factory(),
+            // Always the organization's workspace, even while a user is signed in.
+            'workspace_id' => fn (array $attributes) => Organization::withoutGlobalScopes()
+                ->findOrFail($attributes['organization_id'])->workspace_id,
             'name' => fake()->city().' website',
             'description' => fake()->sentence(12),
             'phase' => ProjectPhase::Scope,

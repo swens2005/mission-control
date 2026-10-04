@@ -5,26 +5,27 @@ their projects, so every later module has a client and a project to work on.
 
 ## Acceptance criteria
 
-- [ ] **Organizations:** list (search, paginated, archived hidden by
+- [x] **Organizations:** list (search, paginated, archived hidden by
       default), create, edit, archive and unarchive. Fields: name, website
       URL.
-- [ ] **Client contacts:** on an organization, an admin adds a contact (name,
+- [x] **Client contacts:** on an organization, an admin adds a contact (name,
       email). The app generates a temporary password and shows it once. There
       is no email sending on this host (email invites go to the backlog).
-- [ ] **Projects:** list (filter by organization and phase), create, edit,
+- [x] **Projects:** list (filter by organization and phase), create, edit,
       archive. Fields: organization, name, description, phase, target launch
       date.
-- [ ] Laravel policies for `Organization`, `Project` and client `User`: only
-      admins in the same workspace. Anything else returns 404, not 403, so IDs
-      from other workspaces don't leak.
-- [ ] Form requests validate everything. Errors are announced to screen
+- [x] Laravel policies for `Organization` and `Project` (contacts go through
+      the organization): only admins in the same workspace. An admin from
+      another workspace gets 404, not 403, so ids don't leak. Clients never
+      get that far: the portal guard from story 02 answers 403 first.
+- [x] Form requests validate everything. Errors are announced to screen
       readers and linked to their fields.
-- [ ] Empty states with a clear next action ("Add your first client").
+- [x] Empty states with a clear next action ("Add your first client").
 
 ## Tests
 
-- [ ] Full CRUD as an admin.
-- [ ] A client, or an admin from another workspace, gets 404 on every
-      organization, project and contact route.
-- [ ] Validation rules (required fields, URL format, unique contact email).
-- [ ] The temporary password is shown once and stored hashed.
+- [x] Full CRUD as an admin.
+- [x] An admin from another workspace gets 404 on every organization,
+      project and contact route; a client gets 403.
+- [x] Validation rules (required fields, URL format, unique contact email).
+- [x] The temporary password is shown once and stored hashed.

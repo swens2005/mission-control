@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use App\Models\Concerns\BelongsToWorkspace;
+use Carbon\CarbonImmutable;
 use Database\Factories\OrganizationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Carbon;
 
 /**
  * A client of the studio.
@@ -18,9 +18,9 @@ use Illuminate\Support\Carbon;
  * @property int $workspace_id
  * @property string $name
  * @property string|null $website_url
- * @property Carbon|null $archived_at
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property CarbonImmutable|null $archived_at
+ * @property CarbonImmutable|null $created_at
+ * @property CarbonImmutable|null $updated_at
  */
 #[Fillable(['name', 'website_url'])]
 class Organization extends Model
