@@ -130,11 +130,11 @@ jobs:
           FTP_SERVER: ${{ secrets.FTP_SERVER }}
           FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
           FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
-          ENV_FILE: ${{ secrets.ENV_MISSION_CONTROL_PROD }}
+          ENV_MISSION_CONTROL_PROD: ${{ secrets.ENV_MISSION_CONTROL_PROD }}
           DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         run: |
           missing=""
-          for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD ENV_FILE DEPLOY_TOKEN; do
+          for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD ENV_MISSION_CONTROL_PROD DEPLOY_TOKEN; do
             [ -z "${!name}" ] && missing="$missing $name"
           done
           if [ -n "$missing" ]; then
