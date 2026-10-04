@@ -52,3 +52,53 @@ All of these must pass before committing. CI runs the same set.
   behind the `auth` middleware (it runs before route-model binding).
 - Target WCAG 2.2 AA: keyboard support, contrast, 320 px width.
 - Tour steps target `data-tour="..."` attributes, never CSS classes.
+
+## Patterns to reuse
+
+- **Policies:** `AdminOfWorkspace` trait; other workspaces get
+  `Response::denyAsNotFound()` (404), the wrong portal gets 403 from
+  `EnsurePortal`. Client access to a project: `ProjectPolicy::viewAsClient`.
+- **Controllers** pass explicit arrays to Inertia (see `present()` methods),
+  never whole models.
+- **Activity:** every meaningful write calls `App\Support\Activity::record()`
+  with a name snapshot; set `visibleToClient: true` for things clients should
+  see. Add new events to `ActivityEntry::description()`.
+- **Client to-dos:** modules register providers with
+  `App\Support\Waiting\WaitingOnClient` (feeds "Waiting on you").
+- **Demo:** extend `App\Support\Sandbox\DemoTemplate` / `SandboxFactory` so
+  every new module has believable demo data. Sandbox users are blocked from
+  account changes by `SandboxGuardrails`.
+- **Forms:** `FormField` (links hint and error with aria-describedby),
+  `focusFirstError` on submit errors, native `<select>` with
+  `selectClassName`. Dynamic breadcrumbs: `useBreadcrumbs()`.
+- **Colors:** only through tokens in `resources/css/themes.css`;
+  `ThemeContrastTest` checks every pair. Contrast math:
+  `App\Support\Color\Contrast` (reuse it in Palette Lab).
+- **Wayfinder:** import controllers per file
+  (`@/actions/App/Http/Controllers/Admin/ProjectController`), not from the
+  folder index.
+
+## Gotchas (each one cost time in Phase 1)
+
+- **CSP:** never add a library that injects `<style>` or `<script>` tags at
+  runtime (sonner was removed for this). Radix gets the nonce via
+  `setNonce` in `app.tsx`. On codelaunch.nl the CSP header is replaced by the
+  portfolio's `.htaccess`; the `<meta>` copy is what protects pages
+  (ADR 0006). Check the browser console for violations after UI changes.
+- **Subfolder:** pages can look fine on production while client-side URLs
+  are wrong. After a deploy, click through the real site in a browser, not
+  only `curl`. Wayfinder's prefix comes from `APP_URL` in the deploy build.
+- **Production MariaDB defaults to MyISAM.** Laravel forces InnoDB;
+  `DatabaseEngineTest` guards it. CI mirrors the MyISAM default.
+- **Model docblocks** use `Carbon\CarbonImmutable` (the app uses immutable
+  dates); Larastan fails otherwise.
+- **Factories** must set `workspace_id` from the parent record, never rely on
+  the signed-in user (see `ProjectFactory`).
+- **Shell:** a local hook blocks any command whose text contains `.env`
+  (including `import.meta.env`); edit such files with the file editor. Long
+  heredocs with quotes break in Git Bash; write files with the editor.
+- **CI watching:** after pushing, wait for the _new_ run id before
+  `gh run watch`, or you'll watch the previous run.
+- **Local server without `.env`:** pass settings as environment variables
+  (`APP_ENV=local APP_KEY=... DB_CONNECTION=sqlite DB_DATABASE=<file>`);
+  Laravel refuses destructive commands when it thinks it's production.
