@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -14,43 +15,62 @@ use Symfony\Component\HttpFoundation\Response;
  * Vite adds to its tags. No inline styles or scripts without it; React's
  * `style` prop is fine because it writes through the CSSOM, not markup.
  *
- * Production also inherits `frame-ancestors 'none'` and the other security
- * headers from the portfolio's root .htaccess (ADR 0002); browsers enforce
- * both policies, which only ever tightens things.
+ * The policy is sent twice, on purpose:
+ *  - as a header (everything, including frame-ancestors), and
+ *  - as a <meta http-equiv> tag in the page (everything except
+ *    frame-ancestors, which browsers ignore in meta tags).
+ * On codelaunch.nl, LiteSpeed replaces our header with the portfolio's
+ * root .htaccess one (frame-ancestors 'none' only), so the meta tag is what
+ * carries the policy there. Browsers enforce every policy they get.
+ * See docs/decisions/0006-csp-delivery.md.
  */
 class ContentSecurityPolicy
 {
     public function handle(Request $request, Closure $next): Response
     {
         $nonce = Vite::useCspNonce();
+        $directives = $this->directives($nonce);
+
+        View::share('contentSecurityPolicy', $this->compile(
+            array_diff_key($directives, ['frame-ancestors' => true]),
+        ));
 
         $response = $next($request);
 
         if (str_starts_with((string) $response->headers->get('Content-Type'), 'text/html')) {
-            $response->headers->set('Content-Security-Policy', $this->policy($nonce));
+            $response->headers->set('Content-Security-Policy', $this->compile($directives));
         }
 
         return $response;
     }
 
-    private function policy(string $nonce): string
+    /**
+     * @return array<string, list<string>>
+     */
+    private function directives(string $nonce): array
     {
         $dev = $this->viteDevServer();
 
-        $directives = [
+        return [
             'default-src' => ["'self'"],
             'script-src' => ["'self'", "'nonce-{$nonce}'", ...$dev],
             // The dev server injects <style> tags for hot reloading.
             'style-src' => ["'self'", "'nonce-{$nonce}'", ...($dev ? [...$dev, "'unsafe-inline'"] : [])],
             'img-src' => ["'self'", 'data:'],
             'font-src' => ["'self'", ...$dev],
-            'connect-src' => ["'self'", ...$dev, ...array_map(fn (string $origin) => preg_replace('/^http/', 'ws', $origin), $dev)],
+            'connect-src' => ["'self'", ...$dev, ...array_map(fn (string $origin) => (string) preg_replace('/^http/', 'ws', $origin), $dev)],
             'object-src' => ["'none'"],
             'base-uri' => ["'self'"],
             'form-action' => ["'self'"],
             'frame-ancestors' => ["'none'"],
         ];
+    }
 
+    /**
+     * @param  array<string, list<string>>  $directives
+     */
+    private function compile(array $directives): string
+    {
         return collect($directives)
             ->map(fn (array $sources, string $directive) => $directive.' '.implode(' ', $sources))
             ->implode('; ');

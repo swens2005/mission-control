@@ -33,6 +33,25 @@ test('the nonce in the header is the one on the page\'s script tags', function (
     $response->assertSee('nonce="'.$match[1].'"', false);
 })->skip(fn () => ! is_file(public_path('build/manifest.json')), 'Needs a production build (CI builds first).');
 
+test('the page also carries the policy in a meta tag, without frame-ancestors', function () {
+    $response = $this->get(route('login'));
+
+    preg_match('/<meta http-equiv="Content-Security-Policy" content="([^"]+)">/', $response->getContent(), $meta);
+    $metaPolicy = html_entity_decode($meta[1] ?? '', ENT_QUOTES);
+
+    preg_match("/'nonce-([A-Za-z0-9]+)'/", cspOf($response), $headerNonce);
+
+    expect($metaPolicy)
+        ->toContain("default-src 'self'")
+        ->toContain("'nonce-{$headerNonce[1]}'")
+        ->not->toContain('frame-ancestors');
+
+    // It has to come before any script or stylesheet to protect them.
+    expect(strpos($response->getContent(), 'http-equiv="Content-Security-Policy"'))
+        ->toBeLessThan(strpos($response->getContent(), '<script') ?: PHP_INT_MAX)
+        ->toBeLessThan(strpos($response->getContent(), '<link') ?: PHP_INT_MAX);
+});
+
 test('every request gets a fresh nonce', function () {
     preg_match("/'nonce-([^']+)'/", cspOf($this->get(route('login'))), $first);
     preg_match("/'nonce-([^']+)'/", cspOf($this->get(route('login'))), $second);
