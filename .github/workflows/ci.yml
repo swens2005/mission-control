@@ -96,6 +96,11 @@ jobs:
           ASSET_URL: ${{ env.SITE_URL }}
         run: npm run build
 
+      # Production's MariaDB defaults to MyISAM; mirror that so a migration
+      # that forgets the InnoDB engine setting fails here, not on deploy.
+      - name: Match production's default storage engine
+        run: mysql -h 127.0.0.1 -uroot -proot -e "SET GLOBAL default_storage_engine = 'MyISAM'"
+
       - name: Pest (against MariaDB 11.4)
         env:
           DB_CONNECTION: mariadb

@@ -40,6 +40,12 @@ Other parts of the decision:
 
 ## Consequences
 
+- The host's MariaDB creates **MyISAM** tables by default. MyISAM's
+  1000-byte key limit broke the first deploy (`varchar(255)` utf8mb4 indexes
+  need 1020 bytes). `config/database.php` now sets `engine => InnoDB`; CI sets
+  MyISAM as its default to match production, and `DatabaseEngineTest`
+  checks that every table is InnoDB.
+
 - The portfolio's own FTPS deploy only deletes files it uploaded itself, so it
   leaves `public_html/mission-control/` alone. It must never be switched to
   `dangerous-clean-slate`.
