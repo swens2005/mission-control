@@ -101,6 +101,11 @@ jobs:
       - name: Match production's default storage engine
         run: mysql -h 127.0.0.1 -uroot -proot -e "SET GLOBAL default_storage_engine = 'MyISAM'"
 
+      # Tests take their settings from phpunit.xml and the env below; the empty
+      # file only stops PHPUnit reporting dotenv's failed read for every test.
+      - name: Create empty environment file
+        run: touch .env
+
       - name: Pest (against MariaDB 11.4)
         env:
           DB_CONNECTION: mariadb
