@@ -1,0 +1,6 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Throwaway APP_KEY used only by the test suite; never used in any real environment"
+paths = ['''^phpunit\.xml$''']

@@ -1,0 +1,224 @@
+# Every push and pull request: secret scan, code style, static analysis,
+# tests against MariaDB 11.4 (same as production), and a production build.
+# Pushes to main that pass are deployed to https://codelaunch.nl/mission-control
+# over FTPS, then CI calls the app to run migrations.
+# See docs/decisions/0002-hosting-layout.md and 0003-migrations-without-ssh.md.
+name: CI and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: '8.5'
+  PHP_EXTENSIONS: bcmath, gd, intl, pdo_mysql, pdo_sqlite
+  NODE_VERSION: '24'
+  APP_PATH: /mission-control
+  SITE_URL: https://codelaunch.nl/mission-control
+
+jobs:
+  secrets-scan:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  checks:
+    name: Lint, analyse, test, build
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=10
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          tools: composer:v2
+          coverage: none
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Pint (code style)
+        run: vendor/bin/pint --test
+
+      - name: Larastan (static analysis)
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      - name: Lint and format (Vite+ / Oxlint)
+        run: npm run check
+
+      - name: TypeScript
+        run: npm run types:check
+
+      - name: Production build
+        env:
+          ASSET_URL: ${{ env.SITE_URL }}
+        run: npm run build
+
+      - name: Pest (against MariaDB 11.4)
+        env:
+          DB_CONNECTION: mariadb
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_DATABASE: testing
+          DB_USERNAME: root
+          DB_PASSWORD: root
+        run: php artisan test --compact
+
+  deploy:
+    name: Deploy to codelaunch.nl/mission-control
+    needs: [secrets-scan, checks]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ env.SITE_URL }}
+    concurrency:
+      group: production-mission-control
+      cancel-in-progress: false
+    env:
+      # Both relative to the cPanel home folder the FTP account logs in to.
+      # Must end with a slash.
+      APP_DIR: mission-control-app/
+      PUBLIC_DIR: public_html/mission-control/
+    steps:
+      # Skip cleanly (instead of failing) until all deploy secrets exist.
+      - name: Check deployment secrets
+        id: secrets
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          ENV_FILE: ${{ secrets.ENV_MISSION_CONTROL_PROD }}
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          missing=""
+          for name in FTP_SERVER FTP_USERNAME FTP_PASSWORD ENV_FILE DEPLOY_TOKEN; do
+            [ -z "${!name}" ] && missing="$missing $name"
+          done
+          if [ -n "$missing" ]; then
+            echo "::warning::Missing secrets:$missing. Nothing was deployed."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          persist-credentials: false
+
+      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          tools: composer:v2
+          coverage: none
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        if: steps.secrets.outputs.ready == 'true'
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Build release
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          ASSET_URL: ${{ env.SITE_URL }}
+        run: |
+          composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader
+          npm ci
+          npm run build
+
+      # Two upload folders: the app (outside the web root) and public/
+      # (inside it). public/index.php finds the app; see ADR 0002.
+      - name: Stage release
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          mkdir -p release/app release/public
+          rsync -a ./ release/app/ \
+            --exclude='/.git' --exclude='/.github' --exclude='/release' \
+            --exclude='/node_modules' --exclude='/tests' --exclude='/docs' \
+            --exclude='/public' --exclude='/resources/js' --exclude='/resources/css' \
+            --exclude='*.md' --exclude='/phpunit.xml' --exclude='/phpstan.neon'
+          rsync -a public/ release/public/ --exclude='/hot'
+
+      # The whole production environment lives in one secret, written to a
+      # file next to the app. It never touches the repo or the web root.
+      - name: Write production environment
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          ENV_FILE: ${{ secrets.ENV_MISSION_CONTROL_PROD }}
+        run: printf '%s\n' "$ENV_FILE" > release/app/.env
+
+      - name: Upload app (outside web root)
+        if: steps.secrets.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b # v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: release/app/
+          server-dir: ${{ env.APP_DIR }}
+
+      - name: Upload public folder (web root)
+        if: steps.secrets.outputs.ready == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b # v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: release/public/
+          server-dir: ${{ env.PUBLIC_DIR }}
+
+      - name: Run migrations
+        if: steps.secrets.outputs.ready == 'true'
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          curl --fail-with-body --silent --show-error --max-time 120 \
+            -X POST -H "Authorization: Bearer $DEPLOY_TOKEN" -H "Accept: application/json" \
+            "$SITE_URL/_deploy/migrate"
+
+      - name: Smoke test
+        if: steps.secrets.outputs.ready == 'true'
+        run: curl --fail --silent --show-error --max-time 30 "$SITE_URL/up" > /dev/null
