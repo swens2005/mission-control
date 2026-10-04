@@ -109,7 +109,7 @@ jobs:
           DB_DATABASE: testing
           DB_USERNAME: root
           DB_PASSWORD: root
-        run: php artisan test --compact
+        run: php artisan test --compact --display-warnings --display-deprecations
 
   deploy:
     name: Deploy to codelaunch.nl/mission-control
