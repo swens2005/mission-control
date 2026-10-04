@@ -20,6 +20,6 @@ before any features exist.
 - [x] `POST /_deploy/migrate` runs migrations only with the right bearer
       token, answers 404 otherwise, is rate limited and sets no cookies
       (ADR 0003, `tests/Feature/DeployTest.php`).
-- [ ] Deploy job uploads over FTPS, runs migrations and the `/up` smoke test
+- [x] Deploy job uploads over FTPS, runs migrations and the `/up` smoke test
       passes on production (needs the one-time steps in
       `docs/production-setup.md`).
