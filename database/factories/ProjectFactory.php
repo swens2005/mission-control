@@ -21,7 +21,7 @@ class ProjectFactory extends Factory
             'organization_id' => Organization::factory(),
             // Always the organization's workspace, even while a user is signed in.
             'workspace_id' => fn (array $attributes) => Organization::withoutGlobalScopes()
-                ->findOrFail($attributes['organization_id'])->workspace_id,
+                ->whereKey($attributes['organization_id'])->firstOrFail()->workspace_id,
             'name' => fake()->city().' website',
             'description' => fake()->sentence(12),
             'phase' => ProjectPhase::Scope,

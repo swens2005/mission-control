@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,8 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
 
 // Launchpad: the client's portal.
 Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')->group(function () {
-    Route::inertia('/', 'client/home')->name('home');
+    Route::get('/', [ClientProjectController::class, 'index'])->name('home');
+    Route::get('projects/{project}', [ClientProjectController::class, 'show'])->name('projects.show');
 });
 
 require __DIR__.'/settings.php';

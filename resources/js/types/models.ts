@@ -44,3 +44,25 @@ export type Paginated<T> = {
     to: number | null;
     total: number;
 };
+
+/** A project as the client sees it in Launchpad. */
+export type ClientProject = {
+    id: number;
+    name: string;
+    description: string | null;
+    phase: ProjectPhase;
+    phaseLabel: string;
+    /** 1-based position in the four phases; 5 means launched. */
+    step: number;
+    targetLaunchOn: string | null;
+};
+
+/** Something a module needs the client to do (WaitingOnClient). */
+export type WaitingItem = {
+    title: string;
+    module: string;
+    projectId: number;
+    projectName: string;
+    url: string;
+    dueOn: string | null;
+};

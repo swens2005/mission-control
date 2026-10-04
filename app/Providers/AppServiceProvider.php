@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\Waiting\WaitingOnClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -18,7 +19,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // One registry per app, so modules can add their providers at boot.
+        $this->app->singleton(WaitingOnClient::class);
     }
 
     /**
