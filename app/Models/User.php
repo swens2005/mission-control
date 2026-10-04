@@ -88,6 +88,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Home of this user's portal: Mission Control for admins, Launchpad for
+     * clients.
+     */
+    public function portalHomeUrl(): string
+    {
+        return $this->isAdmin() ? route('admin.dashboard') : route('client.home');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

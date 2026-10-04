@@ -1,7 +1,11 @@
+/** The portal a user belongs to: Mission Control (admin) or Launchpad (client). */
+export type Portal = 'admin' | 'client';
+
 export type User = {
     id: number;
     name: string;
     email: string;
+    role: Portal;
     avatar?: string;
     email_verified_at: string | null;
     two_factor_enabled?: boolean;

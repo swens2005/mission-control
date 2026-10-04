@@ -1,4 +1,4 @@
-import type { Auth } from '@/types/auth';
+import type { Auth, Portal } from '@/types/auth';
 
 declare module 'react' {
     interface InputHTMLAttributes<T> {
@@ -12,6 +12,7 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
+            portal: Portal | null;
             [key: string]: unknown;
         };
     }
