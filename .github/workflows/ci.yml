@@ -74,6 +74,11 @@ jobs:
       - name: Install JS dependencies
         run: npm ci
 
+      # Typed route helpers in resources/js/{routes,actions} are generated and
+      # git-ignored; tsc and the linter need them before the build runs.
+      - name: Generate Wayfinder route helpers
+        run: php artisan wayfinder:generate --with-form --no-interaction
+
       - name: Pint (code style)
         run: vendor/bin/pint --test
 
