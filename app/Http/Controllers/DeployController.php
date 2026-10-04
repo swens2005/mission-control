@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -30,9 +31,15 @@ final class DeployController
             report($e);
             Log::error('Post-deploy migration failed.');
 
-            // CI logs are public, so return the exception type only; the
-            // message (which can name hosts or users) stays in the server log.
-            return response()->json(['ok' => false, 'error' => class_basename($e)], 500);
+            // CI logs are public, so return only the exception type and, for
+            // database errors, the numeric driver code (e.g. 1045 = access
+            // denied). The message, which can name hosts or users, stays in
+            // the server log.
+            return response()->json([
+                'ok' => false,
+                'error' => class_basename($e),
+                'code' => $e instanceof QueryException ? ($e->errorInfo[1] ?? null) : null,
+            ], 500);
         }
 
         return response()->json([

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
 
@@ -30,7 +31,22 @@ test('reports only the exception type when migrations throw', function () {
     $this->withToken('correct-token')
         ->postJson(route('deploy.migrate'))
         ->assertStatus(500)
-        ->assertExactJson(['ok' => false, 'error' => 'RuntimeException']);
+        ->assertExactJson(['ok' => false, 'error' => 'RuntimeException', 'code' => null]);
+});
+
+test('reports the numeric driver code, not the message, for database errors', function () {
+    $pdo = new PDOException("SQLSTATE[HY000] [1045] Access denied for user 'secret-user'");
+    $pdo->errorInfo = ['HY000', 1045, "Access denied for user 'secret-user'"];
+
+    Artisan::shouldReceive('call')->once()->andThrow(
+        new QueryException('mariadb', 'select 1', [], $pdo),
+    );
+
+    $this->withToken('correct-token')
+        ->postJson(route('deploy.migrate'))
+        ->assertStatus(500)
+        ->assertExactJson(['ok' => false, 'error' => 'QueryException', 'code' => 1045])
+        ->assertDontSee('secret-user');
 });
 
 test('works on a fresh database whose cache table does not exist yet', function () {
