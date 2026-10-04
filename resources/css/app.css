@@ -152,3 +152,33 @@
         scroll-behavior: auto !important;
     }
 }
+
+/* Inertia's page-load progress bar (its built-in CSS is turned off in
+   app.tsx so the CSP needs no inline styles). */
+#nprogress {
+    pointer-events: none;
+    position: fixed;
+    inset: 0 auto auto 0;
+    width: 100%;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    overflow: visible;
+}
+#nprogress::backdrop {
+    display: none;
+}
+#nprogress .bar {
+    position: fixed;
+    z-index: 1031;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--brand-accent);
+}
+#nprogress .peg {
+    display: none;
+}
