@@ -26,6 +26,11 @@ and otherwise uses `../../mission-control-app`, then calls
 
 Other parts of the decision:
 
+- **Routes in JavaScript:** Wayfinder's typed routes are generated during the
+  build and take their prefix from `APP_URL`'s path, so the deploy build sets
+  `APP_URL=https://codelaunch.nl/mission-control`, and a CI step fails the
+  deploy if the generated routes lack the prefix. (Found after story 08: the
+  pages rendered fine, but every form posted to the portfolio's root.)
 - **Assets:** built in CI with `ASSET_URL=https://codelaunch.nl/mission-control`,
   so every asset and font URL includes the subfolder.
 - **Session cookie:** `SESSION_PATH=/mission-control`, so the app's cookies

@@ -173,14 +173,26 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
 
+      # APP_URL's path is how Wayfinder (typed routes, generated during the
+      # build) learns the app lives under /mission-control. Without it every
+      # client-side link and form posts to the portfolio's root instead.
       - name: Build release
         if: steps.secrets.outputs.ready == 'true'
         env:
+          APP_URL: ${{ env.SITE_URL }}
           ASSET_URL: ${{ env.SITE_URL }}
         run: |
           composer install --no-dev --no-interaction --no-progress --prefer-dist --optimize-autoloader
           npm ci
           npm run build
+
+      - name: Check routes include the subfolder
+        if: steps.secrets.outputs.ready == 'true'
+        run: |
+          grep -q "'${APP_PATH}/login'" resources/js/routes/login/index.ts \
+            || { echo "::error::Wayfinder routes lack ${APP_PATH}; check APP_URL in the build step."; exit 1; }
+          grep -rq "${APP_PATH}/login" public/build/assets/ \
+            || { echo "::error::The built JavaScript lacks ${APP_PATH} route URLs."; exit 1; }
 
       # Two upload folders: the app (outside the web root) and public/
       # (inside it). public/index.php finds the app; see ADR 0002.
