@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * Runs pending migrations after CI has uploaded a new release.
@@ -22,7 +24,16 @@ final class DeployController
         // 404 rather than 401/403, so the endpoint doesn't advertise itself.
         abort_if($expected === '' || ! hash_equals($expected, $given), 404);
 
-        $status = Artisan::call('migrate', ['--force' => true]);
+        try {
+            $status = Artisan::call('migrate', ['--force' => true]);
+        } catch (Throwable $e) {
+            report($e);
+            Log::error('Post-deploy migration failed.');
+
+            // CI logs are public, so return the exception type only; the
+            // message (which can name hosts or users) stays in the server log.
+            return response()->json(['ok' => false, 'error' => class_basename($e)], 500);
+        }
 
         return response()->json([
             'ok' => $status === 0,

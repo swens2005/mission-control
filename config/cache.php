@@ -19,6 +19,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Rate Limiter Cache Store
+    |--------------------------------------------------------------------------
+    |
+    | Rate limit counters live in the file store, not the database: the
+    | post-deploy migration endpoint is rate limited and must work before
+    | the database's cache table exists.
+    |
+    */
+
+    'limiter' => env('CACHE_LIMITER_STORE', 'file'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Cache Stores
     |--------------------------------------------------------------------------
     |

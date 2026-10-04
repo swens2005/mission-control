@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schema;
 
 beforeEach(function () {
     config(['app.deploy_token' => 'correct-token']);
@@ -21,6 +22,26 @@ test('reports failure when migrations fail', function () {
         ->postJson(route('deploy.migrate'))
         ->assertStatus(500)
         ->assertJson(['ok' => false, 'output' => 'boom']);
+});
+
+test('reports only the exception type when migrations throw', function () {
+    Artisan::shouldReceive('call')->once()->andThrow(new RuntimeException('secret host details'));
+
+    $this->withToken('correct-token')
+        ->postJson(route('deploy.migrate'))
+        ->assertStatus(500)
+        ->assertExactJson(['ok' => false, 'error' => 'RuntimeException']);
+});
+
+test('works on a fresh database whose cache table does not exist yet', function () {
+    // Production's default cache store is the database. The rate limiter must
+    // not depend on it, or the first deploy can never run its migrations.
+    config(['cache.default' => 'database']);
+    Schema::drop('cache');
+
+    $this->withToken('correct-token')
+        ->postJson(route('deploy.migrate'))
+        ->assertOk();
 });
 
 test('hides itself from a wrong or missing token', function (?string $token) {
