@@ -6,6 +6,7 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { SandboxBanner } from '@/components/sandbox-banner';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { usePortal } from '@/hooks/use-portal';
@@ -34,6 +35,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             <a href="#main" className="skip-link">
                 Skip to content
             </a>
+
+            <SandboxBanner />
 
             <header className="border-b-2 border-foreground bg-card">
                 <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">

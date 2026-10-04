@@ -144,3 +144,13 @@ test('clients cannot reach any project-management route', function () {
     $this->get(route('admin.projects.show', $project))->assertForbidden();
     $this->post(route('admin.projects.store'), validProject())->assertForbidden();
 });
+
+test('launched projects are listed after the ones still in flight', function () {
+    Project::factory()->for($this->organization)->phase(ProjectPhase::Launched)->create(['name' => 'Done', 'target_launch_on' => '2026-01-01']);
+    Project::factory()->for($this->organization)->create(['name' => 'In flight', 'target_launch_on' => '2026-12-01']);
+
+    $this->get(route('admin.projects.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('projects.data.0.name', 'In flight')
+            ->where('projects.data.1.name', 'Done'));
+});

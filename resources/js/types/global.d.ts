@@ -13,7 +13,11 @@ declare module '@inertiajs/core' {
             auth: Auth;
             sidebarOpen: boolean;
             portal: Portal | null;
-            workspace: { name: string; isSandbox: boolean } | null;
+            workspace: {
+                name: string;
+                isSandbox: boolean;
+                expiresAt: string | null;
+            } | null;
             [key: string]: unknown;
         };
     }

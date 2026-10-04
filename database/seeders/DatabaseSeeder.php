@@ -2,24 +2,24 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Support\Sandbox\SandboxFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
-     * Seed the application's database.
+     * Local development: one demo studio, built exactly like a visitor's
+     * sandbox, with its logins printed once.
      */
-    public function run(): void
+    public function run(SandboxFactory $sandboxes): void
     {
-        // User::factory(10)->create();
+        $sandbox = $sandboxes->create();
+        $credentials = $sandbox->credentials();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->command->info('Demo studio created (expires in 24 hours; run db:seed again for a new one).');
+        $this->command->table(['Portal', 'Email', 'Password'], [
+            ['Mission Control (admin)', $credentials['admin']['email'], $credentials['admin']['password']],
+            ['Launchpad (client)', $credentials['client']['email'], $credentials['client']['password']],
         ]);
     }
 }

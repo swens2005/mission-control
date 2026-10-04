@@ -34,6 +34,8 @@ class ProjectController extends Controller
             ->when(! $request->boolean('archived'), fn ($query) => $query->active())
             ->when($filters['organization'] ?? null, fn ($query, $id) => $query->where('organization_id', $id))
             ->when($filters['phase'] ?? null, fn ($query, $phase) => $query->where('phase', $phase))
+            // Launched projects (past dates) after the ones still in flight.
+            ->orderByRaw("case when phase = 'launched' then 1 else 0 end")
             ->orderBy('target_launch_on')
             ->orderBy('name')
             ->paginate(15)

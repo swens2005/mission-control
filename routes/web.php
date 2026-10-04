@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
+use App\Http\Controllers\DemoController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -15,6 +16,10 @@ Route::get('/', function (Request $request) {
 
     return redirect()->to($user instanceof User ? $user->portalHomeUrl() : route('login'));
 })->name('home');
+
+// The public demo: a sandbox per visitor (ADR 0004, story 08).
+Route::post('demo', [DemoController::class, 'store'])->middleware(['guest', 'throttle:demo'])->name('demo.store');
+Route::post('demo/switch', [DemoController::class, 'switch'])->middleware('auth')->name('demo.switch');
 
 // Mission Control: the studio's portal.
 Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->group(function () {

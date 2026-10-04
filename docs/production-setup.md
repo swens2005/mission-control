@@ -60,7 +60,7 @@ workflow). The job uploads to `~/mission-control-app/` and
 `~/public_html/mission-control/`, runs migrations, and checks
 `https://codelaunch.nl/mission-control/up`.
 
-## 4. Cron (needed from Phase 1, for sandbox cleanup)
+## 4. Cron (needed for the demo: deletes expired sandboxes hourly)
 
 cPanel → Cron Jobs → every minute:
 

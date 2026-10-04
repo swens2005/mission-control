@@ -28,6 +28,8 @@ class ProjectController extends Controller
         $projects = Project::query()
             ->active()
             ->where('organization_id', $client->organization_id)
+            // Launched projects (past dates) after the ones still in flight.
+            ->orderByRaw("case when phase = 'launched' then 1 else 0 end")
             ->orderBy('target_launch_on')
             ->orderBy('name')
             ->get();

@@ -1,4 +1,4 @@
-import { Form, Head } from '@inertiajs/react';
+import { Form, Head, usePage } from '@inertiajs/react';
 import { useRef } from 'react';
 import SecurityController from '@/actions/App/Http/Controllers/Settings/SecurityController';
 import Heading from '@/components/heading';
@@ -19,6 +19,22 @@ type Props = {
 export default function Security(props: Props) {
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
+    const isSandbox = usePage().props.workspace?.isSandbox ?? false;
+
+    // Demo sandboxes can't change passwords or turn on 2FA (story 08).
+    if (isSandbox) {
+        return (
+            <>
+                <Head title="Security settings" />
+                <h1 className="sr-only">Security settings</h1>
+                <Heading
+                    variant="small"
+                    title="Password and two-factor authentication"
+                    description="Not available in the demo: these accounts are shared for 24 hours and then deleted."
+                />
+            </>
+        );
+    }
 
     return (
         <>

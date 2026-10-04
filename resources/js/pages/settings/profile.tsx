@@ -14,7 +14,9 @@ type PageProps = {
 };
 
 export default function Profile() {
-    const { auth } = usePage<PageProps>().props;
+    const { auth, workspace } = usePage<PageProps>().props;
+    // Demo sandboxes keep their generated login (story 08).
+    const isSandbox = workspace?.isSandbox ?? false;
 
     return (
         <>
@@ -65,6 +67,7 @@ export default function Profile() {
                                     type="email"
                                     className="mt-1 block w-full"
                                     defaultValue={auth.user.email}
+                                    readOnly={isSandbox}
                                     name="email"
                                     required
                                     autoComplete="username"
@@ -90,7 +93,7 @@ export default function Profile() {
                 </Form>
             </div>
 
-            <DeleteUser />
+            {!isSandbox && <DeleteUser />}
         </>
     );
 }

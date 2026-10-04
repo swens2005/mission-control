@@ -51,6 +51,7 @@ class HandleInertiaRequests extends Middleware
             'workspace' => $user === null ? null : [
                 'name' => $user->workspace->name,
                 'isSandbox' => $user->workspace->is_sandbox,
+                'expiresAt' => $user->workspace->expires_at?->toIso8601String(),
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];

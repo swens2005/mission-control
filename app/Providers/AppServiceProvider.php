@@ -39,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // CI calls this once per deploy; anything more is a guess at the token.
         RateLimiter::for('deploy', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+
+        // New demo sandboxes per visitor IP (story 08).
+        RateLimiter::for('demo', fn (Request $request) => Limit::perHour(config()->integer('demo.per_ip_per_hour'))->by($request->ip()));
     }
 
     /**
