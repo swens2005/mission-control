@@ -31,6 +31,15 @@ shapes, dark green for text.
 
 ## Consequences
 
+- Display face: **Archivo** at its expanded width (`font-stretch: 125%`,
+  weight 800), self-hosted from `@fontsource-variable/archivo` (SIL OFL).
+  It echoes Eurostile Extended, the lettering of 1960s space-race posters.
+  Body text stays Figtree for readability. Corners are near-square (4 px)
+  against Mission Control's rounded 12 px.
+- All colors live in `resources/css/themes.css`; `ThemeContrastTest` reads
+  that file and checks every text pair (4.5:1) and UI pair (3:1) for both
+  portals.
+
 - It fits the Launchpad name, the space theme, and Proofmark (marking up
   printed proofs), and looks clearly different from Mission Control.
 - Palette Lab verifies this palette as a demo moment, including the teal fix.

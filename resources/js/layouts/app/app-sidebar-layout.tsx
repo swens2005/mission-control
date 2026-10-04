@@ -10,8 +10,16 @@ export default function AppSidebarLayout({
 }: AppLayoutProps) {
     return (
         <AppShell variant="sidebar">
+            <a href="#main" className="skip-link">
+                Skip to content
+            </a>
             <AppSidebar />
-            <AppContent variant="sidebar" className="min-w-0 overflow-x-clip">
+            <AppContent
+                variant="sidebar"
+                id="main"
+                tabIndex={-1}
+                className="min-w-0 overflow-x-clip focus:outline-none"
+            >
                 <AppSidebarHeader breadcrumbs={breadcrumbs} />
                 {children}
             </AppContent>

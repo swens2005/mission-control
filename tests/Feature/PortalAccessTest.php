@@ -99,3 +99,15 @@ test('both roles can open their account settings', function () {
     $this->actingAs(User::factory()->admin()->create())->get(route('profile.edit'))->assertOk();
     $this->actingAs(User::factory()->client()->create())->get(route('profile.edit'))->assertOk();
 });
+
+test('each portal renders with its own theme attribute', function () {
+    $this->get(route('login'))->assertSee('data-portal="guest"', false);
+
+    $this->actingAs(User::factory()->admin()->create())
+        ->get(route('admin.dashboard'))
+        ->assertSee('data-portal="admin"', false);
+
+    $this->actingAs(User::factory()->client()->create())
+        ->get(route('client.home'))
+        ->assertSee('data-portal="client"', false);
+});

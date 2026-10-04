@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,14 +36,22 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $user = $user instanceof User ? $user : null;
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
             // Which portal the signed-in user belongs to: 'admin' or 'client'.
-            'portal' => $request->user()?->role,
+            // The root template also puts it on <html data-portal>.
+            'portal' => $user?->role->value,
+            'workspace' => $user === null ? null : [
+                'name' => $user->workspace->name,
+                'isSandbox' => $user->workspace->is_sandbox,
+            ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
