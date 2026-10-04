@@ -47,6 +47,8 @@ All of these must pass before committing. CI runs the same set.
   no SSH, no queue worker and possibly no `proc_open`. Don't rely on any of
   them. See ADR 0002.
 - Money is integer cents; never floats.
-- Every domain model is scoped to a workspace (ADR 0004).
+- Every domain model uses `BelongsToWorkspace` (ADR 0004). The scope relies on
+  the already-resolved user, so every route touching workspace data must be
+  behind the `auth` middleware (it runs before route-model binding).
 - Target WCAG 2.2 AA: keyboard support, contrast, 320 px width.
 - Tour steps target `data-tour="..."` attributes, never CSS classes.

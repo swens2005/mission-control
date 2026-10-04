@@ -2,7 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Enums\Role;
+use App\Models\Organization;
 use App\Models\User;
+use App\Models\Workspace;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -25,6 +28,9 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
+            'workspace_id' => Workspace::factory(),
+            'role' => Role::Admin,
+            'organization_id' => null,
             'name' => fake()->name(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
@@ -39,6 +45,44 @@ class UserFactory extends Factory
     /**
      * Indicate that the model's email address should be unverified.
      */
+    /**
+     * A studio admin (the default).
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => Role::Admin,
+            'organization_id' => null,
+        ]);
+    }
+
+    /**
+     * A client contact. Without an organization, a new one is created; the
+     * user's workspace is always the organization's.
+     */
+    public function client(?Organization $organization = null): static
+    {
+        return $this->state(function (array $attributes) use ($organization) {
+            $organization ??= Organization::factory()->create();
+
+            return [
+                'role' => Role::Client,
+                'organization_id' => $organization->id,
+                'workspace_id' => $organization->workspace_id,
+            ];
+        });
+    }
+
+    /**
+     * A user in the given workspace.
+     */
+    public function inWorkspace(Workspace $workspace): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'workspace_id' => $workspace->id,
+        ]);
+    }
+
     public function unverified(): static
     {
         return $this->state(fn (array $attributes) => [

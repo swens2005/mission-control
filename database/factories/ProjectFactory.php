@@ -1,0 +1,45 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Enums\ProjectPhase;
+use App\Models\Organization;
+use App\Models\Project;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<Project>
+ */
+class ProjectFactory extends Factory
+{
+    /**
+     * The workspace is inherited from the organization (see Project::booted).
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'organization_id' => Organization::factory(),
+            'name' => fake()->city().' website',
+            'description' => fake()->sentence(12),
+            'phase' => ProjectPhase::Scope,
+            'target_launch_on' => fake()->dateTimeBetween('+2 weeks', '+4 months'),
+            'archived_at' => null,
+        ];
+    }
+
+    public function phase(ProjectPhase $phase): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'phase' => $phase,
+        ]);
+    }
+
+    public function archived(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'archived_at' => now(),
+        ]);
+    }
+}
