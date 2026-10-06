@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
@@ -68,6 +69,16 @@ class Project extends Model
     public function launch(): HasOne
     {
         return $this->hasOne(Launch::class);
+    }
+
+    /**
+     * Proofmark rounds, newest first.
+     *
+     * @return HasMany<ReviewRound, $this>
+     */
+    public function reviewRounds(): HasMany
+    {
+        return $this->hasMany(ReviewRound::class)->orderByDesc('number');
     }
 
     /**

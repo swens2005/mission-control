@@ -26,6 +26,12 @@ return [
     // is ever sent to them.
     'email_domain' => env('DEMO_EMAIL_DOMAIN', 'sandbox.codelaunch.nl'),
 
+    // Proofmark uploads (ADR 0009): per sandbox, and for all sandboxes
+    // together, so the demo can't fill the host's disk.
+    'upload_quota_bytes' => (int) env('DEMO_UPLOAD_QUOTA_BYTES', 20 * 1024 * 1024),
+
+    'total_upload_quota_bytes' => (int) env('DEMO_TOTAL_UPLOAD_QUOTA_BYTES', 1024 * 1024 * 1024),
+
     // The only sites a sandbox's Launch Control may check (ADR 0007).
     'check_hosts' => ['codelaunch.nl', 'www.codelaunch.nl'],
 

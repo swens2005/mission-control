@@ -62,6 +62,9 @@ class AppServiceProvider extends ServiceProvider
 
         // New demo sandboxes per visitor IP (story 08).
         RateLimiter::for('demo', fn (Request $request) => Limit::perHour(config()->integer('demo.per_ip_per_hour'))->by($request->ip()));
+
+        // Proofmark uploads: decoding images costs CPU on a shared host (ADR 0009).
+        RateLimiter::for('uploads', fn (Request $request) => Limit::perMinute(20)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
     }
 
     /**

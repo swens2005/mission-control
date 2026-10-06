@@ -137,3 +137,39 @@ export type GoBoardState = {
     expectedName: string;
     canMarkLaunched: boolean;
 };
+
+/** Proofmark (stories 15-18). */
+export type RoundStatus = 'draft' | 'in_review' | 'superseded' | 'approved';
+
+/** A round in the round switcher. */
+export type ReviewRoundSummary = {
+    id: number;
+    number: number;
+    label: string;
+    status: RoundStatus;
+    statusLabel: string;
+    designCount: number;
+};
+
+export type Design = {
+    id: number;
+    title: string;
+    width: number;
+    height: number;
+    bytes: number;
+    /** Human-readable, e.g. "1.5 MB". */
+    size: string;
+    imageUrl: string;
+};
+
+export type ReviewRound = {
+    id: number;
+    number: number;
+    label: string;
+    status: RoundStatus;
+    statusLabel: string;
+    sentAt: string | null;
+    approvedAt: string | null;
+    approvedByName: string | null;
+    designs: Design[];
+};

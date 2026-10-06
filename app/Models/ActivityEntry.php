@@ -106,6 +106,10 @@ class ActivityEntry extends Model
             'check.unwaived' => "withdrew the waiver for the {$name} check",
             'launch.signed' => "signed off the launch of {$name} for the ".strtolower((string) ($p['role'] ?? 'team')),
             'launch.signoffs_voided' => "cancelled the sign-offs for {$name}: ".($p['reason'] ?? 'the board changed'),
+            'proofmark.round_created' => 'started design round '.($p['round'] ?? '')." of {$name}",
+            'proofmark.design_added' => 'added the design '.($p['design'] ?? '').' to round '.($p['round'] ?? '')." of {$name}",
+            'proofmark.design_renamed' => 'renamed the design '.($p['from'] ?? '').' to '.($p['design'] ?? '').' in round '.($p['round'] ?? '')." of {$name}",
+            'proofmark.design_removed' => 'removed the design '.($p['design'] ?? '').' from round '.($p['round'] ?? '')." of {$name}",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };
     }

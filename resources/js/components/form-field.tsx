@@ -65,9 +65,36 @@ export function FormField({
  * and screen reader users land on the problem.
  */
 export function focusFirstError(): void {
-    requestAnimationFrame(() => {
-        document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+    afterRender(() =>
+        document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus(),
+    );
+}
+
+/**
+ * Moves focus to an element by id once Inertia's visit has re-rendered the
+ * page. Use after an action removes or moves the control that had focus.
+ * The fallback is used when the element is gone or disabled.
+ */
+export function focusById(id: string, fallbackId?: string): void {
+    afterRender(() => {
+        const element = document.getElementById(id);
+        const usable =
+            element !== null &&
+            !(element instanceof HTMLButtonElement && element.disabled);
+
+        (usable || !fallbackId
+            ? element
+            : document.getElementById(fallbackId)
+        )?.focus();
     });
+}
+
+/**
+ * Two frames: React may commit Inertia's new page props after the first
+ * one (seen with uploads and renames), and focus set earlier is lost.
+ */
+function afterRender(callback: () => void): void {
+    requestAnimationFrame(() => requestAnimationFrame(callback));
 }
 
 /** Native select styled like the other inputs. */

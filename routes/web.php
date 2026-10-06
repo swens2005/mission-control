@@ -5,13 +5,16 @@ use App\Http\Controllers\Admin\ChecklistItemController;
 use App\Http\Controllers\Admin\CheckRunController;
 use App\Http\Controllers\Admin\CheckWaiverController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\DesignController;
 use App\Http\Controllers\Admin\LaunchController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\ProofmarkController;
 use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Http\Controllers\DemoController;
+use App\Http\Controllers\DesignImageController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +29,9 @@ Route::get('/', function (Request $request) {
 // The public demo: a sandbox per visitor (ADR 0004, story 08).
 Route::post('demo', [DemoController::class, 'store'])->middleware(['guest', 'throttle:demo'])->name('demo.store');
 Route::post('demo/switch', [DemoController::class, 'switch'])->middleware('auth')->name('demo.switch');
+
+// Design images for both portals, through their policy (ADR 0009).
+Route::get('proofmark/designs/{design}/image', DesignImageController::class)->middleware('auth')->name('designs.image');
 
 // Mission Control: the studio's portal.
 Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -59,6 +65,14 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     // Go/no-go (story 12).
     Route::post('projects/{project}/launch/signoff', [SignoffController::class, 'store'])->name('signoffs.store');
     Route::post('projects/{project}/launch/launched', [LaunchController::class, 'launched'])->name('launch.launched');
+
+    // Proofmark (story 15).
+    Route::get('projects/{project}/proofmark', [ProofmarkController::class, 'show'])->name('proofmark.show');
+    Route::post('projects/{project}/proofmark/rounds', [ProofmarkController::class, 'storeRound'])->name('rounds.store');
+    Route::post('rounds/{round}/designs', [DesignController::class, 'store'])->middleware('throttle:uploads')->name('designs.store');
+    Route::patch('designs/{design}', [DesignController::class, 'update'])->name('designs.update');
+    Route::post('designs/{design}/move', [DesignController::class, 'move'])->name('designs.move');
+    Route::delete('designs/{design}', [DesignController::class, 'destroy'])->name('designs.destroy');
 });
 
 // Launchpad: the client's portal.

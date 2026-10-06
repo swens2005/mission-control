@@ -1,6 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import OrganizationController from '@/actions/App/Http/Controllers/Admin/OrganizationController';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
+import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
 import { ActivityList } from '@/components/activity-list';
 import { PageHeader } from '@/components/page-header';
 import { PhaseBadge } from '@/components/phase-badge';
@@ -55,6 +56,14 @@ export default function ShowProject({
                                     data-tour="open-launch-control"
                                 >
                                     Launch Control
+                                </Link>
+                            </Button>
+                            <Button variant="secondary" asChild>
+                                <Link
+                                    href={ProofmarkController.show(project.id)}
+                                    data-tour="open-proofmark"
+                                >
+                                    Proofmark
                                 </Link>
                             </Button>
                             <Button variant="secondary" asChild>

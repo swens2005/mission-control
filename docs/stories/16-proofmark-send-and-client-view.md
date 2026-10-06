@@ -34,7 +34,6 @@ client, I want to see exactly the designs that are waiting for my review.
 - [ ] Sending freezes the round; uploading to or deleting from a sent round
       is refused.
 - [ ] Sending v2 supersedes v1.
-- [ ] A client sees sent rounds only; another organization's client gets
-      404.
+- [ ] A client sees sent rounds only; another organization's client gets 404.
 - [ ] The waiting item appears after sending and disappears after approval
       (story 18), archiving or launch.
