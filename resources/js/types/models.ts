@@ -213,6 +213,7 @@ export type BrandKit = {
     locked: boolean;
     colors: BrandColor[];
     matrix: ContrastMatrix;
+    type: KitType;
 };
 
 export type RoleOption = { value: ColorRole; label: string; hint: string };
@@ -240,4 +241,30 @@ export type ContrastMatrix = {
     }[];
     /** Text pairs below AA. */
     failing: number;
+};
+
+export type TypeStep = { name: string; px: number; rem: string };
+
+export type KitType = {
+    headingFont: string;
+    headingLabel: string;
+    /** CSS font-family stack. */
+    headingStack: string;
+    bodyFont: string;
+    bodyLabel: string;
+    bodyStack: string;
+    baseSizePx: number;
+    /** "1.25" */
+    ratio: string;
+    /** "1250", or "custom" */
+    ratioPreset: string;
+    stepsUp: number;
+    stepsDown: number;
+    /** Smallest to largest. */
+    scale: TypeStep[];
+};
+
+export type TypeOptions = {
+    fonts: { value: string; label: string }[];
+    ratios: { value: string; label: string }[];
 };

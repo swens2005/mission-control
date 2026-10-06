@@ -33,5 +33,8 @@ and fix a failing one without changing the color's character.
 ## Notes
 
 - Demo moment: the codelaunch.nl kit starts with the CV site's original
-  screen label blue, which is 3.6:1 on the lower screen gradient. "Fix it"
-  proposes the darker blue the app actually uses (ADR 0008).
+  screen label blue `#4a7fc4`, which is 3.23:1 on the lower screen
+  gradient. "Fix it" proposes `#3367ab` (4.51:1); the app uses the darker
+  `#33598a` (5.64:1) for extra margin (ADR 0008).
+- "Fails" for text also covers "AA large only": both get "Fix it". Shape
+  cells say "Icons OK" (3:1) or "Decoration only", never "Fails".

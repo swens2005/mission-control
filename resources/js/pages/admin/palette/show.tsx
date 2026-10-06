@@ -7,18 +7,31 @@ import { focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { ColorFields } from '@/components/palette/color-fields';
 import { ContrastMatrix } from '@/components/palette/contrast-matrix';
+import { TypeSection } from '@/components/palette/type-section';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { index, show } from '@/routes/admin/projects';
-import type { BrandColor, BrandKit, Project, RoleOption } from '@/types';
+import type {
+    BrandColor,
+    BrandKit,
+    Project,
+    RoleOption,
+    TypeOptions,
+} from '@/types';
 
 type Props = {
     project: Project;
     kit: BrandKit | null;
     roles: RoleOption[];
+    typeOptions: TypeOptions;
 };
 
-export default function ShowPalette({ project, kit, roles }: Props) {
+export default function ShowPalette({
+    project,
+    kit,
+    roles,
+    typeOptions,
+}: Props) {
     useBreadcrumbs([
         { title: 'Projects', href: index() },
         { title: project.name, href: show(project.id) },
@@ -79,6 +92,12 @@ export default function ShowPalette({ project, kit, roles }: Props) {
                         <ContrastMatrix
                             matrix={kit.matrix}
                             canFix={!kit.locked}
+                        />
+                        <TypeSection
+                            kitId={kit.id}
+                            type={kit.type}
+                            options={typeOptions}
+                            editable={!kit.locked}
                         />
                     </div>
                 )}

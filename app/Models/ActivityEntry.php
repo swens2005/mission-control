@@ -118,6 +118,7 @@ class ActivityEntry extends Model
             'palette.color_added' => 'added the color '.($p['color'] ?? '').' ('.($p['hex'] ?? '').") to {$name}",
             'palette.color_changed' => 'changed the color '.($p['color'] ?? '').' to '.($p['hex'] ?? '')." in {$name}",
             'palette.color_fixed' => 'fixed the contrast of '.($p['color'] ?? '').' on '.($p['surface'] ?? 'its surface').': '.($p['from'] ?? '').' to '.($p['hex'] ?? '')." in {$name}",
+            'palette.type_changed' => 'set the type of '.$name.' to '.($p['heading'] ?? '').' and '.($p['body'] ?? '').', ratio '.($p['ratio'] ?? ''),
             'palette.color_removed' => 'removed the color '.($p['color'] ?? '')." from {$name}",
             'proofmark.design_removed' => 'removed the design '.($p['design'] ?? '').' from round '.($p['round'] ?? '')." of {$name}",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",

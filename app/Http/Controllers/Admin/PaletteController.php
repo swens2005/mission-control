@@ -27,6 +27,7 @@ class PaletteController extends Controller
             'project' => ProjectController::present($project),
             'kit' => $kit ? PalettePresenter::kit($kit) : null,
             'roles' => PalettePresenter::roles(),
+            'typeOptions' => PalettePresenter::typeOptions(),
         ]);
     }
 
