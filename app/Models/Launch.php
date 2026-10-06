@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use LogicException;
 
 /**
@@ -50,6 +51,30 @@ class Launch extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * @return HasMany<CheckRun, $this>
+     */
+    public function checkRuns(): HasMany
+    {
+        return $this->hasMany(CheckRun::class);
+    }
+
+    /**
+     * @return HasOne<CheckRun, $this>
+     */
+    public function latestCheckRun(): HasOne
+    {
+        return $this->hasOne(CheckRun::class)->latestOfMany();
+    }
+
+    /**
+     * @return HasMany<CheckWaiver, $this>
+     */
+    public function waivers(): HasMany
+    {
+        return $this->hasMany(CheckWaiver::class);
     }
 
     /**

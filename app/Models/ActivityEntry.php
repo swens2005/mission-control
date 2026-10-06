@@ -101,6 +101,9 @@ class ActivityEntry extends Model
             'checklist.unchecked' => "unticked {$name} on the launch checklist",
             'checklist.item_added' => "added {$name} to the launch checklist",
             'checklist.item_removed' => "removed {$name} from the launch checklist",
+            'launch.checked' => "ran the launch checks for {$name}: ".($p['summary'] ?? 'done'),
+            'check.waived' => "waived the {$name} check: ".($p['reason'] ?? ''),
+            'check.unwaived' => "withdrew the waiver for the {$name} check",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };
     }

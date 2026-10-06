@@ -6,7 +6,7 @@ fix problems before launch.
 
 ## Acceptance criteria
 
-- [ ] Each check is a small class implementing `LaunchCheck`, returning a
+- [x] Each check is a small class implementing `LaunchCheck`, returning a
       `CheckResult` (pass, warn or fail, plus a one-line message and optional
       details). The checks:
     - HTTPS, and `http://` redirects to `https://`
@@ -23,33 +23,46 @@ fix problems before launch.
     - Exactly one `h1`, and no skipped heading levels
     - `robots.txt` and `sitemap.xml` reachable
     - Response time and page weight
-- [ ] All network access goes through `SafeFetcher` (story 10). The page is
+- [x] All network access goes through `SafeFetcher` (story 10). The page is
       fetched once and shared by the checks that only read it.
-- [ ] **Runs synchronously** in the request (no queue on the host, ADR 0002),
+- [x] **Runs synchronously** in the request (no queue on the host, ADR 0002),
       with a 25 s total budget: checks that don't get a turn are marked
       "skipped: time budget".
-- [ ] Each run is stored (`check_runs`, `check_results`) with who ran it and
+- [x] Each run is stored (`check_runs`, `check_results`) with who ran it and
       when. The page shows the latest run and the previous run's time.
-- [ ] **Waive:** an admin can waive a failing or warning check with a
+- [x] **Waive:** an admin can waive a failing or warning check with a
       required reason. Waivers belong to the launch, survive new runs, and
       can be withdrawn. Shown as "Waived: reason, by whom".
-- [ ] Rate limit: 5 runs per user per 10 minutes, and per launch, with a
+- [x] Rate limit: 5 runs per user per 10 minutes, and per launch, with a
       friendly message showing when to try again.
-- [ ] Demo sandboxes can only run checks against `codelaunch.nl`
+- [x] Demo sandboxes can only run checks against `codelaunch.nl`
       (ADR 0007); other URLs get a friendly explanation.
-- [ ] Clients see the latest results read-only in Launchpad.
-- [ ] Results are a list with status as text and icon (not color alone); the
+- [x] Clients see the latest results read-only in Launchpad.
+- [x] Results are a list with status as text and icon (not color alone); the
       run button announces progress and the summary via a live region.
-- [ ] Activity: "ran launch checks (9 passed, 1 warning)", visible to the
+- [x] Activity: "ran launch checks (9 passed, 1 warning)", visible to the
       client.
-- [ ] `data-tour`: `run-checks`, `check-results`, `check-result`, `waive`.
-- [ ] **Demo:** the sandbox launch ("Online pre-orders") targets codelaunch.nl, and running the
+- [x] `data-tour`: `run-checks`, `check-results`, `check-result`, `waive`.
+- [x] **Demo:** the sandbox launch ("Online pre-orders") targets codelaunch.nl, and running the
       checks there shows every check green.
 
 ## Tests
 
-- [ ] Unit test per check, with fixture HTML and headers: pass, warn and
+- [x] Unit test per check, with fixture HTML and headers: pass, warn and
       fail cases.
-- [ ] Feature: running checks stores a run (fetcher faked); rate limit
+- [x] Feature: running checks stores a run (fetcher faked); rate limit
       applies; a waiver survives a new run; clients can't run or waive.
-- [ ] Another workspace's launch returns 404.
+- [x] Another workspace's launch returns 404.
+
+## Notes
+
+- Status colors are new theme tokens (`--status-pass/warn/fail`, text-safe
+  in both portals, covered by `ThemeContrastTest`); status is always also
+  written out and shown with an icon.
+- HTML is parsed with PHP 8.5's HTML5 parser (`Dom\HTMLDocument`), which
+  copes with real-world markup and supports CSS selectors.
+- Checks can be unit tested without HTTP: `CheckContext::fake()` takes the
+  responses as fixtures.
+- Live run against codelaunch.nl from a development machine: all 10 checks
+  pass in about 2.7 s. The first run on production is the outbound HTTP
+  test (ADR 0007).

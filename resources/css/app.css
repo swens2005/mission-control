@@ -40,6 +40,9 @@
 
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
+    --color-status-pass: var(--status-pass);
+    --color-status-warn: var(--status-warn);
+    --color-status-fail: var(--status-fail);
 
     --color-border: var(--border);
     --color-input: var(--input);

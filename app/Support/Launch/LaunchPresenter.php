@@ -4,8 +4,12 @@ namespace App\Support\Launch;
 
 use App\Enums\ChecklistOwner;
 use App\Models\ChecklistItem;
+use App\Models\CheckRun;
+use App\Models\CheckRunResult;
+use App\Models\CheckWaiver;
 use App\Models\Launch;
 use App\Models\User;
+use App\Support\Launch\Checks\CheckRegistry;
 
 /**
  * The launch as both portals receive it: explicit arrays, never models.
@@ -23,6 +27,65 @@ final class LaunchPresenter
             'checklist' => $launch->checklistItems
                 ->map(fn (ChecklistItem $item) => self::item($item, $viewer))
                 ->values(),
+            'checks' => self::checks($launch),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function checks(Launch $launch): array
+    {
+        $run = $launch->latestCheckRun;
+        $waivers = $launch->waivers->keyBy('check_key');
+        $labels = CheckRegistry::labels();
+
+        $previous = $run === null ? null : $launch->checkRuns()
+            ->where('id', '<', $run->id)
+            ->latest('id')
+            ->first();
+
+        return [
+            'latestRun' => $run === null ? null : self::run($run),
+            'previousRunAt' => $previous?->created_at->toIso8601String(),
+            'results' => $run === null ? [] : $run->results
+                ->map(fn (CheckRunResult $result) => [
+                    'key' => $result->check_key,
+                    'label' => $labels[$result->check_key] ?? $result->check_key,
+                    'status' => $result->status->value,
+                    'statusLabel' => $result->status->label(),
+                    'message' => $result->message,
+                    'details' => $result->details ?? [],
+                    'waiver' => self::waiver($waivers->get($result->check_key)),
+                ])
+                ->values(),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function run(CheckRun $run): array
+    {
+        return [
+            'id' => $run->id,
+            'ranAt' => $run->created_at->toIso8601String(),
+            'ranBy' => $run->run_by_name,
+            'url' => $run->url,
+            'summary' => $run->summary(),
+            'durationMs' => $run->duration_ms,
+        ];
+    }
+
+    /**
+     * @return array{reason: string, by: string, at: string|null}|null
+     */
+    private static function waiver(?CheckWaiver $waiver): ?array
+    {
+        return $waiver === null ? null : [
+            'reason' => $waiver->reason,
+            'by' => $waiver->waived_by_name,
+            'at' => $waiver->created_at?->toIso8601String(),
         ];
     }
 

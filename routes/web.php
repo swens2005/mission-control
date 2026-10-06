@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ChecklistItemController;
+use App\Http\Controllers\Admin\CheckRunController;
+use App\Http\Controllers\Admin\CheckWaiverController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\LaunchController;
 use App\Http\Controllers\Admin\OrganizationController;
@@ -47,6 +49,11 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::delete('checklist-items/{item}', [ChecklistItemController::class, 'destroy'])->name('checklist.destroy');
     Route::put('checklist-items/{item}/check', [ChecklistItemController::class, 'check'])->name('checklist.check');
     Route::delete('checklist-items/{item}/check', [ChecklistItemController::class, 'uncheck'])->name('checklist.uncheck');
+
+    // Automated checks (story 11).
+    Route::post('projects/{project}/launch/runs', [CheckRunController::class, 'store'])->name('checks.store');
+    Route::post('projects/{project}/launch/waivers/{check}', [CheckWaiverController::class, 'store'])->name('waivers.store');
+    Route::delete('projects/{project}/launch/waivers/{check}', [CheckWaiverController::class, 'destroy'])->name('waivers.destroy');
 });
 
 // Launchpad: the client's portal.

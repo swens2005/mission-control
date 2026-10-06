@@ -44,6 +44,10 @@
     --sidebar-border: #24405f;
     --sidebar-ring: #8ac800;
     --brand-accent: #8ac800;
+    /* Launch check results: text-safe on background and card. */
+    --status-pass: #4a7300;
+    --status-warn: #8a5300;
+    --status-fail: #b42318;
 
     --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
     --display-stretch: 100%;
@@ -81,6 +85,10 @@
     --sidebar-border: #d9cfbf;
     --sidebar-ring: #007379;
     --brand-accent: #ff48b0;
+    /* Launch check results: text-safe on background and card. */
+    --status-pass: #2f6b1f;
+    --status-warn: #8a5300;
+    --status-fail: #b42318;
     --riso-teal: #00838a;
 
     --font-portal-display:

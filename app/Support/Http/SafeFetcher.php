@@ -34,10 +34,11 @@ final class SafeFetcher
 
     /**
      * @param  'GET'|'HEAD'  $method
+     * @param  float|null  $timeout  seconds per request, at most TIMEOUT (a caller with a time budget passes what is left)
      *
      * @throws FetchFailed
      */
-    public function fetch(string $url, string $method = 'GET'): FetchedResponse
+    public function fetch(string $url, string $method = 'GET', ?float $timeout = null): FetchedResponse
     {
         // Without curl, Guzzle would fall back to a handler that can't be
         // pinned to the checked address. Fail closed instead.
@@ -51,7 +52,7 @@ final class SafeFetcher
         for ($hop = 0; ; $hop++) {
             $target = $this->check($current);
             $started = hrtime(true);
-            $response = $this->request($current, $method, $target);
+            $response = $this->request($current, $method, $target, min($timeout ?? self::TIMEOUT, self::TIMEOUT));
             $timeMs = (int) round((hrtime(true) - $started) / 1_000_000);
 
             $location = $response->header('Location');
@@ -178,15 +179,15 @@ final class SafeFetcher
      *
      * @throws FetchFailed
      */
-    private function request(string $url, string $method, array $target): Response
+    private function request(string $url, string $method, array $target, float $timeout): Response
     {
         $tooLarge = false;
 
         $options = [
             'allow_redirects' => false,
             'protocols' => ['http', 'https'],
-            'connect_timeout' => self::CONNECT_TIMEOUT,
-            'timeout' => self::TIMEOUT,
+            'connect_timeout' => min(self::CONNECT_TIMEOUT, $timeout),
+            'timeout' => $timeout,
             // Unzipped by decode() with a size cap, never by curl.
             'decode_content' => false,
             // Returning true aborts the transfer as soon as it passes the cap.

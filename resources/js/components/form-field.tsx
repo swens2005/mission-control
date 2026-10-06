@@ -14,18 +14,21 @@ export type FieldControlProps = {
  */
 export function FormField({
     name,
+    id: idOverride,
     label,
     error,
     hint,
     children,
 }: {
     name: string;
+    /** Needed when the same field name appears more than once on a page. */
+    id?: string;
     label: string;
     error?: string;
     hint?: string;
     children: (props: FieldControlProps) => ReactNode;
 }) {
-    const id = `field-${name}`;
+    const id = idOverride ?? `field-${name}`;
     const describedBy =
         [hint && `${id}-hint`, error && `${id}-error`]
             .filter(Boolean)

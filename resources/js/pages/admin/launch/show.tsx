@@ -1,11 +1,13 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import ChecklistItemController from '@/actions/App/Http/Controllers/Admin/ChecklistItemController';
+import CheckRunController from '@/actions/App/Http/Controllers/Admin/CheckRunController';
 import LaunchController from '@/actions/App/Http/Controllers/Admin/LaunchController';
 import {
     FormField,
     focusFirstError,
     selectClassName,
 } from '@/components/form-field';
+import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
@@ -146,6 +148,59 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                                     </>
                                 )}
                             </Form>
+                        </section>
+
+                        <section
+                            aria-labelledby="checks-heading"
+                            className="max-w-2xl space-y-3"
+                        >
+                            <h2
+                                id="checks-heading"
+                                className="text-lg font-bold"
+                            >
+                                Automated checks
+                            </h2>
+                            <Form
+                                {...CheckRunController.store.form(project.id)}
+                                options={{ preserveScroll: true }}
+                                className="space-y-3"
+                            >
+                                {({ processing, errors }) => (
+                                    <>
+                                        <div className="flex flex-wrap items-center gap-3">
+                                            <Button
+                                                disabled={processing}
+                                                data-tour="run-checks"
+                                            >
+                                                {processing
+                                                    ? 'Running checks…'
+                                                    : 'Run checks'}
+                                            </Button>
+                                            <p
+                                                className="text-sm text-muted-foreground"
+                                                role="status"
+                                            >
+                                                {processing
+                                                    ? `Checking ${launch.url}. This can take up to 25 seconds.`
+                                                    : ''}
+                                            </p>
+                                        </div>
+                                        {errors.checks && (
+                                            <p
+                                                role="alert"
+                                                className="text-sm font-medium text-destructive"
+                                            >
+                                                {errors.checks}
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            </Form>
+                            <RunSummary checks={launch.checks} />
+                            <CheckResults
+                                checks={launch.checks}
+                                projectId={project.id}
+                            />
                         </section>
 
                         <section

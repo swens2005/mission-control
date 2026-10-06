@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import ClientLaunchController from '@/actions/App/Http/Controllers/Client/LaunchController';
+import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
 import { formatDate } from '@/lib/format';
 import { show } from '@/routes/client/projects';
@@ -30,6 +31,21 @@ export default function ShowLaunch({ project, launch }: Props) {
                         <span className="break-all">{launch.url}</span>
                     </p>
                 </div>
+
+                <section
+                    aria-labelledby="checks-heading"
+                    className="max-w-2xl space-y-3"
+                >
+                    <h2 id="checks-heading" className="text-xl font-extrabold">
+                        Automated checks
+                    </h2>
+                    <p>
+                        The studio runs these against your site before launch:
+                        security, search and sharing basics, and speed.
+                    </p>
+                    <RunSummary checks={launch.checks} />
+                    <CheckResults checks={launch.checks} />
+                </section>
 
                 <section
                     aria-labelledby="checklist-heading"

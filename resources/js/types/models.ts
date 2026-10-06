@@ -94,4 +94,31 @@ export type Launch = {
     id: number;
     url: string;
     checklist: ChecklistItem[];
+    checks: LaunchChecks;
+};
+
+export type CheckStatus = 'pass' | 'warn' | 'fail' | 'skipped';
+
+/** One automated check's outcome in the latest run. */
+export type CheckResultItem = {
+    key: string;
+    label: string;
+    status: CheckStatus;
+    statusLabel: string;
+    message: string;
+    details: string[];
+    waiver: { reason: string; by: string; at: string | null } | null;
+};
+
+export type LaunchChecks = {
+    latestRun: {
+        id: number;
+        ranAt: string;
+        ranBy: string;
+        url: string;
+        summary: string;
+        durationMs: number;
+    } | null;
+    previousRunAt: string | null;
+    results: CheckResultItem[];
 };
