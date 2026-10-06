@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ProofmarkController;
 use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
+use App\Http\Controllers\Client\ProofmarkController as ClientProofmarkController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DesignImageController;
 use App\Models\User;
@@ -69,6 +70,7 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     // Proofmark (story 15).
     Route::get('projects/{project}/proofmark', [ProofmarkController::class, 'show'])->name('proofmark.show');
     Route::post('projects/{project}/proofmark/rounds', [ProofmarkController::class, 'storeRound'])->name('rounds.store');
+    Route::post('rounds/{round}/send', [ProofmarkController::class, 'send'])->name('rounds.send');
     Route::post('rounds/{round}/designs', [DesignController::class, 'store'])->middleware('throttle:uploads')->name('designs.store');
     Route::patch('designs/{design}', [DesignController::class, 'update'])->name('designs.update');
     Route::post('designs/{design}/move', [DesignController::class, 'move'])->name('designs.move');
@@ -81,6 +83,7 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::get('projects/{project}', [ClientProjectController::class, 'show'])->name('projects.show');
     Route::get('projects/{project}/launch', [ClientLaunchController::class, 'show'])->name('launch.show');
     Route::post('projects/{project}/launch/signoff', [ClientLaunchController::class, 'signoff'])->name('signoffs.store');
+    Route::get('projects/{project}/proofmark', [ClientProofmarkController::class, 'show'])->name('proofmark.show');
     Route::put('checklist-items/{item}/check', [ClientLaunchController::class, 'check'])->name('checklist.check');
     Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
 });

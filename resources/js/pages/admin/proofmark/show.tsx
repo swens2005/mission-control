@@ -1,5 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ImagePlus } from 'lucide-react';
+import { ImagePlus, Send } from 'lucide-react';
 import { useState } from 'react';
 import DesignController from '@/actions/App/Http/Controllers/Admin/DesignController';
 import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
@@ -7,10 +7,12 @@ import { FormField, focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { DesignCard } from '@/components/proofmark/design-card';
 import { RoundList } from '@/components/proofmark/round-list';
-import { RoundHud } from '@/components/proofmark/round-status';
+import { DesignViewer } from '@/components/proofmark/design-viewer';
+import { RoundHeader } from '@/components/proofmark/round-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
+import { formatDateTime } from '@/lib/format';
 import { index, show } from '@/routes/admin/projects';
 import type { Design, Project, ReviewRound, ReviewRoundSummary } from '@/types';
 
@@ -121,63 +123,109 @@ function RoundDetail({
 
     return (
         <section aria-labelledby="round-heading" className="min-w-0 space-y-6">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-                <div>
-                    <p className="lc-label text-muted-foreground">
-                        Light table
-                    </p>
-                    <h2
-                        id="round-heading"
+            <RoundHeader round={round} description={roundDescription(round)}>
+                {draft && round.designs.length > 0 && (
+                    <SendForm round={round} />
+                )}
+            </RoundHeader>
+
+            {draft ? (
+                <>
+                    <UploadForm round={round} quota={quota} />
+                    <h3
+                        id="designs-heading"
                         tabIndex={-1}
-                        className="text-2xl font-extrabold"
+                        className="sr-only focus:not-sr-only"
                     >
-                        Round {round.label}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                        {draft
-                            ? 'A draft: only the studio can see it.'
-                            : 'Sent to the client. Its designs can no longer change.'}
-                    </p>
-                </div>
-                <RoundHud
-                    label={round.label}
-                    status={round.status}
-                    statusLabel={round.statusLabel}
-                />
-            </div>
-
-            {draft && <UploadForm round={round} quota={quota} />}
-
-            <h3
-                id="designs-heading"
-                tabIndex={-1}
-                className="sr-only focus:not-sr-only"
-            >
-                Designs in {round.label}
-            </h3>
-            {round.designs.length === 0 ? (
-                <p className="rounded-2xl border border-dashed border-input bg-card px-6 py-10 text-center text-muted-foreground">
-                    No designs in this round yet.
-                </p>
-            ) : (
-                <ol
-                    aria-labelledby="designs-heading"
-                    className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
-                >
-                    {round.designs.map((design, i) => (
-                        <DesignCard key={design.id} design={design} index={i}>
-                            {draft && (
-                                <DraftActions
+                        Designs in {round.label}
+                    </h3>
+                    {round.designs.length === 0 ? (
+                        <p className="rounded-2xl border border-dashed border-input bg-card px-6 py-10 text-center text-muted-foreground">
+                            No designs in this round yet.
+                        </p>
+                    ) : (
+                        <ol
+                            aria-labelledby="designs-heading"
+                            className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
+                        >
+                            {round.designs.map((design, i) => (
+                                <DesignCard
+                                    key={design.id}
                                     design={design}
-                                    isFirst={i === 0}
-                                    isLast={i === round.designs.length - 1}
-                                />
-                            )}
-                        </DesignCard>
-                    ))}
-                </ol>
+                                    index={i}
+                                >
+                                    <DraftActions
+                                        design={design}
+                                        isFirst={i === 0}
+                                        isLast={i === round.designs.length - 1}
+                                    />
+                                </DesignCard>
+                            ))}
+                        </ol>
+                    )}
+                </>
+            ) : (
+                <DesignViewer
+                    key={round.id}
+                    designs={round.designs}
+                    roundLabel={round.label}
+                />
             )}
         </section>
+    );
+}
+
+function roundDescription(round: ReviewRound): string {
+    switch (round.status) {
+        case 'draft':
+            return 'A draft: only the studio can see it.';
+        case 'in_review':
+            return `With the client since ${formatDateTime(round.sentAt)}. Its designs can no longer change.`;
+        case 'approved':
+            return `Approved by ${round.approvedByName ?? 'the client'} on ${formatDateTime(round.approvedAt)}.`;
+        default:
+            return 'Replaced by a newer round. Kept for the record.';
+    }
+}
+
+/**
+ * Sends the draft to the client, after a confirmation, because the
+ * designs are frozen from then on.
+ */
+function SendForm({ round }: { round: ReviewRound }) {
+    return (
+        <Form
+            {...ProofmarkController.send.form(round.id)}
+            options={{ preserveScroll: true }}
+            onBefore={() =>
+                window.confirm(
+                    `Send ${round.label} to the client? Its designs can't change after this.`,
+                )
+            }
+            onSuccess={() => focusById('round-heading')}
+            className="space-y-2"
+        >
+            {({ processing, errors }) => (
+                <>
+                    <button
+                        className="lc-pill"
+                        disabled={processing}
+                        data-tour="send-round"
+                    >
+                        <Send aria-hidden="true" className="size-5" />
+                        Send {round.label} to the client
+                    </button>
+                    {errors.send && (
+                        <p
+                            role="alert"
+                            className="text-sm font-medium text-destructive"
+                        >
+                            {errors.send}
+                        </p>
+                    )}
+                </>
+            )}
+        </Form>
     );
 }
 
@@ -226,6 +274,7 @@ function UploadForm({
                                 type="file"
                                 required
                                 accept="image/png,image/jpeg,image/webp"
+                                autoComplete="off"
                                 className="h-auto py-1.5"
                             />
                         )}

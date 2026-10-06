@@ -12,7 +12,9 @@ use App\Support\Proofmark\DesignFiles;
 use App\Support\Proofmark\ProofmarkPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -67,5 +69,43 @@ class ProofmarkController extends Controller
         }
 
         return to_route('admin.proofmark.show', [$project, 'round' => $draft->number]);
+    }
+
+    /**
+     * Sends a draft to the client. From now on its designs are frozen, and
+     * the round it replaces (if any) is superseded: one round in review.
+     */
+    public function send(ReviewRound $round): RedirectResponse
+    {
+        Gate::authorize('update', $round);
+
+        if (! $round->designs()->exists()) {
+            throw ValidationException::withMessages(['send' => 'Add at least one design before sending the round.']);
+        }
+
+        $project = $round->project;
+
+        DB::transaction(function () use ($round, $project): void {
+            $replaced = $project->reviewRounds()->where('status', RoundStatus::InReview)->get();
+
+            foreach ($replaced as $old) {
+                $old->status = RoundStatus::Superseded;
+                $old->save();
+            }
+
+            $round->status = RoundStatus::InReview;
+            $round->sent_at = now();
+            $round->save();
+
+            Activity::record('proofmark.round_sent', $round, [
+                'name' => $project->name,
+                'round' => $round->label(),
+                'replaces' => $replaced->first()?->label(),
+            ], visibleToClient: true);
+        });
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "Round {$round->label()} sent to the client."]);
+
+        return to_route('admin.proofmark.show', [$project, 'round' => $round->number]);
     }
 }

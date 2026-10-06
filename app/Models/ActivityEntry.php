@@ -109,6 +109,7 @@ class ActivityEntry extends Model
             'proofmark.round_created' => 'started design round '.($p['round'] ?? '')." of {$name}",
             'proofmark.design_added' => 'added the design '.($p['design'] ?? '').' to round '.($p['round'] ?? '')." of {$name}",
             'proofmark.design_renamed' => 'renamed the design '.($p['from'] ?? '').' to '.($p['design'] ?? '').' in round '.($p['round'] ?? '')." of {$name}",
+            'proofmark.round_sent' => 'sent design round '.($p['round'] ?? '')." of {$name} for review".(isset($p['replaces']) ? ", replacing {$p['replaces']}" : ''),
             'proofmark.design_removed' => 'removed the design '.($p['design'] ?? '').' from round '.($p['round'] ?? '')." of {$name}",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };

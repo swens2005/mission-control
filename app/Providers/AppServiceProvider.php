@@ -7,6 +7,7 @@ use App\Support\Http\Resolver;
 use App\Support\Http\SystemResolver;
 use App\Support\Launch\ChecklistWaitingItems;
 use App\Support\Launch\SignoffWaitingItems;
+use App\Support\Proofmark\RoundWaitingItems;
 use App\Support\Waiting\WaitingOnClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -50,6 +51,7 @@ class AppServiceProvider extends ServiceProvider
 
         $waiting->register(fn (User $client) => (new ChecklistWaitingItems)($client));
         $waiting->register(fn (User $client) => (new SignoffWaitingItems)($client));
+        $waiting->register(fn (User $client) => (new RoundWaitingItems)($client));
     }
 
     /**

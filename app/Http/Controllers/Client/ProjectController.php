@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Client;
 
 use App\Enums\ProjectPhase;
+use App\Enums\RoundStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityEntry;
 use App\Models\Project;
@@ -50,6 +51,7 @@ class ProjectController extends Controller
             'project' => $this->present($project),
             'steps' => self::steps(),
             'hasLaunch' => $project->launch()->exists(),
+            'hasProofmark' => $project->reviewRounds()->where('status', '!=', RoundStatus::Draft)->exists(),
             // Only what the studio marked for clients.
             'activity' => ActivityEntry::query()
                 ->visibleToClient()

@@ -15,3 +15,21 @@ export function formatDate(date: string | null, fallback = 'Not set'): string {
         year: 'numeric',
     });
 }
+
+/** An ISO timestamp as "6 Oct 2026, 14:05" in the viewer's time zone. */
+export function formatDateTime(
+    timestamp: string | null,
+    fallback = 'an unknown date',
+): string {
+    if (!timestamp) {
+        return fallback;
+    }
+
+    return new Date(timestamp).toLocaleString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}

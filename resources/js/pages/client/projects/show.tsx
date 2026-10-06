@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { Rocket } from 'lucide-react';
+import { PenTool, Rocket } from 'lucide-react';
+import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
 import { ActivityList } from '@/components/activity-list';
 import { PhaseSteps } from '@/components/phase-steps';
 import { formatDate } from '@/lib/format';
@@ -12,11 +13,13 @@ export default function ShowProject({
     steps,
     activity,
     hasLaunch,
+    hasProofmark,
 }: {
     project: ClientProject;
     steps: Option[];
     activity: ActivityItem[];
     hasLaunch: boolean;
+    hasProofmark: boolean;
 }) {
     return (
         <>
@@ -45,6 +48,17 @@ export default function ShowProject({
                         </p>
                     )}
                 </div>
+
+                {hasProofmark && (
+                    <Link
+                        href={ClientProofmarkController.show(project.id)}
+                        className="lc-pill w-fit"
+                        data-tour="open-proofmark"
+                    >
+                        <PenTool aria-hidden="true" className="size-5" />
+                        Open Proofmark
+                    </Link>
+                )}
 
                 {hasLaunch && (
                     <Link
