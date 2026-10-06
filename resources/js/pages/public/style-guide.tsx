@@ -17,6 +17,9 @@ export default function PublicStyleGuide({
         <>
             <Head title={`Style guide: ${projectName}`}>
                 <meta name="robots" content="noindex, nofollow" />
+                {/* On codelaunch.nl the portfolio's .htaccess replaces the
+                    Referrer-Policy header (like the CSP, ADR 0006). */}
+                <meta name="referrer" content="no-referrer" />
             </Head>
             <div className="space-y-10">
                 <div>

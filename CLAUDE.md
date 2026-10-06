@@ -89,6 +89,19 @@ All of these must pass before committing. CI runs the same set.
   `DesignFiles` (ADR 0009): content-checked, re-encoded with GD, private
   disk, served by an authorized route. Demo files are shipped in
   `resources/demo/` and referenced, never copied into sandboxes.
+- **Colors and type:** OKLCH lives in `App\Support\Color\Oklch` /
+  `OklchColor` (stored as integers), contrast fixes in `ContrastFixer`,
+  grades in `App\Support\Palette\ContrastGrade` (shapes-only colors are
+  graphics, never text), type scales in `App\Support\Typography\TypeScale`.
+  Exports: `TokenExporter`. Ratios and scales are stored as integer
+  thousandths; floats only in display maths.
+- **Client approval pattern** (Proofmark rounds, brand kits): a policy
+  `approve` method (client of the organization, once), user/name/time/IP
+  stored, the thing locked afterwards, a `WaitingOnClient` provider, and
+  focus to the status heading after approving.
+- **Public pages:** Inertia pages under `public/` get `PublicLayout` (no
+  nav, no login). Only the style guide uses it; it finds its record by a
+  random token with `withoutGlobalScopes()`.
 - **Focus after a visit:** `focusById(id, fallbackId?)` and
   `focusFirstError` from `form-field.tsx` wait two frames; one frame was
   not enough after uploads and renames.
@@ -105,6 +118,8 @@ All of these must pass before committing. CI runs the same set.
   `setNonce` in `app.tsx`. On codelaunch.nl the CSP header is replaced by the
   portfolio's `.htaccess`; the `<meta>` copy is what protects pages
   (ADR 0006). Check the browser console for violations after UI changes.
+  The same `.htaccess` also replaces `Referrer-Policy`; use a
+  `<meta name="referrer">` where a page needs a stricter one.
 - **Subfolder:** pages can look fine on production while client-side URLs
   are wrong. After a deploy, click through the real site in a browser, not
   only `curl`. Wayfinder's prefix comes from `APP_URL` in the deploy build.
