@@ -289,6 +289,7 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                                                             selectClassName
                                                         }
                                                         defaultValue="studio"
+                                                        autoComplete="off"
                                                     >
                                                         <option value="studio">
                                                             Studio
