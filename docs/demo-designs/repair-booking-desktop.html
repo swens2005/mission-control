@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="mock.css" />
+        <style>
+            /* Fietsatelier Noord: its own colours over the shared layout. */
+            body {
+                background: #eef2f4;
+                color: #13262f;
+            }
+            .logo small,
+            .eyebrow {
+                color: #2f7d6d;
+            }
+            .btn {
+                background: #13262f;
+                color: #f4f8f9;
+            }
+            .btn.alt {
+                color: #13262f;
+                box-shadow: inset 0 0 0 2px #13262f;
+            }
+            .panel,
+            .step {
+                background: #ffffff;
+            }
+            .input,
+            .chip {
+                background: #eef2f4;
+                box-shadow: inset 0 0 0 2px #cfdbe0;
+                color: #4d6470;
+            }
+            .chip.on {
+                background: #2f7d6d;
+                color: #fff;
+                box-shadow: none;
+            }
+            .line {
+                border-color: #cfdbe0;
+            }
+            .step.on {
+                background: #13262f;
+            }
+            .step.on b {
+                background: #f2b33d;
+            }
+            .cal {
+                display: grid;
+                grid-template-columns: repeat(7, 1fr);
+                gap: 10px;
+                margin-top: 8px;
+            }
+            .day {
+                height: 66px;
+                border-radius: 14px;
+                background: #eef2f4;
+                display: grid;
+                place-items: center;
+                font-weight: 700;
+            }
+            .day.off {
+                opacity: 0.35;
+            }
+            .day.on {
+                background: #2f7d6d;
+                color: #fff;
+            }
+            .slots {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            footer {
+                background: #13262f;
+            }
+        </style>
+        <title>Booking, desktop</title>
+    </head>
+    <body>
+        <div class="wrap nav">
+            <div class="logo">
+                Fietsatelier Noord<small>Repairs · Ndsm-werf</small>
+            </div>
+            <div class="links">
+                <span>Repairs</span><span>Prices</span
+                ><span>Bikes for sale</span><span>Contact</span>
+            </div>
+            <span class="btn">Book a repair</span>
+        </div>
+        <div class="wrap plain">
+            <span class="eyebrow">Book a repair</span>
+            <h2>Pick a day, drop it off, get a text</h2>
+            <div class="steps">
+                <span class="step"><b>1</b>Your bike</span
+                ><span class="step on"><b>2</b>Day and time</span
+                ><span class="step"><b>3</b>Your details</span>
+            </div>
+            <div class="order">
+                <div class="panel">
+                    <div class="field">
+                        <label>October 2026</label>
+                        <div class="cal">
+                            <div class="day off">Mo 12</div>
+                            <div class="day">Tu 13</div>
+                            <div class="day">We 14</div>
+                            <div class="day on">Th 15</div>
+                            <div class="day">Fr 16</div>
+                            <div class="day">Sa 17</div>
+                            <div class="day off">Su 18</div>
+                            <div class="day off">Mo 19</div>
+                            <div class="day">Tu 20</div>
+                            <div class="day">We 21</div>
+                            <div class="day">Th 22</div>
+                            <div class="day off">Fr 23</div>
+                            <div class="day">Sa 24</div>
+                            <div class="day off">Su 25</div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Drop-off time</label>
+                        <div class="slots">
+                            <span class="chip">08:00</span
+                            ><span class="chip on">08:30</span
+                            ><span class="chip">09:00</span
+                            ><span class="chip">12:30</span
+                            ><span class="chip">17:30</span>
+                        </div>
+                    </div>
+                    <div class="ctas">
+                        <span class="btn">Next: your details</span>
+                    </div>
+                </div>
+                <div class="panel summary">
+                    <h3>Your repair</h3>
+                    <div class="line">
+                        <span>Service, city bike</span><span>€59</span>
+                    </div>
+                    <div class="line">
+                        <span>New brake pads</span><span>€24</span>
+                    </div>
+                    <div class="total">
+                        <span>Estimate</span><span>€83</span>
+                    </div>
+                    <p class="note">
+                        Ready the same day if you drop it off before 9:00. We
+                        text you when it's done.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="wrap">
+                <div class="logo">Fietsatelier Noord</div>
+                <div>Ndsm-plein 4, Amsterdam</div>
+            </div>
+        </footer>
+    </body>
+</html>

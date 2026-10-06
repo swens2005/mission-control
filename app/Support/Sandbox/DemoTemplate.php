@@ -3,9 +3,10 @@
 namespace App\Support\Sandbox;
 
 use App\Enums\ProjectPhase;
+use App\Enums\RoundStatus;
 
 /**
- * The studio every demo visitor starts with: three clients and five
+ * The studio every demo visitor starts with: three clients and six
  * projects spread over the phases, so each module has something to show.
  * The first client is the one the demo client contact belongs to.
  */
@@ -38,6 +39,66 @@ final class DemoTemplate
     }
 
     /**
+     * Proofmark's demo (story 19), per project: rounds oldest first. Images
+     * are files shipped in resources/demo/proofmark/ (never copied, so a
+     * sandbox adds nothing to the disk). Pins are in hundredths of a
+     * percent; "by" is the demo admin or the demo client.
+     *
+     * @return array<string, list<array{status: RoundStatus, sent_days_ago: int|null, designs: list<array{title: string, file: string}>, comments: list<array{design: int, x: int, y: int, by: 'admin'|'client', body: string, resolved: bool}>}>>
+     */
+    public static function proofmark(): array
+    {
+        return [
+            'Wedding cakes' => [
+                [
+                    'status' => RoundStatus::Superseded,
+                    'sent_days_ago' => 12,
+                    'designs' => [
+                        ['title' => 'Home, desktop', 'file' => 'wedding-home-desktop-v1.webp'],
+                        ['title' => 'Order page, desktop', 'file' => 'wedding-order-desktop-v1.webp'],
+                    ],
+                    'comments' => [
+                        ['design' => 0, 'x' => 7300, 'y' => 2300, 'by' => 'client', 'resolved' => true,
+                            'body' => 'The pink feels more like a baby shower than a wedding. Could it be warmer, like the shop?'],
+                        ['design' => 0, 'x' => 2200, 'y' => 7200, 'by' => 'client', 'resolved' => true,
+                            'body' => 'Can we show prices? People always ask us that first.'],
+                        ['design' => 1, 'x' => 3000, 'y' => 4500, 'by' => 'admin', 'resolved' => true,
+                            'body' => 'Suggest splitting this form into steps, so it feels less like a tax return.'],
+                    ],
+                ],
+                [
+                    'status' => RoundStatus::InReview,
+                    'sent_days_ago' => 2,
+                    'designs' => [
+                        ['title' => 'Home, desktop', 'file' => 'wedding-home-desktop-v2.webp'],
+                        ['title' => 'Home, mobile', 'file' => 'wedding-home-mobile-v2.webp'],
+                        ['title' => 'Order page, desktop', 'file' => 'wedding-order-desktop-v2.webp'],
+                        ['title' => 'Order page, mobile', 'file' => 'wedding-order-mobile-v2.webp'],
+                    ],
+                    'comments' => [
+                        ['design' => 0, 'x' => 8500, 'y' => 1350, 'by' => 'client', 'resolved' => false,
+                            'body' => "Love this! Could the badge say 'Saturday mornings'? We close at one."],
+                        ['design' => 2, 'x' => 8000, 'y' => 6000, 'by' => 'client', 'resolved' => false,
+                            'body' => 'The deposit is 25%, not 30%.'],
+                        ['design' => 0, 'x' => 7400, 'y' => 2200, 'by' => 'admin', 'resolved' => false,
+                            'body' => "A photo of the real cakes goes here once Anna's photographer delivers."],
+                    ],
+                ],
+            ],
+            'Repair booking' => [
+                [
+                    'status' => RoundStatus::Draft,
+                    'sent_days_ago' => null,
+                    'designs' => [
+                        ['title' => 'Booking, desktop', 'file' => 'repair-booking-desktop.webp'],
+                    ],
+                    'comments' => [],
+                ],
+            ],
+        ];
+    }
+
+    /**
      * @return list<array{name: string, website: string, projects: list<array{name: string, description: string, phase: ProjectPhase, launch_in_days: int}>}>
      */
     public static function organizations(): array
@@ -52,6 +113,12 @@ final class DemoTemplate
                         'description' => "A new site where regulars order tomorrow's bread before 8 pm.",
                         'phase' => ProjectPhase::Launch,
                         'launch_in_days' => 6,
+                    ],
+                    [
+                        'name' => 'Wedding cakes',
+                        'description' => 'A showcase for wedding cakes, with tastings and an order form.',
+                        'phase' => ProjectPhase::Proofmark,
+                        'launch_in_days' => 35,
                     ],
                     [
                         'name' => 'Seasonal menu pages',

@@ -5,9 +5,12 @@ namespace App\Support\Sandbox;
 use App\Enums\ProjectPhase;
 use App\Enums\Role;
 use App\Models\ChecklistItem;
+use App\Models\Comment;
+use App\Models\Design;
 use App\Models\Launch;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Models\ReviewRound;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Support\Activity;
@@ -15,6 +18,7 @@ use App\Support\Launch\ChecklistToggle;
 use App\Support\Launch\DefaultChecklist;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * Creates a demo visitor's own copy of the studio (ADR 0004).
@@ -86,6 +90,7 @@ final class SandboxFactory
             ], actor: $admin);
 
             $this->createLaunch($workspace, $admin, $client);
+            $this->createProofmark($workspace, $admin, $client);
 
             return new Sandbox($workspace, $admin, $adminPassword, $client, $clientPassword);
         });
@@ -119,6 +124,94 @@ final class SandboxFactory
                 ChecklistToggle::set($item, $by === 'admin' ? $admin : $client, checked: true);
             }
         }
+    }
+
+    /**
+     * Proofmark's review rounds (DemoTemplate::proofmark()). Designs point to
+     * the shipped demo files, so nothing is written to disk (ADR 0009).
+     */
+    private function createProofmark(Workspace $workspace, User $admin, User $client): void
+    {
+        foreach (DemoTemplate::proofmark() as $projectName => $rounds) {
+            $project = Project::withoutGlobalScopes()
+                ->where('workspace_id', $workspace->id)
+                ->where('name', $projectName)
+                ->firstOrFail();
+
+            foreach ($rounds as $index => $data) {
+                $round = new ReviewRound;
+                $round->project_id = $project->id;
+                $round->number = $index + 1;
+                $round->status = $data['status'];
+                $round->sent_at = $data['sent_days_ago'] === null ? null : now()->subDays($data['sent_days_ago']);
+                $round->save();
+
+                $snapshot = ['name' => $project->name, 'round' => $round->label()];
+                Activity::record('proofmark.round_created', $round, $snapshot, actor: $admin);
+
+                $designs = [];
+
+                foreach ($data['designs'] as $position => $designData) {
+                    $designs[] = $this->demoDesign($round, $position, $designData['title'], $designData['file']);
+                }
+
+                if ($round->sent_at !== null) {
+                    Activity::record('proofmark.round_sent', $round, [
+                        ...$snapshot,
+                        'replaces' => $index > 0 ? 'v'.$index : null,
+                    ], visibleToClient: true, actor: $admin);
+                }
+
+                foreach ($data['comments'] as $commentData) {
+                    $author = $commentData['by'] === 'admin' ? $admin : $client;
+                    $design = $designs[$commentData['design']];
+
+                    $comment = new Comment;
+                    $comment->design_id = $design->id;
+                    $comment->author_id = $author->id;
+                    $comment->author_name = $author->name;
+                    $comment->author_role = $author->isAdmin() ? 'studio' : 'client';
+                    $comment->x = $commentData['x'];
+                    $comment->y = $commentData['y'];
+                    $comment->body = $commentData['body'];
+
+                    if ($commentData['resolved']) {
+                        $comment->resolved_at = now();
+                        $comment->resolved_by_id = $admin->id;
+                        $comment->resolved_by_name = $admin->name;
+                    }
+
+                    $comment->save();
+
+                    Activity::record('proofmark.commented', $round, [...$snapshot, 'design' => $design->title], visibleToClient: true, actor: $author);
+                }
+            }
+        }
+    }
+
+    private function demoDesign(ReviewRound $round, int $position, string $title, string $file): Design
+    {
+        $path = resource_path('demo/proofmark/'.$file);
+        $size = getimagesize($path);
+
+        if ($size === false) {
+            throw new RuntimeException("Demo design {$file} is missing or not an image.");
+        }
+
+        $design = new Design;
+        $design->review_round_id = $round->id;
+        $design->title = $title;
+        $design->position = $position;
+        $design->source = 'demo';
+        $design->path = $file;
+        $design->original_name = $file;
+        $design->mime = $size['mime'];
+        $design->width = $size[0];
+        $design->height = $size[1];
+        $design->bytes = (int) filesize($path);
+        $design->save();
+
+        return $design;
     }
 
     /**
