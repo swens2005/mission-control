@@ -6,6 +6,7 @@ import PaletteController from '@/actions/App/Http/Controllers/Admin/PaletteContr
 import { focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { ColorFields } from '@/components/palette/color-fields';
+import { ContrastMatrix } from '@/components/palette/contrast-matrix';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { index, show } from '@/routes/admin/projects';
@@ -73,7 +74,13 @@ export default function ShowPalette({ project, kit, roles }: Props) {
                         </Form>
                     </section>
                 ) : (
-                    <Colors kit={kit} roles={roles} />
+                    <div className="space-y-12">
+                        <Colors kit={kit} roles={roles} />
+                        <ContrastMatrix
+                            matrix={kit.matrix}
+                            canFix={!kit.locked}
+                        />
+                    </div>
                 )}
             </div>
         </>

@@ -94,6 +94,7 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::post('kits/{kit}/colors', [ColorController::class, 'store'])->name('colors.store');
     Route::patch('colors/{color}', [ColorController::class, 'update'])->name('colors.update');
     Route::post('colors/{color}/move', [ColorController::class, 'move'])->name('colors.move');
+    Route::post('colors/{color}/fix', [ColorController::class, 'fix'])->name('colors.fix');
     Route::delete('colors/{color}', [ColorController::class, 'destroy'])->name('colors.destroy');
 });
 

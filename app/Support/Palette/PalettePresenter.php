@@ -20,6 +20,7 @@ final class PalettePresenter
             'id' => $kit->id,
             'locked' => $kit->isApproved(),
             'colors' => $kit->colors->map(fn (Color $color) => self::color($color))->values()->all(),
+            'matrix' => ContrastMatrix::build($kit->colors),
         ];
     }
 

@@ -15,6 +15,16 @@ final readonly class ColorInput
         public bool $adjusted,
     ) {}
 
+    /**
+     * A computed color (from "Fix it"), already in gamut.
+     */
+    public static function fromOklch(OklchColor $color): self
+    {
+        $fitted = Oklch::inGamut($color);
+
+        return new self(Oklch::toHex($fitted), $fitted, $fitted->chroma !== $color->chroma);
+    }
+
     public static function parse(string $value): ?self
     {
         $value = strtolower(trim($value));

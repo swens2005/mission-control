@@ -212,6 +212,32 @@ export type BrandKit = {
     /** Approved by the client; "Start a revision" unlocks it. */
     locked: boolean;
     colors: BrandColor[];
+    matrix: ContrastMatrix;
 };
 
 export type RoleOption = { value: ColorRole; label: string; hint: string };
+
+export type ContrastCell = {
+    surfaceId: number;
+    /** "4.82:1", rounded down. */
+    ratio: string;
+    grade: 'aaa' | 'aa' | 'aa_large' | 'fails' | 'graphics' | 'decoration';
+    gradeLabel: string;
+    tone: 'pass' | 'warn' | 'fail';
+    /** The nearest AA shade, for text that fails. */
+    fix: { hex: string; oklch: string; ratio: string } | null;
+};
+
+export type ContrastMatrix = {
+    columns: { id: number; name: string; hex: string }[];
+    rows: {
+        id: number;
+        name: string;
+        hex: string;
+        role: ColorRole;
+        roleLabel: string;
+        cells: ContrastCell[];
+    }[];
+    /** Text pairs below AA. */
+    failing: number;
+};

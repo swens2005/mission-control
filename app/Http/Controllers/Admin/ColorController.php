@@ -8,12 +8,15 @@ use App\Models\BrandKit;
 use App\Models\Color;
 use App\Support\Activity;
 use App\Support\Color\ColorInput;
+use App\Support\Color\Contrast;
+use App\Support\Color\ContrastFixer;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 
 /**
@@ -80,6 +83,46 @@ class ColorController extends Controller
                 Color::whereKey($id)->update(['position' => $position]);
             }
         });
+
+        return to_route('admin.palette.show', $color->kit->project_id);
+    }
+
+    /**
+     * "Fix it" (story 21): applies the nearest lightness that reaches AA on
+     * the chosen surface. Recomputed here, never taken from the browser.
+     */
+    public function fix(Request $request, Color $color): RedirectResponse
+    {
+        Gate::authorize('update', $color->kit);
+
+        $request->validate(['surface' => ['required', 'integer']]);
+
+        // Only a surface of this same kit; anything else is a 404.
+        $surface = $color->kit->colors()
+            ->where('role', ColorRole::Surface)
+            ->findOrFail($request->integer('surface'));
+
+        if ($color->role === ColorRole::Surface || $color->role === ColorRole::Shape) {
+            throw ValidationException::withMessages(['fix' => 'Only text and accent colors are fixed for contrast.']);
+        }
+
+        $fixed = ContrastFixer::fix($color->oklch(), $surface->hex, Contrast::AA_TEXT);
+
+        if ($fixed === null) {
+            throw ValidationException::withMessages(['fix' => "No shade of {$color->name} reaches AA on {$surface->name}."]);
+        }
+
+        $before = $color->hex;
+        $color->setValue(ColorInput::fromOklch($fixed));
+        $color->save();
+
+        Activity::record('palette.color_fixed', $color->kit, [
+            ...$this->snapshot($color->kit, $color),
+            'from' => $before,
+            'surface' => $surface->name,
+        ]);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "{$color->name} is now {$color->hex}."]);
 
         return to_route('admin.palette.show', $color->kit->project_id);
     }
