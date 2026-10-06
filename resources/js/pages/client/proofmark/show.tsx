@@ -1,5 +1,7 @@
-import { Head, Link } from '@inertiajs/react';
+import { Form, Head, Link } from '@inertiajs/react';
+import { BadgeCheck } from 'lucide-react';
 import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
+import { focusById } from '@/components/form-field';
 import { PinnedReview } from '@/components/proofmark/pinned-review';
 import { RoundHeader } from '@/components/proofmark/round-header';
 import { RoundList } from '@/components/proofmark/round-list';
@@ -51,12 +53,67 @@ export default function ShowProofmark({ project, rounds, round }: Props) {
                         <RoundHeader
                             round={round}
                             description={describe(round)}
-                        />
+                        >
+                            {round.status === 'in_review' && (
+                                <ApproveForm round={round} />
+                            )}
+                        </RoundHeader>
                         <PinnedReview key={round.id} round={round} />
                     </section>
                 </div>
             </div>
         </>
+    );
+}
+
+/**
+ * Approving locks the round, so it asks first, and says how many comments
+ * are still open (they stay open, for the record).
+ */
+function ApproveForm({ round }: { round: ReviewRound }) {
+    const open = round.designs.reduce(
+        (total, design) =>
+            total + design.comments.filter((c) => !c.resolved).length,
+        0,
+    );
+    const warning =
+        open === 0
+            ? ''
+            : open === 1
+              ? ' 1 comment is still open; approving keeps it for the record.'
+              : ` ${open} comments are still open; approving keeps them for the record.`;
+
+    return (
+        <Form
+            {...ClientProofmarkController.approve.form(round.id)}
+            options={{ preserveScroll: true }}
+            onBefore={() =>
+                window.confirm(
+                    `Approve the designs in ${round.label}?${warning} After approving, no more comments can be added.`,
+                )
+            }
+            onSuccess={() => focusById('round-status')}
+            className="space-y-2"
+        >
+            {({ processing }) => (
+                <>
+                    <button
+                        className="lc-pill"
+                        disabled={processing}
+                        data-tour="approve-round"
+                    >
+                        <BadgeCheck aria-hidden="true" className="size-5" />
+                        Approve {round.label}
+                    </button>
+                    <p className="text-sm text-muted-foreground">
+                        Happy with these designs? Approve them so the studio can
+                        start building.
+                        {open > 0 &&
+                            ` ${open} open ${open === 1 ? 'comment' : 'comments'}.`}
+                    </p>
+                </>
+            )}
+        </Form>
     );
 }
 

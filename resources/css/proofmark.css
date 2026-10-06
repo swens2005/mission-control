@@ -58,6 +58,21 @@
             0 0 0 2px var(--sidebar),
             0 4px 10px color-mix(in srgb, var(--sidebar) 30%, transparent);
     }
+    .pm-pin-resolved::after {
+        content: '✓';
+        position: absolute;
+        right: -6px;
+        bottom: -6px;
+        display: grid;
+        place-items: center;
+        width: 16px;
+        height: 16px;
+        border-radius: 9999px;
+        background: var(--lamp-go);
+        color: var(--sidebar);
+        font-size: 10px;
+        line-height: 1;
+    }
     .pm-pin-draft {
         background: var(--lamp-go);
         color: var(--sidebar);

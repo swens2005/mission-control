@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ProjectPhase;
 use App\Enums\RoundStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
@@ -39,6 +40,8 @@ class ProofmarkController extends Controller
             'rounds' => ProofmarkPresenter::rounds($rounds),
             'round' => $selected ? ProofmarkPresenter::round($selected) : null,
             'canStartRound' => $rounds->doesntContain(fn (ReviewRound $round) => $round->isDraft()),
+            'canMoveToLaunch' => $project->phase === ProjectPhase::Proofmark
+                && $rounds->contains(fn (ReviewRound $round) => $round->status === RoundStatus::Approved),
             'quota' => $user->workspace->is_sandbox ? [
                 'used' => DesignFiles::humanSize(DesignFiles::used($user->workspace)),
                 'limit' => DesignFiles::humanSize(config()->integer('demo.upload_quota_bytes')),
@@ -107,5 +110,33 @@ class ProofmarkController extends Controller
         Inertia::flash('toast', ['type' => 'success', 'message' => "Round {$round->label()} sent to the client."]);
 
         return to_route('admin.proofmark.show', [$project, 'round' => $round->number]);
+    }
+
+    /**
+     * After the client approved a round, the project moves on to Launch
+     * Control: the same phase change (and activity entry) as editing the
+     * project by hand.
+     */
+    public function toLaunch(Project $project): RedirectResponse
+    {
+        Gate::authorize('update', $project);
+
+        $approved = $project->reviewRounds()->where('status', RoundStatus::Approved)->exists();
+
+        if ($project->phase !== ProjectPhase::Proofmark || ! $approved) {
+            throw ValidationException::withMessages(['phase' => 'The project moves on once the client has approved a round.']);
+        }
+
+        $project->update(['phase' => ProjectPhase::Launch]);
+
+        Activity::record('project.phase_changed', $project, [
+            'name' => $project->name,
+            'from' => ProjectPhase::Proofmark->label(),
+            'to' => ProjectPhase::Launch->label(),
+        ], visibleToClient: true);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "{$project->name} moved to Launch Control."]);
+
+        return to_route('admin.launch.show', $project);
     }
 }

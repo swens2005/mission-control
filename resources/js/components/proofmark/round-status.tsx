@@ -32,6 +32,8 @@ export function RoundHud({
 }) {
     return (
         <div
+            id="round-status"
+            tabIndex={-1}
             className={cn('lc-hud inline-flex items-center gap-4', className)}
             data-tour="round-status"
         >

@@ -49,6 +49,22 @@ class ReviewRoundPolicy
     }
 
     /**
+     * Any contact of the organization approves the round in review, once.
+     */
+    public function approve(User $user, ReviewRound $round): Response
+    {
+        $canSee = $this->viewAsClient($user, $round);
+
+        if ($canSee->denied()) {
+            return $canSee;
+        }
+
+        return $round->status === RoundStatus::InReview
+            ? Response::allow()
+            : Response::deny("{$round->label()} is not waiting for approval.");
+    }
+
+    /**
      * Both sides can pin comments, but only on the round in review: a draft
      * isn't shared yet, and superseded or approved rounds are history.
      */

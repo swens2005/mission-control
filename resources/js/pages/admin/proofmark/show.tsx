@@ -1,5 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ImagePlus, Send } from 'lucide-react';
+import { ImagePlus, Rocket, Send } from 'lucide-react';
 import { useState } from 'react';
 import DesignController from '@/actions/App/Http/Controllers/Admin/DesignController';
 import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
@@ -21,6 +21,7 @@ type Props = {
     rounds: ReviewRoundSummary[];
     round: ReviewRound | null;
     canStartRound: boolean;
+    canMoveToLaunch: boolean;
     quota: { used: string; limit: string } | null;
 };
 
@@ -29,6 +30,7 @@ export default function ShowProofmark({
     rounds,
     round,
     canStartRound,
+    canMoveToLaunch,
     quota,
 }: Props) {
     useBreadcrumbs([
@@ -76,7 +78,44 @@ export default function ShowProofmark({
                             </Link>
                         </>
                     }
-                    actions={rounds.length > 0 ? startRound : undefined}
+                    actions={
+                        rounds.length > 0 && (
+                            <>
+                                {canMoveToLaunch && (
+                                    <Form
+                                        {...ProofmarkController.toLaunch.form(
+                                            project.id,
+                                        )}
+                                    >
+                                        {({ processing, errors }) => (
+                                            <>
+                                                <button
+                                                    className="lc-pill"
+                                                    disabled={processing}
+                                                    data-tour="move-to-launch"
+                                                >
+                                                    <Rocket
+                                                        aria-hidden="true"
+                                                        className="size-5"
+                                                    />
+                                                    Move to Launch Control
+                                                </button>
+                                                {errors.phase && (
+                                                    <p
+                                                        role="alert"
+                                                        className="mt-2 text-sm font-medium text-destructive"
+                                                    >
+                                                        {errors.phase}
+                                                    </p>
+                                                )}
+                                            </>
+                                        )}
+                                    </Form>
+                                )}
+                                {startRound}
+                            </>
+                        )
+                    }
                 />
 
                 {round === null ? (
@@ -165,7 +204,7 @@ function RoundDetail({
                     )}
                 </>
             ) : (
-                <PinnedReview key={round.id} round={round} />
+                <PinnedReview key={round.id} round={round} studio />
             )}
         </section>
     );

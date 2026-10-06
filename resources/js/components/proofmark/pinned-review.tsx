@@ -2,6 +2,7 @@ import { Form } from '@inertiajs/react';
 import { MessageSquarePlus } from 'lucide-react';
 import type { KeyboardEvent, MouseEvent } from 'react';
 import { useEffect, useRef, useState } from 'react';
+import CommentResolutionController from '@/actions/App/Http/Controllers/Admin/CommentResolutionController';
 import CommentController from '@/actions/App/Http/Controllers/CommentController';
 import { FormField, focusById, focusFirstError } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
@@ -28,8 +29,18 @@ const textareaClassName =
  * Every pin is also in the numbered list next to the design, the
  * accessible equivalent; selecting either one highlights the other.
  */
-export function PinnedReview({ round }: { round: ReviewRound }) {
+type Filter = 'all' | 'open' | 'resolved';
+
+export function PinnedReview({
+    round,
+    studio = false,
+}: {
+    round: ReviewRound;
+    /** The studio can resolve and reopen comments (story 18). */
+    studio?: boolean;
+}) {
     const [adding, setAdding] = useState(false);
+    const [filter, setFilter] = useState<Filter>('all');
     const [crosshair, setCrosshair] = useState<PinPoint>({ x: 5000, y: 5000 });
     const [draft, setDraft] = useState<PinPoint | null>(null);
     const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -178,7 +189,7 @@ export function PinnedReview({ round }: { round: ReviewRound }) {
             }}
             overlay={(design) => (
                 <>
-                    {design.comments.map((comment) => (
+                    {shown(design.comments, filter).map((comment) => (
                         <button
                             key={comment.id}
                             id={`pin-${comment.id}`}
@@ -250,7 +261,10 @@ export function PinnedReview({ round }: { round: ReviewRound }) {
                     )}
                     <CommentList
                         design={design}
+                        filter={filter}
+                        onFilterChange={setFilter}
                         selectedId={selectedId}
+                        canResolve={studio && round.canComment}
                         onSelect={(comment) => select(comment, 'list')}
                     />
                 </div>
@@ -338,16 +352,37 @@ function CommentForm({
     );
 }
 
+function shown(comments: DesignComment[], filter: Filter): DesignComment[] {
+    return filter === 'all'
+        ? comments
+        : comments.filter((comment) =>
+              filter === 'resolved' ? comment.resolved : !comment.resolved,
+          );
+}
+
 function CommentList({
     design,
+    filter,
+    onFilterChange,
     selectedId,
+    canResolve,
     onSelect,
 }: {
     design: Design;
+    filter: Filter;
+    onFilterChange: (filter: Filter) => void;
     selectedId: number | null;
+    canResolve: boolean;
     onSelect: (comment: DesignComment) => void;
 }) {
     const count = design.comments.length;
+    const open = design.comments.filter((comment) => !comment.resolved).length;
+    const visible = shown(design.comments, filter);
+    const filters: [Filter, string][] = [
+        ['all', `All (${count})`],
+        ['open', `Open (${open})`],
+        ['resolved', `Resolved (${count - open})`],
+    ];
 
     return (
         <section aria-labelledby="pins-heading" data-tour="pin-list">
@@ -357,34 +392,71 @@ function CommentList({
             >
                 Comments on this design · {count}
             </h4>
+            {count > 0 && (
+                <fieldset className="mb-3" data-tour="pin-filter">
+                    <legend className="sr-only">Show comments</legend>
+                    <div className="inline-flex flex-wrap rounded-xl border border-border bg-card p-1">
+                        {filters.map(([value, label]) => (
+                            <label
+                                key={value}
+                                className="cursor-pointer rounded-lg px-2.5 py-1 text-sm font-semibold has-checked:bg-sidebar has-checked:text-sidebar-foreground has-focus-visible:outline-3 has-focus-visible:outline-offset-2 has-focus-visible:outline-ring"
+                            >
+                                <input
+                                    type="radio"
+                                    name={`pin-filter-${design.id}`}
+                                    value={value}
+                                    checked={filter === value}
+                                    onChange={() => onFilterChange(value)}
+                                    className="sr-only"
+                                />
+                                {label}
+                            </label>
+                        ))}
+                    </div>
+                </fieldset>
+            )}
             {count === 0 ? (
                 <p className="rounded-2xl border border-dashed border-input bg-card px-4 py-6 text-sm text-muted-foreground">
                     No comments on this design yet.
                 </p>
+            ) : visible.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-input bg-card px-4 py-6 text-sm text-muted-foreground">
+                    {filter === 'open'
+                        ? 'No open comments. Everything is resolved.'
+                        : 'No resolved comments yet.'}
+                </p>
             ) : (
                 <ol className="space-y-2">
-                    {design.comments.map((comment) => {
+                    {visible.map((comment) => {
                         const selected = comment.id === selectedId;
 
                         return (
-                            <li key={comment.id}>
+                            <li
+                                key={comment.id}
+                                className={cn(
+                                    'lc-card',
+                                    comment.resolved
+                                        ? 'lc-edge-pass'
+                                        : 'lc-edge-warn',
+                                    selected &&
+                                        'ring-2 ring-foreground ring-offset-2 ring-offset-background',
+                                )}
+                            >
                                 <button
                                     type="button"
                                     id={`comment-${comment.id}`}
                                     aria-current={selected ? 'true' : undefined}
                                     onClick={() => onSelect(comment)}
-                                    className={cn(
-                                        'lc-card flex w-full gap-3 p-3 text-left focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring',
-                                        comment.resolved
-                                            ? 'lc-edge-pass'
-                                            : 'lc-edge-warn',
-                                        selected &&
-                                            'ring-2 ring-foreground ring-offset-2 ring-offset-background',
-                                    )}
+                                    className="flex w-full gap-3 rounded-[14px] p-3 text-left focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                 >
                                     <span
                                         aria-hidden="true"
-                                        className="grid size-7 shrink-0 place-items-center rounded-full bg-sidebar font-mono text-xs font-bold text-sidebar-foreground"
+                                        className={cn(
+                                            'grid size-7 shrink-0 place-items-center rounded-full font-mono text-xs font-bold',
+                                            comment.resolved
+                                                ? 'border-2 border-sidebar bg-card text-sidebar'
+                                                : 'bg-sidebar text-sidebar-foreground',
+                                        )}
                                     >
                                         {comment.number}
                                     </span>
@@ -405,17 +477,52 @@ function CommentList({
                                         </span>
                                         <span className="lc-label block text-foreground">
                                             {comment.resolved
-                                                ? 'Resolved'
+                                                ? `Resolved${comment.resolvedByName ? ` by ${comment.resolvedByName}` : ''}`
                                                 : 'Open'}
                                             {selected && ' · Selected'}
                                         </span>
                                     </span>
                                 </button>
+                                {canResolve && (
+                                    <ResolveForm comment={comment} />
+                                )}
                             </li>
                         );
                     })}
                 </ol>
             )}
         </section>
+    );
+}
+
+/**
+ * Resolve or reopen. Keeps focus on the button, whose label flips.
+ */
+function ResolveForm({ comment }: { comment: DesignComment }) {
+    const id = `resolve-${comment.id}`;
+    const action = comment.resolved
+        ? CommentResolutionController.destroy.form(comment.id)
+        : CommentResolutionController.store.form(comment.id);
+
+    return (
+        <Form
+            {...action}
+            options={{ preserveScroll: true, preserveState: true }}
+            onSuccess={() => focusById(id)}
+            className="px-3 pb-3"
+        >
+            {({ processing }) => (
+                <Button
+                    id={id}
+                    size="sm"
+                    variant="secondary"
+                    disabled={processing}
+                    aria-label={`${comment.resolved ? 'Reopen' : 'Resolve'} comment ${comment.number}`}
+                    data-tour="resolve-comment"
+                >
+                    {comment.resolved ? 'Reopen' : 'Resolve'}
+                </Button>
+            )}
+        </Form>
     );
 }

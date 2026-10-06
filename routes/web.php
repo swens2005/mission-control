@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ChecklistItemController;
 use App\Http\Controllers\Admin\CheckRunController;
 use App\Http\Controllers\Admin\CheckWaiverController;
+use App\Http\Controllers\Admin\CommentResolutionController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DesignController;
 use App\Http\Controllers\Admin\LaunchController;
@@ -79,6 +80,11 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::patch('designs/{design}', [DesignController::class, 'update'])->name('designs.update');
     Route::post('designs/{design}/move', [DesignController::class, 'move'])->name('designs.move');
     Route::delete('designs/{design}', [DesignController::class, 'destroy'])->name('designs.destroy');
+
+    // Resolving comments and moving on (story 18).
+    Route::put('comments/{comment}/resolved', [CommentResolutionController::class, 'store'])->name('comments.resolve');
+    Route::delete('comments/{comment}/resolved', [CommentResolutionController::class, 'destroy'])->name('comments.reopen');
+    Route::post('projects/{project}/proofmark/to-launch', [ProofmarkController::class, 'toLaunch'])->name('proofmark.to-launch');
 });
 
 // Launchpad: the client's portal.
@@ -88,6 +94,7 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::get('projects/{project}/launch', [ClientLaunchController::class, 'show'])->name('launch.show');
     Route::post('projects/{project}/launch/signoff', [ClientLaunchController::class, 'signoff'])->name('signoffs.store');
     Route::get('projects/{project}/proofmark', [ClientProofmarkController::class, 'show'])->name('proofmark.show');
+    Route::post('rounds/{round}/approve', [ClientProofmarkController::class, 'approve'])->name('rounds.approve');
     Route::put('checklist-items/{item}/check', [ClientLaunchController::class, 'check'])->name('checklist.check');
     Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
 });
