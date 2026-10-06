@@ -10,3 +10,6 @@ stories at most; anything extra lands here instead of in the build.
 - A real, non-sandbox studio workspace for Meagan in production, and a way to create its admin without SSH.
 - Launch Control: full page weight (CSS, JS, images and fonts), not just the HTML document. Needs many more outbound requests per run.
 - Launch Control: re-run checks on a schedule (cron) and notify when something regresses after launch.
+- Proofmark: replies on comments (a thread per pin). Phase 3 keeps one comment per pin, resolved or open.
+- Proofmark: compare two rounds side by side, and carry open comments over to the next round.
+- Proofmark: PDF and video uploads (images only for now, see story 15).
