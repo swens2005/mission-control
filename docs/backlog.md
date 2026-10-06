@@ -8,3 +8,5 @@ stories at most; anything extra lands here instead of in the build.
 - Email invitations for client contacts (needs working mail on the host; story 04 shows a one-time password instead).
 - Dark mode for both portals (the starter kit's appearance toggle is removed in story 03).
 - A real, non-sandbox studio workspace for Meagan in production, and a way to create its admin without SSH.
+- Launch Control: full page weight (CSS, JS, images and fonts), not just the HTML document. Needs many more outbound requests per run.
+- Launch Control: re-run checks on a schedule (cron) and notify when something regresses after launch.
