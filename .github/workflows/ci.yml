@@ -91,7 +91,11 @@ jobs:
       - name: TypeScript
         run: npm run types:check
 
+      # Vitest starts an in-process Vite server; laravel-vite-plugin refuses
+      # any Vite server in CI (meant to catch a stray HMR server) unless told.
       - name: TypeScript unit tests (Vitest via Vite+)
+        env:
+          LARAVEL_BYPASS_ENV_CHECK: '1'
         run: npm run test:js
 
       - name: Production build
