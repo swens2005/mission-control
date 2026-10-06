@@ -49,6 +49,7 @@ class ProjectController extends Controller
         return Inertia::render('client/projects/show', [
             'project' => $this->present($project),
             'steps' => self::steps(),
+            'hasLaunch' => $project->launch()->exists(),
             // Only what the studio marked for clients.
             'activity' => ActivityEntry::query()
                 ->visibleToClient()

@@ -7,6 +7,7 @@ import { PhaseBadge } from '@/components/phase-badge';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { formatDate } from '@/lib/format';
+import { show as showLaunch } from '@/routes/admin/launch';
 import { index, show } from '@/routes/admin/projects';
 import type { ActivityItem, Project } from '@/types';
 
@@ -48,6 +49,14 @@ export default function ShowProject({
                     }
                     actions={
                         <>
+                            <Button asChild>
+                                <Link
+                                    href={showLaunch(project.id)}
+                                    data-tour="open-launch-control"
+                                >
+                                    Launch Control
+                                </Link>
+                            </Button>
                             <Button variant="secondary" asChild>
                                 <Link href={ProjectController.edit(project.id)}>
                                     Edit

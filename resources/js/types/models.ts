@@ -75,3 +75,23 @@ export type ActivityItem = {
     createdAt: string;
     project: { id: number; name: string } | null;
 };
+
+/** One manual pre-flight item on a launch checklist (Launch Control). */
+export type ChecklistItem = {
+    id: number;
+    label: string;
+    hint: string | null;
+    owner: 'studio' | 'client';
+    ownerLabel: string;
+    checked: boolean;
+    checkedAt: string | null;
+    checkedBy: string | null;
+    /** What the UI offers; the server checks again. */
+    canToggle: boolean;
+};
+
+export type Launch = {
+    id: number;
+    url: string;
+    checklist: ChecklistItem[];
+};

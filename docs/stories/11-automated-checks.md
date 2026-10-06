@@ -43,7 +43,7 @@ fix problems before launch.
 - [ ] Activity: "ran launch checks (9 passed, 1 warning)", visible to the
       client.
 - [ ] `data-tour`: `run-checks`, `check-results`, `check-result`, `waive`.
-- [ ] **Demo:** the sandbox launch targets codelaunch.nl, and running the
+- [ ] **Demo:** the sandbox launch ("Online pre-orders") targets codelaunch.nl, and running the
       checks there shows every check green.
 
 ## Tests

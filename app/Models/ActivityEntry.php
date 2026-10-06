@@ -95,6 +95,12 @@ class ActivityEntry extends Model
             'project.phase_changed' => "moved {$name} from {$p['from']} to {$p['to']}",
             'project.archived' => "archived project {$name}",
             'project.restored' => "restored project {$name}",
+            'launch.created' => "prepared the launch of {$name}",
+            'launch.updated' => "changed the site URL of {$name} to ".($p['url'] ?? 'a new address'),
+            'checklist.checked' => "ticked {$name} on the launch checklist",
+            'checklist.unchecked' => "unticked {$name} on the launch checklist",
+            'checklist.item_added' => "added {$name} to the launch checklist",
+            'checklist.item_removed' => "removed {$name} from the launch checklist",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };
     }

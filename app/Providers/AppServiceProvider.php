@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Support\Launch\ChecklistWaitingItems;
 use App\Support\Waiting\WaitingOnClient;
 use Carbon\CarbonImmutable;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -30,6 +32,17 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureRateLimiting();
+        $this->registerWaitingItems();
+    }
+
+    /**
+     * Each module's contribution to the client's "Waiting on you" list.
+     */
+    protected function registerWaitingItems(): void
+    {
+        $waiting = $this->app->make(WaitingOnClient::class);
+
+        $waiting->register(fn (User $client) => (new ChecklistWaitingItems)($client));
     }
 
     /**

@@ -3,16 +3,19 @@ import { ActivityList } from '@/components/activity-list';
 import { PhaseSteps } from '@/components/phase-steps';
 import { formatDate } from '@/lib/format';
 import { home } from '@/routes/client';
+import { show as showLaunch } from '@/routes/client/launch';
 import type { ActivityItem, ClientProject, Option } from '@/types';
 
 export default function ShowProject({
     project,
     steps,
     activity,
+    hasLaunch,
 }: {
     project: ClientProject;
     steps: Option[];
     activity: ActivityItem[];
+    hasLaunch: boolean;
 }) {
     return (
         <>
@@ -34,6 +37,18 @@ export default function ShowProject({
                         </p>
                     )}
                 </div>
+
+                {hasLaunch && (
+                    <p>
+                        <Link
+                            href={showLaunch(project.id)}
+                            className="font-semibold text-primary underline"
+                            data-tour="open-launch-control"
+                        >
+                            Open the launch checklist
+                        </Link>
+                    </p>
+                )}
 
                 <PhaseSteps
                     steps={steps}

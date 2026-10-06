@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ProjectPhase;
 use App\Enums\Role;
 use App\Models\ActivityEntry;
 use App\Models\Organization;
@@ -54,6 +55,25 @@ test('the demo client sees their organization\'s projects with a history', funct
     $this->post(route('login.store'), $credentials['client']);
 
     $this->get(route('client.home'))->assertInertia(fn (Assert $page) => $page->has('projects', 2));
+});
+
+test('the demo client\'s launch checks codelaunch.nl and is part-way through', function () {
+    $credentials = sandboxCredentials();
+    $this->post(route('login.store'), $credentials['client']);
+
+    $project = Project::where('name', 'Online pre-orders')->sole();
+    $launch = $project->launch;
+
+    expect($project->phase)->toBe(ProjectPhase::Launch)
+        ->and($launch->url)->toBe('https://codelaunch.nl')
+        ->and($launch->checklistItems->whereNotNull('checked_at')->pluck('label')->all())
+        ->toBe(['404 page', 'Favicon', 'Forms tested']);
+
+    $this->get(route('client.home'))->assertInertia(fn (Assert $page) => $page
+        ->where('waiting.0.title', 'Finish your launch checklist (2 items left)')
+        ->where('waiting.0.module', 'Launch Control'));
+
+    $this->get(route('client.launch.show', $project))->assertOk();
 });
 
 test('two sandboxes never see each other\'s data', function () {

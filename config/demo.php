@@ -26,4 +26,7 @@ return [
     // is ever sent to them.
     'email_domain' => env('DEMO_EMAIL_DOMAIN', 'sandbox.codelaunch.nl'),
 
+    // The only sites a sandbox's Launch Control may check (ADR 0007).
+    'check_hosts' => ['codelaunch.nl', 'www.codelaunch.nl'],
+
 ];

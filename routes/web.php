@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\ActivityController;
+use App\Http\Controllers\Admin\ChecklistItemController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\LaunchController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Http\Controllers\DemoController;
 use App\Models\User;
@@ -35,12 +38,24 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::delete('projects/{project}/archive', [ProjectController::class, 'unarchive'])->name('projects.unarchive');
 
     Route::get('activity', [ActivityController::class, 'index'])->name('activity.index');
+
+    // Launch Control (story 09).
+    Route::get('projects/{project}/launch', [LaunchController::class, 'show'])->name('launch.show');
+    Route::post('projects/{project}/launch', [LaunchController::class, 'store'])->name('launch.store');
+    Route::patch('projects/{project}/launch', [LaunchController::class, 'update'])->name('launch.update');
+    Route::post('projects/{project}/launch/items', [ChecklistItemController::class, 'store'])->name('checklist.store');
+    Route::delete('checklist-items/{item}', [ChecklistItemController::class, 'destroy'])->name('checklist.destroy');
+    Route::put('checklist-items/{item}/check', [ChecklistItemController::class, 'check'])->name('checklist.check');
+    Route::delete('checklist-items/{item}/check', [ChecklistItemController::class, 'uncheck'])->name('checklist.uncheck');
 });
 
 // Launchpad: the client's portal.
 Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')->group(function () {
     Route::get('/', [ClientProjectController::class, 'index'])->name('home');
     Route::get('projects/{project}', [ClientProjectController::class, 'show'])->name('projects.show');
+    Route::get('projects/{project}/launch', [ClientLaunchController::class, 'show'])->name('launch.show');
+    Route::put('checklist-items/{item}/check', [ClientLaunchController::class, 'check'])->name('checklist.check');
+    Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
 });
 
 require __DIR__.'/settings.php';

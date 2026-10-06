@@ -4,11 +4,15 @@ namespace App\Support\Sandbox;
 
 use App\Enums\ProjectPhase;
 use App\Enums\Role;
+use App\Models\ChecklistItem;
+use App\Models\Launch;
 use App\Models\Organization;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Support\Activity;
+use App\Support\Launch\ChecklistToggle;
+use App\Support\Launch\DefaultChecklist;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -81,8 +85,40 @@ final class SandboxFactory
                 'organization' => $organizations[0]->name,
             ], actor: $admin);
 
+            $this->createLaunch($workspace, $admin, $client);
+
             return new Sandbox($workspace, $admin, $adminPassword, $client, $clientPassword);
         });
+    }
+
+    /**
+     * Launch Control, part-way through its checklist (DemoTemplate::launch()).
+     */
+    private function createLaunch(Workspace $workspace, User $admin, User $client): void
+    {
+        $template = DemoTemplate::launch();
+
+        $project = Project::withoutGlobalScopes()
+            ->where('workspace_id', $workspace->id)
+            ->where('name', $template['project'])
+            ->firstOrFail();
+
+        $launch = new Launch(['url' => $template['url']]);
+        $launch->project_id = $project->id;
+        $launch->save();
+
+        DefaultChecklist::addTo($launch);
+        Activity::record('launch.created', $launch, ['name' => $project->name], visibleToClient: true, actor: $admin);
+
+        $items = ChecklistItem::withoutGlobalScopes()->where('launch_id', $launch->id)->get();
+
+        foreach ($template['ticked'] as $label => $by) {
+            $item = $items->firstWhere('label', $label);
+
+            if ($item !== null) {
+                ChecklistToggle::set($item, $by === 'admin' ? $admin : $client, checked: true);
+            }
+        }
     }
 
     /**
