@@ -4,11 +4,13 @@ use App\Http\Controllers\Admin\ActivityController;
 use App\Http\Controllers\Admin\ChecklistItemController;
 use App\Http\Controllers\Admin\CheckRunController;
 use App\Http\Controllers\Admin\CheckWaiverController;
+use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CommentResolutionController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DesignController;
 use App\Http\Controllers\Admin\LaunchController;
 use App\Http\Controllers\Admin\OrganizationController;
+use App\Http\Controllers\Admin\PaletteController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProofmarkController;
 use App\Http\Controllers\Admin\SignoffController;
@@ -85,6 +87,14 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::put('comments/{comment}/resolved', [CommentResolutionController::class, 'store'])->name('comments.resolve');
     Route::delete('comments/{comment}/resolved', [CommentResolutionController::class, 'destroy'])->name('comments.reopen');
     Route::post('projects/{project}/proofmark/to-launch', [ProofmarkController::class, 'toLaunch'])->name('proofmark.to-launch');
+
+    // Palette Lab (story 20).
+    Route::get('projects/{project}/palette', [PaletteController::class, 'show'])->name('palette.show');
+    Route::post('projects/{project}/palette', [PaletteController::class, 'store'])->name('palette.store');
+    Route::post('kits/{kit}/colors', [ColorController::class, 'store'])->name('colors.store');
+    Route::patch('colors/{color}', [ColorController::class, 'update'])->name('colors.update');
+    Route::post('colors/{color}/move', [ColorController::class, 'move'])->name('colors.move');
+    Route::delete('colors/{color}', [ColorController::class, 'destroy'])->name('colors.destroy');
 });
 
 // Launchpad: the client's portal.

@@ -72,6 +72,14 @@ class Project extends Model
     }
 
     /**
+     * @return HasOne<BrandKit, $this>
+     */
+    public function brandKit(): HasOne
+    {
+        return $this->hasOne(BrandKit::class);
+    }
+
+    /**
      * Proofmark rounds, newest first.
      *
      * @return HasMany<ReviewRound, $this>

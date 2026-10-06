@@ -191,3 +191,27 @@ export type ReviewRound = {
     canComment: boolean;
     designs: Design[];
 };
+
+/** Palette Lab (stories 20-24). */
+export type ColorRole = 'text' | 'surface' | 'accent' | 'shape';
+
+export type BrandColor = {
+    id: number;
+    name: string;
+    role: ColorRole;
+    roleLabel: string;
+    hex: string;
+    /** CSS notation, e.g. "oklch(27.12% 0.051 255.3)". */
+    oklch: string;
+    /** The OKLCH value didn't fit sRGB, so its chroma was lowered. */
+    gamutAdjusted: boolean;
+};
+
+export type BrandKit = {
+    id: number;
+    /** Approved by the client; "Start a revision" unlocks it. */
+    locked: boolean;
+    colors: BrandColor[];
+};
+
+export type RoleOption = { value: ColorRole; label: string; hint: string };

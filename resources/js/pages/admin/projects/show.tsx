@@ -1,5 +1,6 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import OrganizationController from '@/actions/App/Http/Controllers/Admin/OrganizationController';
+import PaletteController from '@/actions/App/Http/Controllers/Admin/PaletteController';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
 import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
 import { ActivityList } from '@/components/activity-list';
@@ -56,6 +57,14 @@ export default function ShowProject({
                                     data-tour="open-launch-control"
                                 >
                                     Launch Control
+                                </Link>
+                            </Button>
+                            <Button variant="secondary" asChild>
+                                <Link
+                                    href={PaletteController.show(project.id)}
+                                    data-tour="open-palette"
+                                >
+                                    Palette Lab
                                 </Link>
                             </Button>
                             <Button variant="secondary" asChild>

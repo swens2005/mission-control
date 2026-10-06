@@ -114,6 +114,10 @@ class ActivityEntry extends Model
             'proofmark.comment_resolved' => 'resolved comment '.($p['number'] ?? '').' on '.($p['design'] ?? 'a design')." of {$name}",
             'proofmark.comment_reopened' => 'reopened comment '.($p['number'] ?? '').' on '.($p['design'] ?? 'a design')." of {$name}",
             'proofmark.round_approved' => 'approved design round '.($p['round'] ?? '')." of {$name}",
+            'palette.kit_created' => "started the brand kit of {$name}",
+            'palette.color_added' => 'added the color '.($p['color'] ?? '').' ('.($p['hex'] ?? '').") to {$name}",
+            'palette.color_changed' => 'changed the color '.($p['color'] ?? '').' to '.($p['hex'] ?? '')." in {$name}",
+            'palette.color_removed' => 'removed the color '.($p['color'] ?? '')." from {$name}",
             'proofmark.design_removed' => 'removed the design '.($p['design'] ?? '').' from round '.($p['round'] ?? '')." of {$name}",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };
