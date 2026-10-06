@@ -15,10 +15,18 @@ export function DesignViewer({
     designs,
     roundLabel,
     overlay,
+    aside,
+    toolbar,
+    onDesignChange,
 }: {
     designs: Design[];
     roundLabel: string;
+    /** Drawn over the image, in a box exactly the image's size. */
     overlay?: (design: Design) => ReactNode;
+    /** Next to the design on wide screens, below it on narrow ones. */
+    aside?: (design: Design) => ReactNode;
+    toolbar?: ReactNode;
+    onDesignChange?: () => void;
 }) {
     const [currentId, setCurrentId] = useState(designs[0]?.id);
     const [zoom, setZoom] = useState<Zoom>('fit');
@@ -59,7 +67,10 @@ export function DesignViewer({
                                 key={item.id}
                                 type="button"
                                 aria-current={current ? 'true' : undefined}
-                                onClick={() => setCurrentId(item.id)}
+                                onClick={() => {
+                                    setCurrentId(item.id);
+                                    onDesignChange?.();
+                                }}
                                 className={cn(
                                     'rounded-xl border px-3 py-2 text-left text-sm font-semibold focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring',
                                     current
@@ -104,6 +115,8 @@ export function DesignViewer({
                 </div>
             </div>
 
+            {toolbar}
+
             <h3 id="viewer-heading" className="lc-label text-foreground">
                 <span aria-hidden="true" className="text-status-pass">
                     ●
@@ -114,30 +127,38 @@ export function DesignViewer({
                 </span>
             </h3>
 
-            {/* Focusable, so keyboard users can scroll a long design. */}
             <div
-                role="region"
-                aria-label={`${design.title}, scrollable`}
-                tabIndex={0}
-                className="lc-card lc-edge-ink max-h-[80vh] overflow-auto bg-muted p-3 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className={cn(
+                    'grid gap-6',
+                    aside && 'xl:grid-cols-[minmax(0,1fr)_20rem]',
+                )}
             >
+                {/* Focusable, so keyboard users can scroll a long design. */}
                 <div
-                    className="relative mx-auto"
-                    style={{
-                        width: design.width,
-                        maxWidth: zoom === 'fit' ? '100%' : 'none',
-                    }}
+                    role="region"
+                    aria-label={`${design.title}, scrollable`}
+                    tabIndex={0}
+                    className="lc-card lc-edge-ink max-h-[80vh] overflow-auto bg-muted p-3 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
-                    <img
-                        key={design.id}
-                        src={design.imageUrl}
-                        alt={`Design: ${design.title}`}
-                        width={design.width}
-                        height={design.height}
-                        className="block h-auto w-full shadow-md"
-                    />
-                    {overlay?.(design)}
+                    <div
+                        className="relative mx-auto"
+                        style={{
+                            width: design.width,
+                            maxWidth: zoom === 'fit' ? '100%' : 'none',
+                        }}
+                    >
+                        <img
+                            key={design.id}
+                            src={design.imageUrl}
+                            alt={`Design: ${design.title}`}
+                            width={design.width}
+                            height={design.height}
+                            className="block h-auto w-full shadow-md"
+                        />
+                        {overlay?.(design)}
+                    </div>
                 </div>
+                {aside?.(design)}
             </div>
         </section>
     );

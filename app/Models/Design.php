@@ -8,6 +8,7 @@ use Database\Factories\DesignFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 /**
@@ -55,5 +56,15 @@ class Design extends Model
     public function round(): BelongsTo
     {
         return $this->belongsTo(ReviewRound::class, 'review_round_id');
+    }
+
+    /**
+     * Pinned comments, oldest first; their order gives the pin numbers.
+     *
+     * @return HasMany<Comment, $this>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->orderBy('id');
     }
 }

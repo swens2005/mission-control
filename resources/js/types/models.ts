@@ -151,6 +151,21 @@ export type ReviewRoundSummary = {
     designCount: number;
 };
 
+export type DesignComment = {
+    id: number;
+    /** 1-based, per design, oldest first. */
+    number: number;
+    /** Hundredths of a percent of the image (0 to 10 000). */
+    x: number;
+    y: number;
+    body: string;
+    authorName: string;
+    authorRole: 'studio' | 'client';
+    createdAt: string | null;
+    resolved: boolean;
+    resolvedByName: string | null;
+};
+
 export type Design = {
     id: number;
     title: string;
@@ -160,6 +175,7 @@ export type Design = {
     /** Human-readable, e.g. "1.5 MB". */
     size: string;
     imageUrl: string;
+    comments: DesignComment[];
 };
 
 export type ReviewRound = {
@@ -171,5 +187,7 @@ export type ReviewRound = {
     sentAt: string | null;
     approvedAt: string | null;
     approvedByName: string | null;
+    /** Only the round in review takes new comments. */
+    canComment: boolean;
     designs: Design[];
 };

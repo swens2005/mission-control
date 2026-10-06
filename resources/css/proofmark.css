@@ -1,0 +1,97 @@
+/* Proofmark pins and the keyboard crosshair (story 17).
+ *
+ * Pins sit on any design, light or dark, so each has a light halo and a
+ * dark core. Positions come from React's style prop (left/top in %), which
+ * the CSP allows. Shape changes with state, not only color: selected pins
+ * grow, resolved pins (story 18) are outlined with a tick.
+ */
+
+@layer components {
+    .pm-layer {
+        position: absolute;
+        inset: 0;
+    }
+    .pm-layer-adding {
+        cursor: crosshair;
+    }
+    .pm-layer:focus-visible {
+        outline: 3px solid var(--ring);
+        outline-offset: -3px;
+    }
+
+    .pm-pin {
+        position: absolute;
+        display: grid;
+        place-items: center;
+        width: 30px;
+        height: 30px;
+        translate: -50% -50%;
+        border-radius: 9999px 9999px 9999px 4px;
+        background: var(--sidebar);
+        color: var(--sidebar-foreground);
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow:
+            0 0 0 2px var(--sidebar-foreground),
+            0 0 0 4px var(--lamp-go),
+            0 4px 10px color-mix(in srgb, var(--sidebar) 45%, transparent);
+        transition: scale 0.12s;
+    }
+    .pm-pin:hover {
+        scale: 1.08;
+    }
+    .pm-pin:focus-visible {
+        outline: 3px solid var(--ring);
+        outline-offset: 4px;
+    }
+    .pm-pin[aria-current='true'] {
+        z-index: 1;
+        scale: 1.3;
+        background: var(--lamp-go);
+        color: var(--sidebar);
+    }
+    .pm-pin-resolved {
+        background: var(--card);
+        color: var(--sidebar);
+        box-shadow:
+            0 0 0 2px var(--sidebar),
+            0 4px 10px color-mix(in srgb, var(--sidebar) 30%, transparent);
+    }
+    .pm-pin-draft {
+        background: var(--lamp-go);
+        color: var(--sidebar);
+        pointer-events: none;
+    }
+
+    /* The keyboard crosshair: two hairlines and a ring. */
+    .pm-cross-x,
+    .pm-cross-y {
+        position: absolute;
+        pointer-events: none;
+        background: var(--sidebar);
+        box-shadow: 0 0 0 1px var(--sidebar-foreground);
+    }
+    .pm-cross-x {
+        left: 0;
+        right: 0;
+        height: 1px;
+    }
+    .pm-cross-y {
+        top: 0;
+        bottom: 0;
+        width: 1px;
+    }
+    .pm-cross-ring {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        translate: -50% -50%;
+        pointer-events: none;
+        border-radius: 9999px;
+        border: 3px solid var(--sidebar);
+        box-shadow:
+            0 0 0 2px var(--lamp-go),
+            inset 0 0 0 2px var(--sidebar-foreground);
+    }
+}

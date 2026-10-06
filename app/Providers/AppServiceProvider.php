@@ -66,6 +66,8 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('demo', fn (Request $request) => Limit::perHour(config()->integer('demo.per_ip_per_hour'))->by($request->ip()));
 
         // Proofmark uploads: decoding images costs CPU on a shared host (ADR 0009).
+        RateLimiter::for('comments', fn (Request $request) => Limit::perMinute(30)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
         RateLimiter::for('uploads', fn (Request $request) => Limit::perMinute(20)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
     }
 

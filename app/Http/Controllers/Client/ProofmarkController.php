@@ -23,7 +23,7 @@ class ProofmarkController extends Controller
 
         $rounds = $project->reviewRounds()
             ->where('status', '!=', RoundStatus::Draft)
-            ->with('designs')
+            ->with('designs.comments')
             ->get();
 
         abort_if($rounds->isEmpty(), 404);

@@ -7,7 +7,7 @@ import { FormField, focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { DesignCard } from '@/components/proofmark/design-card';
 import { RoundList } from '@/components/proofmark/round-list';
-import { DesignViewer } from '@/components/proofmark/design-viewer';
+import { PinnedReview } from '@/components/proofmark/pinned-review';
 import { RoundHeader } from '@/components/proofmark/round-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -165,11 +165,7 @@ function RoundDetail({
                     )}
                 </>
             ) : (
-                <DesignViewer
-                    key={round.id}
-                    designs={round.designs}
-                    roundLabel={round.label}
-                />
+                <PinnedReview key={round.id} round={round} />
             )}
         </section>
     );

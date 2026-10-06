@@ -29,7 +29,7 @@ class ProofmarkController extends Controller
 
         /** @var User $user */
         $user = $request->user();
-        $rounds = $project->reviewRounds()->with('designs')->get();
+        $rounds = $project->reviewRounds()->with('designs.comments')->get();
 
         // ?round=2 picks a round; otherwise the newest.
         $selected = $rounds->firstWhere('number', $request->integer('round')) ?? $rounds->first();

@@ -20,6 +20,7 @@ vendor/bin/pint                # PHP code style (CI runs --test)
 vendor/bin/phpstan analyse     # Larastan
 npm run check                  # lint + format check (npm run check:fix to fix)
 npm run types:check            # tsc
+npm run test:js                # Vitest (vp test), *.test.ts next to the code
 npm run build                  # production build
 ```
 

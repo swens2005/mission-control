@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Http\Controllers\Client\ProofmarkController as ClientProofmarkController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DesignImageController;
 use App\Models\User;
@@ -33,6 +34,9 @@ Route::post('demo/switch', [DemoController::class, 'switch'])->middleware('auth'
 
 // Design images for both portals, through their policy (ADR 0009).
 Route::get('proofmark/designs/{design}/image', DesignImageController::class)->middleware('auth')->name('designs.image');
+
+// Pinned comments, from either portal (story 17).
+Route::post('proofmark/designs/{design}/comments', [CommentController::class, 'store'])->middleware(['auth', 'throttle:comments'])->name('comments.store');
 
 // Mission Control: the studio's portal.
 Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->group(function () {

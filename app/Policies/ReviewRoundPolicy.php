@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\RoundStatus;
 use App\Models\ReviewRound;
 use App\Models\User;
 use App\Policies\Concerns\AdminOfWorkspace;
@@ -45,5 +46,22 @@ class ReviewRoundPolicy
         }
 
         return Response::allow();
+    }
+
+    /**
+     * Both sides can pin comments, but only on the round in review: a draft
+     * isn't shared yet, and superseded or approved rounds are history.
+     */
+    public function comment(User $user, ReviewRound $round): Response
+    {
+        $canSee = $user->isAdmin() ? $this->view($user, $round) : $this->viewAsClient($user, $round);
+
+        if ($canSee->denied()) {
+            return $canSee;
+        }
+
+        return $round->status === RoundStatus::InReview
+            ? Response::allow()
+            : Response::deny("{$round->label()} is not open for comments.");
     }
 }

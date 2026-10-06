@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
 import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
-import { DesignViewer } from '@/components/proofmark/design-viewer';
+import { PinnedReview } from '@/components/proofmark/pinned-review';
 import { RoundHeader } from '@/components/proofmark/round-header';
 import { RoundList } from '@/components/proofmark/round-list';
 import { formatDate, formatDateTime } from '@/lib/format';
@@ -52,11 +52,7 @@ export default function ShowProofmark({ project, rounds, round }: Props) {
                             round={round}
                             description={describe(round)}
                         />
-                        <DesignViewer
-                            key={round.id}
-                            designs={round.designs}
-                            roundLabel={round.label}
-                        />
+                        <PinnedReview key={round.id} round={round} />
                     </section>
                 </div>
             </div>
