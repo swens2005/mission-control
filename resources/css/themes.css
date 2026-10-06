@@ -55,6 +55,26 @@
     --space-border: #24405f;
     --space-go: #8ac800;
     --space-nogo: #ff8f7d;
+    /* Launch Control console, after the codelaunch.nl cockpit. Lamps and
+       card edges are decoration; status is always written out too. */
+    --console: #fffdf8;
+    --console-shade: #eef0f3;
+    --console-edge: #b3bac5;
+    --screen-top: #eaf7ff;
+    --screen-bottom: #cfe8fa;
+    --screen-rim: #b9d8f0;
+    --screen-ink: #10233a;
+    --screen-text: #22384f;
+    --screen-label: #33598a;
+    --screen-status: #355f00;
+    --lamp-go: #8ac800;
+    --lamp-nogo: #ef5a2a;
+    --lamp-clear: #f4f7ff;
+    --lamp-off: #c3cad4;
+    --edge-pass: #8ac800;
+    --edge-warn: #f0a020;
+    --edge-fail: #ef5a2a;
+    --edge-skip: #c3cad4;
 
     --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
     --display-stretch: 100%;
@@ -103,6 +123,25 @@
     --space-border: #4a443d;
     --space-go: #4cc9c0;
     --space-nogo: #ff48b0;
+    /* Launch Control console in riso: paper, ink rim, teal and pink. */
+    --console: #fbf8f2;
+    --console-shade: #ebe4d6;
+    --console-edge: #1d1a17;
+    --screen-top: #f4efe6;
+    --screen-bottom: #ebe4d6;
+    --screen-rim: #1d1a17;
+    --screen-ink: #1d1a17;
+    --screen-text: #1d1a17;
+    --screen-label: #5a534b;
+    --screen-status: #00666b;
+    --lamp-go: #00838a;
+    --lamp-nogo: #ff48b0;
+    --lamp-clear: #f4efe6;
+    --lamp-off: #bdb3a6;
+    --edge-pass: #00838a;
+    --edge-warn: #f0a020;
+    --edge-fail: #ff48b0;
+    --edge-skip: #bdb3a6;
     --riso-teal: #00838a;
 
     --font-portal-display:

@@ -1,4 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
+import { Radar } from 'lucide-react';
 import ChecklistItemController from '@/actions/App/Http/Controllers/Admin/ChecklistItemController';
 import CheckRunController from '@/actions/App/Http/Controllers/Admin/CheckRunController';
 import LaunchController from '@/actions/App/Http/Controllers/Admin/LaunchController';
@@ -10,11 +11,13 @@ import {
 } from '@/components/form-field';
 import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
-import { GoBoard } from '@/components/launch/go-board';
+import { LaunchReadouts } from '@/components/launch/launch-readouts';
+import { MissionConsole } from '@/components/launch/mission-console';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
+import { cn } from '@/lib/utils';
 import { show as showLaunch } from '@/routes/admin/launch';
 import { index, show } from '@/routes/admin/projects';
 import type { Launch, Project } from '@/types';
@@ -58,7 +61,7 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                 {launch === null ? (
                     <section
                         aria-labelledby="prepare-heading"
-                        className="max-w-xl space-y-4 rounded-lg border bg-card p-4"
+                        className="lc-card max-w-xl space-y-4 p-5"
                     >
                         <h2 id="prepare-heading" className="text-lg font-bold">
                             Prepare the launch
@@ -104,113 +107,83 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                         </Form>
                     </section>
                 ) : (
-                    <>
-                        <div className="max-w-2xl">
-                            <GoBoard
-                                board={launch.board}
-                                signForm={SignoffController.store.form(
-                                    project.id,
-                                )}
-                                launchedForm={LaunchController.launched.form(
-                                    project.id,
-                                )}
-                            />
-                        </div>
+                    <div className="max-w-5xl space-y-10">
+                        <MissionConsole
+                            projectName={project.name}
+                            url={launch.url}
+                            targetLaunchOn={project.targetLaunchOn}
+                            board={launch.board}
+                            signForm={SignoffController.store.form(project.id)}
+                            launchedForm={LaunchController.launched.form(
+                                project.id,
+                            )}
+                        />
 
-                        <section
-                            aria-labelledby="site-heading"
-                            className="max-w-xl space-y-3"
-                        >
-                            <h2 id="site-heading" className="text-lg font-bold">
-                                Site
-                            </h2>
-                            <Form
-                                {...LaunchController.update.form(project.id)}
-                                onError={focusFirstError}
-                                options={{ preserveScroll: true }}
-                                className="flex flex-wrap items-end gap-3"
-                            >
-                                {({ processing, errors }) => (
-                                    <>
-                                        <div className="min-w-0 flex-1 basis-64">
-                                            <FormField
-                                                name="url"
-                                                label="Site URL"
-                                                hint={urlHint}
-                                                error={errors.url}
-                                            >
-                                                {(props) => (
-                                                    <Input
-                                                        {...props}
-                                                        type="url"
-                                                        required
-                                                        defaultValue={
-                                                            launch.url
-                                                        }
-                                                        autoComplete="url"
-                                                        data-tour="launch-url"
-                                                    />
-                                                )}
-                                            </FormField>
-                                        </div>
-                                        <Button
-                                            variant="secondary"
-                                            disabled={processing}
-                                        >
-                                            Save URL
-                                        </Button>
-                                    </>
-                                )}
-                            </Form>
-                        </section>
+                        <LaunchReadouts launch={launch} />
 
                         <section
                             aria-labelledby="checks-heading"
-                            className="max-w-2xl space-y-3"
+                            className="space-y-4"
                         >
-                            <h2
-                                id="checks-heading"
-                                className="text-lg font-bold"
-                            >
-                                Automated checks
-                            </h2>
-                            <Form
-                                {...CheckRunController.store.form(project.id)}
-                                options={{ preserveScroll: true }}
-                                className="space-y-3"
-                            >
-                                {({ processing, errors }) => (
-                                    <>
-                                        <div className="flex flex-wrap items-center gap-3">
-                                            <Button
+                            <div className="flex flex-wrap items-end justify-between gap-4">
+                                <div>
+                                    <p className="lc-label text-muted-foreground">
+                                        Pre-flight · automated
+                                    </p>
+                                    <h2
+                                        id="checks-heading"
+                                        className="text-2xl font-extrabold"
+                                    >
+                                        Automated checks
+                                    </h2>
+                                    <RunSummary checks={launch.checks} />
+                                </div>
+                                <Form
+                                    {...CheckRunController.store.form(
+                                        project.id,
+                                    )}
+                                    options={{ preserveScroll: true }}
+                                    className="flex flex-col items-start gap-2 sm:items-end"
+                                >
+                                    {({ processing, errors }) => (
+                                        <>
+                                            <button
+                                                className="lc-pill"
                                                 disabled={processing}
                                                 data-tour="run-checks"
                                             >
+                                                <Radar
+                                                    aria-hidden="true"
+                                                    className={cn(
+                                                        'size-5',
+                                                        processing &&
+                                                            'animate-spin',
+                                                    )}
+                                                />
                                                 {processing
                                                     ? 'Running checks…'
                                                     : 'Run checks'}
-                                            </Button>
+                                            </button>
                                             <p
                                                 className="text-sm text-muted-foreground"
                                                 role="status"
                                             >
                                                 {processing
-                                                    ? `Checking ${launch.url}. This can take up to 25 seconds.`
+                                                    ? 'This can take up to 25 seconds.'
                                                     : ''}
                                             </p>
-                                        </div>
-                                        {errors.checks && (
-                                            <p
-                                                role="alert"
-                                                className="text-sm font-medium text-destructive"
-                                            >
-                                                {errors.checks}
-                                            </p>
-                                        )}
-                                    </>
-                                )}
-                            </Form>
-                            <RunSummary checks={launch.checks} />
+                                            {errors.checks && (
+                                                <p
+                                                    role="alert"
+                                                    className="max-w-sm text-sm font-medium text-destructive"
+                                                >
+                                                    {errors.checks}
+                                                </p>
+                                            )}
+                                        </>
+                                    )}
+                                </Form>
+                            </div>
                             <CheckResults
                                 checks={launch.checks}
                                 projectId={project.id}
@@ -219,14 +192,19 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
 
                         <section
                             aria-labelledby="checklist-heading"
-                            className="max-w-2xl space-y-3"
+                            className="space-y-4"
                         >
-                            <h2
-                                id="checklist-heading"
-                                className="text-lg font-bold"
-                            >
-                                Manual checklist
-                            </h2>
+                            <div>
+                                <p className="lc-label text-muted-foreground">
+                                    Pre-flight · by hand
+                                </p>
+                                <h2
+                                    id="checklist-heading"
+                                    className="text-2xl font-extrabold"
+                                >
+                                    Manual checklist
+                                </h2>
+                            </div>
                             <Checklist
                                 items={launch.checklist}
                                 checkRoute={ChecklistItemController.check}
@@ -256,7 +234,7 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                                 onError={focusFirstError}
                                 options={{ preserveScroll: true }}
                                 resetOnSuccess
-                                className="flex flex-wrap items-end gap-3 rounded-lg border bg-card p-4"
+                                className="lc-card flex flex-wrap items-end gap-3 p-5"
                             >
                                 {({ processing, errors }) => (
                                     <>
@@ -311,7 +289,57 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                                 )}
                             </Form>
                         </section>
-                    </>
+
+                        <section
+                            aria-labelledby="site-heading"
+                            className="lc-card space-y-3 p-5"
+                        >
+                            <h2
+                                id="site-heading"
+                                className="lc-label text-muted-foreground"
+                            >
+                                Site settings
+                            </h2>
+                            <Form
+                                {...LaunchController.update.form(project.id)}
+                                onError={focusFirstError}
+                                options={{ preserveScroll: true }}
+                                className="flex flex-wrap items-end gap-3"
+                            >
+                                {({ processing, errors }) => (
+                                    <>
+                                        <div className="min-w-0 flex-1 basis-64">
+                                            <FormField
+                                                name="url"
+                                                label="Site URL"
+                                                hint={urlHint}
+                                                error={errors.url}
+                                            >
+                                                {(props) => (
+                                                    <Input
+                                                        {...props}
+                                                        type="url"
+                                                        required
+                                                        defaultValue={
+                                                            launch.url
+                                                        }
+                                                        autoComplete="url"
+                                                        data-tour="launch-url"
+                                                    />
+                                                )}
+                                            </FormField>
+                                        </div>
+                                        <Button
+                                            variant="secondary"
+                                            disabled={processing}
+                                        >
+                                            Save URL
+                                        </Button>
+                                    </>
+                                )}
+                            </Form>
+                        </section>
+                    </div>
                 )}
             </div>
         </>

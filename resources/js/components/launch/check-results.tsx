@@ -4,7 +4,6 @@ import type { LucideIcon } from 'lucide-react';
 import CheckWaiverController from '@/actions/App/Http/Controllers/Admin/CheckWaiverController';
 import { FormField, focusFirstError } from '@/components/form-field';
 import { Button } from '@/components/ui/button';
-import { usePortal } from '@/hooks/use-portal';
 import { cn } from '@/lib/utils';
 import type { CheckResultItem, CheckStatus, LaunchChecks } from '@/types';
 
@@ -29,27 +28,20 @@ export function CheckResults({
     checks: LaunchChecks;
     projectId?: number;
 }) {
-    const { portal } = usePortal();
-
     if (checks.latestRun === null) {
         return (
-            <p className="text-muted-foreground">The checks haven't run yet.</p>
+            <p className="lc-card p-5 text-muted-foreground">
+                The checks haven't run yet.
+            </p>
         );
     }
 
     return (
-        <ul
-            className={cn(
-                'divide-y bg-card',
-                portal === 'client'
-                    ? 'divide-foreground rounded-sm border-2 border-foreground'
-                    : 'rounded-lg border',
-            )}
-            data-tour="check-results"
-        >
-            {checks.results.map((result) => (
-                <ResultRow
+        <ul className="grid gap-4 md:grid-cols-2" data-tour="check-results">
+            {checks.results.map((result, index) => (
+                <ResultCard
                     key={result.key}
+                    number={index + 1}
                     result={result}
                     projectId={projectId}
                 />
@@ -58,10 +50,26 @@ export function CheckResults({
     );
 }
 
-function ResultRow({
+/** What each check is about, for the "● 01 · SECURITY" label. */
+const area: Record<string, string> = {
+    https: 'Security',
+    hsts: 'Security',
+    csp: 'Security',
+    'security-headers': 'Security',
+    'title-description': 'Search',
+    'og-image': 'Sharing',
+    'image-alt': 'Access',
+    headings: 'Access',
+    'robots-sitemap': 'Search',
+    performance: 'Speed',
+};
+
+function ResultCard({
+    number,
     result,
     projectId,
 }: {
+    number: number;
     result: CheckResultItem;
     projectId?: number;
 }) {
@@ -70,10 +78,31 @@ function ResultRow({
     const canWaive =
         projectId !== undefined &&
         (result.status === 'fail' || result.status === 'warn');
+    const edge = result.waiver
+        ? 'skip'
+        : result.status === 'skipped'
+          ? 'skip'
+          : result.status;
 
     return (
-        <li className="space-y-2 p-4" data-tour="check-result">
-            <div className="flex flex-wrap items-start gap-x-3 gap-y-1">
+        <li
+            className={cn('lc-card space-y-2 p-5', `lc-edge-${edge}`)}
+            data-tour="check-result"
+        >
+            <p className="lc-label flex items-center gap-2 text-muted-foreground">
+                <span
+                    aria-hidden="true"
+                    className={cn(
+                        'lc-lamp size-2.5',
+                        result.status === 'pass' && 'lc-lamp-go',
+                        result.status === 'fail' && 'lc-lamp-nogo',
+                        result.status === 'warn' && 'lc-lamp-warn',
+                    )}
+                />
+                {String(number).padStart(2, '0')} ·{' '}
+                {area[result.key] ?? 'Check'}
+            </p>
+            <div className="flex items-start gap-x-3">
                 <Icon
                     aria-hidden="true"
                     className={cn('mt-0.5 size-5 shrink-0', style.className)}

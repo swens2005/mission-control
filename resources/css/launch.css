@@ -1,0 +1,265 @@
+/* Launch Control, dressed like the codelaunch.nl cockpit (story 13).
+ *
+ * The console, screen, lamps, HUD and chunky buttons come from the CV site's
+ * "toy cockpit" (meagan-swenson/css/style.css). Every color is a token from
+ * themes.css; Launchpad gets riso versions through the same tokens plus a few
+ * overrides at the bottom. Lamps, glows and card edges are decoration: the
+ * markup always writes the status out too.
+ */
+
+@layer components {
+    .lc-label {
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    /* The riveted console panel. */
+    .lc-console {
+        --rivet: radial-gradient(
+            circle at 30% 30%,
+            var(--console) 0 1.5px,
+            var(--console-edge) 2.5px 4px,
+            transparent 4.5px
+        );
+        position: relative;
+        padding: 22px;
+        border-radius: 26px;
+        color: var(--screen-ink);
+        background:
+            var(--rivet) left 9px top 9px / 16px 16px no-repeat,
+            var(--rivet) right 9px top 9px / 16px 16px no-repeat,
+            var(--rivet) left 9px bottom 9px / 16px 16px no-repeat,
+            var(--rivet) right 9px bottom 9px / 16px 16px no-repeat,
+            linear-gradient(
+                var(--console) 0%,
+                var(--console) 88%,
+                var(--console-shade) 100%
+            );
+        box-shadow:
+            0 8px 0 var(--console-edge),
+            0 22px 36px color-mix(in srgb, var(--screen-ink) 22%, transparent),
+            inset 0 2px 0 var(--console);
+    }
+
+    /* The glowing screen inside it. */
+    .lc-screen {
+        position: relative;
+        padding: 18px 20px;
+        border-radius: 18px;
+        color: var(--screen-text);
+        background: linear-gradient(
+            170deg,
+            var(--screen-top),
+            var(--screen-bottom)
+        );
+        box-shadow:
+            inset 0 0 0 3px var(--screen-rim),
+            inset 0 6px 14px color-mix(in srgb, var(--console) 90%, transparent),
+            inset 0 -6px 14px
+                color-mix(in srgb, var(--screen-label) 12%, transparent);
+    }
+    .lc-screen::after {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 14px;
+        right: 40%;
+        height: 16px;
+        border-radius: 12px;
+        background: linear-gradient(
+            color-mix(in srgb, var(--console) 75%, transparent),
+            transparent
+        );
+        pointer-events: none;
+    }
+
+    .lc-cursor {
+        display: inline-block;
+        width: 8px;
+        height: 14px;
+        margin-left: 4px;
+        vertical-align: -2px;
+        border-radius: 2px;
+        background: var(--screen-status);
+        animation: lc-blink 1s steps(1) infinite;
+    }
+
+    /* Status lamps. Set the color with one of the modifiers. */
+    .lc-lamp {
+        --lamp: var(--lamp-off);
+        display: inline-block;
+        flex-shrink: 0;
+        width: 14px;
+        height: 14px;
+        border-radius: 9999px;
+        background: radial-gradient(
+            circle at 35% 30%,
+            color-mix(in srgb, var(--console) 70%, var(--lamp)),
+            var(--lamp) 60%
+        );
+        box-shadow: inset 0 -2px 3px
+            color-mix(in srgb, var(--screen-ink) 25%, transparent);
+    }
+    .lc-lamp-go {
+        --lamp: var(--lamp-go);
+    }
+    .lc-lamp-nogo {
+        --lamp: var(--lamp-nogo);
+    }
+    .lc-lamp-clear {
+        --lamp: var(--lamp-clear);
+    }
+    .lc-lamp-warn {
+        --lamp: var(--edge-warn);
+    }
+    .lc-lamp-lit {
+        box-shadow:
+            0 0 10px color-mix(in srgb, var(--lamp) 70%, transparent),
+            inset 0 -2px 3px
+                color-mix(in srgb, var(--screen-ink) 20%, transparent);
+    }
+    .lc-lamp-big {
+        width: 64px;
+        height: 64px;
+        box-shadow:
+            0 0 0 5px var(--console-shade),
+            0 0 0 7px var(--console-edge),
+            0 0 28px color-mix(in srgb, var(--lamp) 75%, transparent);
+        animation: lc-glow 2.6s ease-in-out infinite;
+    }
+    .lc-lamp-big.lc-lamp-clear {
+        box-shadow:
+            0 0 0 5px var(--console-shade),
+            0 0 0 7px var(--console-edge),
+            inset 0 -4px 8px
+                color-mix(in srgb, var(--screen-ink) 18%, transparent);
+        animation: none;
+    }
+
+    /* The HUD readout, like the CV's altitude box. */
+    .lc-hud {
+        padding: 8px 14px 10px;
+        border-radius: 12px;
+        background: var(--sidebar);
+        color: var(--sidebar-foreground);
+        box-shadow: inset 0 0 0 1px var(--sidebar-border);
+    }
+    .lc-hud-digits {
+        font-family: var(--font-mono);
+        font-size: 2.5rem;
+        font-weight: 600;
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* Chunky glossy buttons, like the CV's contact buttons. */
+    .lc-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 18px;
+        border-radius: 14px;
+        background: linear-gradient(
+            color-mix(in srgb, var(--console) 25%, var(--lamp-go)),
+            var(--lamp-go)
+        );
+        color: var(--screen-ink);
+        font-family: var(--font-portal-display);
+        font-weight: 700;
+        box-shadow:
+            0 5px 0 color-mix(in srgb, var(--lamp-go) 55%, var(--screen-ink)),
+            0 8px 16px color-mix(in srgb, var(--screen-ink) 18%, transparent),
+            inset 0 2px 0 color-mix(in srgb, var(--console) 55%, transparent);
+        transition:
+            translate 0.12s,
+            box-shadow 0.12s;
+    }
+    .lc-pill:hover {
+        translate: 0 1px;
+    }
+    .lc-pill:active {
+        translate: 0 4px;
+        box-shadow: 0 1px 0
+            color-mix(in srgb, var(--lamp-go) 55%, var(--screen-ink));
+    }
+    .lc-pill:focus-visible {
+        outline: 3px solid var(--screen-ink);
+        outline-offset: 3px;
+    }
+    .lc-pill:disabled {
+        opacity: 0.7;
+        translate: none;
+    }
+
+    /* Cards with a colored top edge, like the CV's mission cards. */
+    .lc-card {
+        --edge: transparent;
+        position: relative;
+        border: 1px solid var(--border);
+        border-top: 4px solid var(--edge);
+        border-radius: 18px;
+        background: var(--card);
+        box-shadow: 0 10px 30px
+            color-mix(in srgb, var(--screen-ink) 8%, transparent);
+    }
+    .lc-edge-pass {
+        --edge: var(--edge-pass);
+    }
+    .lc-edge-warn {
+        --edge: var(--edge-warn);
+    }
+    .lc-edge-fail {
+        --edge: var(--edge-fail);
+    }
+    .lc-edge-skip {
+        --edge: var(--edge-skip);
+    }
+    .lc-edge-ink {
+        --edge: var(--screen-ink);
+    }
+
+    /* Semicircle gauges in the readout cards. */
+    .lc-gauge-track,
+    .lc-gauge-value {
+        fill: none;
+        stroke-width: 8;
+        stroke-linecap: round;
+    }
+    .lc-gauge-track {
+        stroke: var(--border);
+    }
+    .lc-gauge-value {
+        stroke: var(--edge-pass);
+    }
+}
+
+/* Launchpad: same structure, riso materials. Square corners, ink outlines,
+   flat print instead of glow. */
+[data-portal='client'] .lc-card {
+    border: 2px solid var(--foreground);
+    border-top: 6px solid var(--edge, var(--foreground));
+    border-radius: var(--radius);
+    box-shadow: none;
+}
+[data-portal='client'] .lc-card.lc-edge-pass,
+[data-portal='client'] .lc-card.lc-edge-skip {
+    border-top-color: var(--foreground);
+}
+
+@keyframes lc-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@keyframes lc-glow {
+    50% {
+        box-shadow:
+            0 0 0 5px var(--console-shade),
+            0 0 0 7px var(--console-edge),
+            0 0 44px color-mix(in srgb, var(--lamp) 90%, transparent);
+    }
+}

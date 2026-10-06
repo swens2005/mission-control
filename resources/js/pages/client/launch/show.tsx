@@ -3,6 +3,7 @@ import ClientLaunchController from '@/actions/App/Http/Controllers/Client/Launch
 import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
 import { GoBoard } from '@/components/launch/go-board';
+import { LaunchReadouts } from '@/components/launch/launch-readouts';
 import { formatDate } from '@/lib/format';
 import { show } from '@/routes/client/projects';
 import type { Launch } from '@/types';
@@ -33,18 +34,19 @@ export default function ShowLaunch({ project, launch }: Props) {
                     </p>
                 </div>
 
-                <div className="max-w-2xl">
+                <div className="max-w-4xl space-y-6">
                     <GoBoard
                         board={launch.board}
                         signForm={ClientLaunchController.signoff.form(
                             project.id,
                         )}
                     />
+                    <LaunchReadouts launch={launch} />
                 </div>
 
                 <section
                     aria-labelledby="checks-heading"
-                    className="max-w-2xl space-y-3"
+                    className="max-w-4xl space-y-3"
                 >
                     <h2 id="checks-heading" className="text-xl font-extrabold">
                         Automated checks
@@ -59,7 +61,7 @@ export default function ShowLaunch({ project, launch }: Props) {
 
                 <section
                     aria-labelledby="checklist-heading"
-                    className="max-w-2xl space-y-3"
+                    className="max-w-4xl space-y-3"
                 >
                     <h2
                         id="checklist-heading"

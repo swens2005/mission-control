@@ -1,7 +1,6 @@
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import type { ChecklistItem } from '@/types';
-import { usePortal } from '@/hooks/use-portal';
 import { cn } from '@/lib/utils';
 
 type Route = { url: string; method: 'put' | 'delete' };
@@ -21,7 +20,6 @@ export function Checklist({
     uncheckRoute: (id: number) => Route;
     renderActions?: (item: ChecklistItem) => React.ReactNode;
 }) {
-    const { portal } = usePortal();
     const [savingId, setSavingId] = useState<number | null>(null);
 
     // Not disabled while saving: a disabled checkbox drops keyboard focus.
@@ -44,71 +42,123 @@ export function Checklist({
 
     const done = items.filter((item) => item.checked).length;
 
+    const groups = (['studio', 'client'] as const)
+        .map((owner) => ({
+            owner,
+            items: items.filter((item) => item.owner === owner),
+        }))
+        .filter((group) => group.items.length > 0);
+
     return (
         <div className="space-y-3">
             <p className="text-sm text-muted-foreground" aria-live="polite">
                 {done} of {items.length} done
             </p>
-            <ul
-                className={cn(
-                    'divide-y bg-card',
-                    portal === 'client'
-                        ? 'divide-foreground rounded-sm border-2 border-foreground'
-                        : 'rounded-lg border',
-                )}
+            <div
+                className="grid gap-4 lg:grid-cols-2"
                 data-tour="launch-checklist"
             >
-                {items.map((item) => {
-                    const id = `checklist-item-${item.id}`;
+                {groups.map((group) => {
+                    const groupDone = group.items.filter(
+                        (item) => item.checked,
+                    ).length;
+                    const complete = groupDone === group.items.length;
 
                     return (
-                        <li
-                            key={item.id}
-                            className="flex flex-wrap items-start gap-3 p-4"
-                            data-tour="checklist-item"
+                        <section
+                            key={group.owner}
+                            aria-labelledby={`checklist-${group.owner}`}
+                            className={cn(
+                                'lc-card p-5',
+                                complete ? 'lc-edge-pass' : 'lc-edge-ink',
+                            )}
                         >
-                            <input
-                                id={id}
-                                type="checkbox"
-                                className="mt-0.5 size-5 shrink-0 accent-primary"
-                                checked={item.checked}
-                                disabled={!item.canToggle}
-                                aria-busy={savingId === item.id}
-                                aria-describedby={`${id}-details`}
-                                onChange={(event) =>
-                                    toggle(item, event.target.checked)
-                                }
-                            />
-                            <div className="min-w-0 flex-1">
-                                <label htmlFor={id} className="font-semibold">
-                                    {item.label}
-                                </label>
-                                <div
-                                    id={`${id}-details`}
-                                    className="text-sm text-muted-foreground"
-                                >
-                                    {item.hint && <p>{item.hint}</p>}
-                                    <p>
-                                        Owner: {item.ownerLabel}
-                                        {item.checked && item.checkedBy && (
-                                            <>
-                                                {' · '}Ticked by{' '}
-                                                {item.checkedBy}
-                                                {item.checkedAt &&
-                                                    `, ${formatDay(item.checkedAt)}`}
-                                            </>
-                                        )}
-                                        {!item.canToggle &&
-                                            ` · Only the ${item.ownerLabel.toLowerCase()} can tick this`}
-                                    </p>
-                                </div>
-                            </div>
-                            {renderActions?.(item)}
-                        </li>
+                            <h3
+                                id={`checklist-${group.owner}`}
+                                className="lc-label flex items-center gap-2 text-muted-foreground"
+                            >
+                                <span
+                                    aria-hidden="true"
+                                    className={cn(
+                                        'lc-lamp size-2.5',
+                                        complete && 'lc-lamp-go',
+                                    )}
+                                />
+                                {group.owner === 'studio' ? 'Studio' : 'Client'}{' '}
+                                · {groupDone} of {group.items.length}
+                            </h3>
+                            <ul className="mt-2 divide-y">
+                                {group.items.map((item) => (
+                                    <ChecklistRow
+                                        key={item.id}
+                                        item={item}
+                                        saving={savingId === item.id}
+                                        onToggle={toggle}
+                                        actions={renderActions?.(item)}
+                                    />
+                                ))}
+                            </ul>
+                        </section>
                     );
                 })}
-            </ul>
+            </div>
         </div>
+    );
+}
+
+function ChecklistRow({
+    item,
+    saving,
+    onToggle,
+    actions,
+}: {
+    item: ChecklistItem;
+    saving: boolean;
+    onToggle: (item: ChecklistItem, checked: boolean) => void;
+    actions?: React.ReactNode;
+}) {
+    const id = `checklist-item-${item.id}`;
+
+    return (
+        <li
+            className="flex flex-wrap items-start gap-3 py-3"
+            data-tour="checklist-item"
+        >
+            <input
+                id={id}
+                type="checkbox"
+                className="mt-0.5 size-5 shrink-0 accent-primary"
+                checked={item.checked}
+                disabled={!item.canToggle}
+                aria-busy={saving}
+                aria-describedby={`${id}-details`}
+                onChange={(event) => onToggle(item, event.target.checked)}
+            />
+            <div className="min-w-0 flex-1">
+                <label htmlFor={id} className="font-semibold">
+                    {item.label}
+                </label>
+                <div
+                    id={`${id}-details`}
+                    className="text-sm text-muted-foreground"
+                >
+                    {item.hint && <p>{item.hint}</p>}
+                    <p>
+                        Owner: {item.ownerLabel}
+                        {item.checked && item.checkedBy && (
+                            <>
+                                {' · '}Ticked by {item.checkedBy}
+                                {item.checkedAt &&
+                                    `, ${formatDay(item.checkedAt)}`}
+                            </>
+                        )}
+                        {!item.canToggle &&
+                            ` · Only the ${item.ownerLabel.toLowerCase()} can tick this`}
+                    </p>
+                </div>
+            </div>
+            {actions}
+        </li>
     );
 }
 
