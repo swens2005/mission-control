@@ -51,6 +51,7 @@ class ProjectController extends Controller
             'project' => $this->present($project),
             'steps' => self::steps(),
             'hasLaunch' => $project->launch()->exists(),
+            'hasPalette' => $project->brandKit()->whereNotNull('shared_at')->exists(),
             'hasProofmark' => $project->reviewRounds()->where('status', '!=', RoundStatus::Draft)->exists(),
             // Only what the studio marked for clients.
             'activity' => ActivityEntry::query()

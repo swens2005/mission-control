@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { PenTool, Rocket } from 'lucide-react';
+import { Palette, PenTool, Rocket } from 'lucide-react';
+import ClientPaletteController from '@/actions/App/Http/Controllers/Client/PaletteController';
 import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
 import { ActivityList } from '@/components/activity-list';
 import { PhaseSteps } from '@/components/phase-steps';
@@ -13,12 +14,14 @@ export default function ShowProject({
     steps,
     activity,
     hasLaunch,
+    hasPalette,
     hasProofmark,
 }: {
     project: ClientProject;
     steps: Option[];
     activity: ActivityItem[];
     hasLaunch: boolean;
+    hasPalette: boolean;
     hasProofmark: boolean;
 }) {
     return (
@@ -48,6 +51,17 @@ export default function ShowProject({
                         </p>
                     )}
                 </div>
+
+                {hasPalette && (
+                    <Link
+                        href={ClientPaletteController.show(project.id)}
+                        className="lc-pill w-fit"
+                        data-tour="open-palette"
+                    >
+                        <Palette aria-hidden="true" className="size-5" />
+                        Open Palette Lab
+                    </Link>
+                )}
 
                 {hasProofmark && (
                     <Link

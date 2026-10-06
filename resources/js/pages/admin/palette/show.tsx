@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/page-header';
 import { ColorFields } from '@/components/palette/color-fields';
 import { ContrastMatrix } from '@/components/palette/contrast-matrix';
 import { ExportSection } from '@/components/palette/export-section';
+import { SharingCard } from '@/components/palette/sharing-card';
 import { TypeSection } from '@/components/palette/type-section';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
@@ -92,6 +93,7 @@ export default function ShowPalette({
                     </section>
                 ) : (
                     <div className="space-y-12">
+                        <SharingCard kitId={kit.id} sharing={kit.sharing} />
                         <Colors kit={kit} roles={roles} />
                         <ContrastMatrix
                             matrix={kit.matrix}

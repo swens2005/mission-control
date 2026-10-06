@@ -4,7 +4,9 @@ namespace App\Support\Sandbox;
 
 use App\Enums\ProjectPhase;
 use App\Enums\Role;
+use App\Models\BrandKit;
 use App\Models\ChecklistItem;
+use App\Models\Color;
 use App\Models\Comment;
 use App\Models\Design;
 use App\Models\Launch;
@@ -14,6 +16,7 @@ use App\Models\ReviewRound;
 use App\Models\User;
 use App\Models\Workspace;
 use App\Support\Activity;
+use App\Support\Color\ColorInput;
 use App\Support\Launch\ChecklistToggle;
 use App\Support\Launch\DefaultChecklist;
 use Illuminate\Support\Facades\DB;
@@ -91,6 +94,7 @@ final class SandboxFactory
 
             $this->createLaunch($workspace, $admin, $client);
             $this->createProofmark($workspace, $admin, $client);
+            $this->createPalette($workspace, $admin);
 
             return new Sandbox($workspace, $admin, $adminPassword, $client, $clientPassword);
         });
@@ -122,6 +126,45 @@ final class SandboxFactory
 
             if ($item !== null) {
                 ChecklistToggle::set($item, $by === 'admin' ? $admin : $client, checked: true);
+            }
+        }
+    }
+
+    /**
+     * Palette Lab's brand kits (DemoTemplate::palette()).
+     */
+    private function createPalette(Workspace $workspace, User $admin): void
+    {
+        foreach (DemoTemplate::palette() as $projectName => $data) {
+            $project = Project::withoutGlobalScopes()
+                ->where('workspace_id', $workspace->id)
+                ->where('name', $projectName)
+                ->firstOrFail();
+
+            $kit = new BrandKit;
+            $kit->project_id = $project->id;
+            $kit->heading_font = $data['heading'];
+            $kit->body_font = $data['body'];
+            $kit->scale_ratio = $data['ratio'];
+            $kit->shared_at = $data['shared'] ? now()->subDay() : null;
+            $kit->save();
+
+            Activity::record('palette.kit_created', $kit, ['name' => $project->name], actor: $admin);
+
+            foreach ($data['colors'] as $position => [$name, $role, $hex]) {
+                $input = ColorInput::parse($hex) ?? throw new RuntimeException("Bad demo color {$hex}");
+
+                $color = new Color;
+                $color->brand_kit_id = $kit->id;
+                $color->name = $name;
+                $color->role = $role;
+                $color->position = $position;
+                $color->setValue($input);
+                $color->save();
+            }
+
+            if ($data['shared']) {
+                Activity::record('palette.kit_shared', $kit, ['name' => $project->name], visibleToClient: true, actor: $admin);
             }
         }
     }

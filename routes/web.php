@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CommentResolutionController;
 use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DesignController;
+use App\Http\Controllers\Admin\KitSharingController;
 use App\Http\Controllers\Admin\LaunchController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\PaletteController;
@@ -17,11 +18,13 @@ use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Admin\TokenExportController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
+use App\Http\Controllers\Client\PaletteController as ClientPaletteController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Http\Controllers\Client\ProofmarkController as ClientProofmarkController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DesignImageController;
+use App\Http\Controllers\PublicStyleGuideController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,6 +45,10 @@ Route::get('proofmark/designs/{design}/image', DesignImageController::class)->mi
 
 // Pinned comments, from either portal (story 17).
 Route::post('proofmark/designs/{design}/comments', [CommentController::class, 'store'])->middleware(['auth', 'throttle:comments'])->name('comments.store');
+
+// A brand kit's read-only style guide, shared by link without login
+// (story 24). The random token is the key; the studio can turn it off.
+Route::get('style-guide/{token}', PublicStyleGuideController::class)->middleware('throttle:60,1')->name('style-guide.show');
 
 // Mission Control: the studio's portal.
 Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -99,6 +106,12 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::post('colors/{color}/fix', [ColorController::class, 'fix'])->name('colors.fix');
     Route::put('kits/{kit}/type', [TypeController::class, 'update'])->name('type.update');
     Route::get('kits/{kit}/export/{format}', TokenExportController::class)->name('tokens.export');
+
+    // Sharing, the public link and revisions (story 24).
+    Route::post('kits/{kit}/share', [KitSharingController::class, 'share'])->name('kits.share');
+    Route::post('kits/{kit}/public-link', [KitSharingController::class, 'enablePublicLink'])->name('kits.public-link.store');
+    Route::delete('kits/{kit}/public-link', [KitSharingController::class, 'disablePublicLink'])->name('kits.public-link.destroy');
+    Route::post('kits/{kit}/revision', [KitSharingController::class, 'revise'])->name('kits.revise');
     Route::delete('colors/{color}', [ColorController::class, 'destroy'])->name('colors.destroy');
 });
 
@@ -110,6 +123,8 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::post('projects/{project}/launch/signoff', [ClientLaunchController::class, 'signoff'])->name('signoffs.store');
     Route::get('projects/{project}/proofmark', [ClientProofmarkController::class, 'show'])->name('proofmark.show');
     Route::post('rounds/{round}/approve', [ClientProofmarkController::class, 'approve'])->name('rounds.approve');
+    Route::get('projects/{project}/palette', [ClientPaletteController::class, 'show'])->name('palette.show');
+    Route::post('kits/{kit}/approve', [ClientPaletteController::class, 'approve'])->name('kits.approve');
     Route::put('checklist-items/{item}/check', [ClientLaunchController::class, 'check'])->name('checklist.check');
     Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
 });

@@ -2,11 +2,12 @@
 
 namespace App\Support\Sandbox;
 
+use App\Enums\ColorRole;
 use App\Enums\ProjectPhase;
 use App\Enums\RoundStatus;
 
 /**
- * The studio every demo visitor starts with: three clients and six
+ * The studio every demo visitor starts with: four clients and eight
  * projects spread over the phases, so each module has something to show.
  * The first client is the one the demo client contact belongs to.
  */
@@ -34,6 +35,56 @@ final class DemoTemplate
                 '404 page' => 'admin',
                 'Favicon' => 'admin',
                 'Forms tested' => 'client',
+            ],
+        ];
+    }
+
+    /**
+     * Palette Lab's demo (story 24), per project.
+     *
+     * - codelaunch.nl: the app's own palette from resources/css/themes.css,
+     *   except the screen label, which is the CV site's original blue. It
+     *   fails on the console screen colors, as does the brand green on the
+     *   screen: the two colors the app really had to darken (ADR 0008).
+     *   "Fix it" shows how. Not shared: a studio showcase.
+     * - Café corner: Bakkerij de Vries's kit, shared and waiting for the
+     *   demo client's approval. Every text pair passes.
+     *
+     * @return array<string, array{shared: bool, heading: string, body: string, ratio: int, colors: list<array{0: string, 1: ColorRole, 2: string}>}>
+     */
+    public static function palette(): array
+    {
+        return [
+            'codelaunch.nl' => [
+                'shared' => false,
+                'heading' => 'bricolage',
+                'body' => 'figtree',
+                'ratio' => 1250,
+                'colors' => [
+                    ['Ink', ColorRole::Text, '#10233a'],
+                    ['Soft', ColorRole::Text, '#4a5a6c'],
+                    ['Green', ColorRole::Accent, '#4a7300'],
+                    ['Screen label', ColorRole::Text, '#4a7fc4'],
+                    ['Lime', ColorRole::Shape, '#8ac800'],
+                    ['Cream', ColorRole::Surface, '#f5f2ea'],
+                    ['Card', ColorRole::Surface, '#fffdf8'],
+                    ['Sky', ColorRole::Surface, '#d4edfa'],
+                    ['Screen', ColorRole::Surface, '#cfe8fa'],
+                ],
+            ],
+            'Café corner' => [
+                'shared' => true,
+                'heading' => 'system-serif',
+                'body' => 'figtree',
+                'ratio' => 1333,
+                'colors' => [
+                    ['Bakery brown', ColorRole::Text, '#4a2c1a'],
+                    ['Caramel', ColorRole::Accent, '#8a5a2b'],
+                    ['Wheat', ColorRole::Shape, '#d9a441'],
+                    ['Rosé', ColorRole::Shape, '#e98f9b'],
+                    ['Cream', ColorRole::Surface, '#f7efe3'],
+                    ['Paper', ColorRole::Surface, '#fffaf2'],
+                ],
             ],
         ];
     }
@@ -121,6 +172,12 @@ final class DemoTemplate
                         'launch_in_days' => 35,
                     ],
                     [
+                        'name' => 'Café corner',
+                        'description' => 'A small café next to the bakery: menu, opening hours and the terrace.',
+                        'phase' => ProjectPhase::Palette,
+                        'launch_in_days' => 56,
+                    ],
+                    [
                         'name' => 'Seasonal menu pages',
                         'description' => 'Christmas and Easter specials, updated by the shop itself.',
                         'phase' => ProjectPhase::Scope,
@@ -155,6 +212,18 @@ final class DemoTemplate
                         'description' => 'New colors and type, live since spring.',
                         'phase' => ProjectPhase::Launched,
                         'launch_in_days' => -60,
+                    ],
+                ],
+            ],
+            [
+                'name' => 'Orbit Web Studio (in-house)',
+                'website' => 'https://codelaunch.nl',
+                'projects' => [
+                    [
+                        'name' => 'codelaunch.nl',
+                        'description' => "Meagan Swenson's portfolio, and the look of this app (ADR 0008).",
+                        'phase' => ProjectPhase::Launched,
+                        'launch_in_days' => -120,
                     ],
                 ],
             ],

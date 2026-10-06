@@ -32,8 +32,8 @@ test('taking the controls creates a complete sandbox and pre-fills the login', f
         ->and($client->role)->toBe(Role::Client)
         ->and($admin->email)->toEndWith('@sandbox.codelaunch.nl')
         ->and(Hash::check($credentials['admin']['password'], $admin->password))->toBeTrue()
-        ->and(Organization::count())->toBe(3)
-        ->and(Project::count())->toBe(6)
+        ->and(Organization::count())->toBe(4)
+        ->and(Project::count())->toBe(8)
         ->and(ActivityEntry::where('visible_to_client', true)->exists())->toBeTrue();
 
     $this->get(route('login'))->assertInertia(fn (Assert $page) => $page
@@ -54,7 +54,7 @@ test('the demo client sees their organization\'s projects with a history', funct
     $credentials = sandboxCredentials();
     $this->post(route('login.store'), $credentials['client']);
 
-    $this->get(route('client.home'))->assertInertia(fn (Assert $page) => $page->has('projects', 3));
+    $this->get(route('client.home'))->assertInertia(fn (Assert $page) => $page->has('projects', 4));
 });
 
 test('the demo client\'s launch checks codelaunch.nl and is part-way through', function () {
@@ -82,7 +82,7 @@ test('two sandboxes never see each other\'s data', function () {
 
     $this->actingAs($first->admin);
 
-    expect(Organization::count())->toBe(3)
+    expect(Organization::count())->toBe(4)
         ->and(Project::pluck('workspace_id')->unique()->all())->toBe([$first->workspace->id]);
 
     $theirs = Project::withoutGlobalScopes()->where('workspace_id', $second->workspace->id)->first();

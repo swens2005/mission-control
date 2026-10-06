@@ -24,6 +24,67 @@ final class PalettePresenter
             'colors' => $kit->colors->map(fn (Color $color) => self::color($color))->values()->all(),
             'matrix' => ContrastMatrix::build($kit->colors),
             'type' => self::type($kit),
+            'sharing' => self::sharing($kit),
+        ];
+    }
+
+    /**
+     * Where the kit stands with the client (story 24).
+     *
+     * @return array{sharedAt: string|null, approvedAt: string|null, approvedByName: string|null, publicUrl: string|null}
+     */
+    public static function sharing(BrandKit $kit): array
+    {
+        return [
+            'sharedAt' => $kit->shared_at?->toIso8601String(),
+            'approvedAt' => $kit->approved_at?->toIso8601String(),
+            'approvedByName' => $kit->approved_by_name,
+            'publicUrl' => $kit->public_token ? route('style-guide.show', $kit->public_token) : null,
+        ];
+    }
+
+    /**
+     * The read-only style guide for the client and the public link: the
+     * colors, the text pairs that pass, and the type. Nothing editable.
+     *
+     * @return array<string, mixed>
+     */
+    public static function styleGuide(BrandKit $kit): array
+    {
+        $colors = $kit->colors->keyBy('id');
+        $matrix = ContrastMatrix::build($kit->colors);
+        $pairs = [];
+
+        foreach ($matrix['rows'] as $row) {
+            if ($row['role'] === ColorRole::Shape->value) {
+                continue;
+            }
+
+            foreach ($row['cells'] as $cell) {
+                if (! ContrastGrade::from($cell['grade'])->passes()) {
+                    continue;
+                }
+
+                $surface = $colors[$cell['surfaceId']];
+                $pairs[] = [
+                    'text' => $row['name'],
+                    'textHex' => $row['hex'],
+                    'surface' => $surface->name,
+                    'surfaceHex' => $surface->hex,
+                    'ratio' => $cell['ratio'],
+                    'gradeLabel' => $cell['gradeLabel'],
+                ];
+            }
+        }
+
+        return [
+            'kitId' => $kit->id,
+            'colors' => $kit->colors->map(fn (Color $color) => self::color($color))->values()->all(),
+            'pairs' => $pairs,
+            'type' => self::type($kit),
+            'sharedAt' => $kit->shared_at?->toIso8601String(),
+            'approvedAt' => $kit->approved_at?->toIso8601String(),
+            'approvedByName' => $kit->approved_by_name,
         ];
     }
 

@@ -214,6 +214,7 @@ export type BrandKit = {
     colors: BrandColor[];
     matrix: ContrastMatrix;
     type: KitType;
+    sharing: KitSharing;
 };
 
 export type RoleOption = { value: ColorRole; label: string; hint: string };
@@ -274,4 +275,31 @@ export type TokenExport = {
     label: string;
     filename: string;
     content: string;
+};
+
+export type KitSharing = {
+    sharedAt: string | null;
+    approvedAt: string | null;
+    approvedByName: string | null;
+    /** The public style guide link, while it's on. */
+    publicUrl: string | null;
+};
+
+/** The read-only style guide (client and public link). */
+export type StyleGuide = {
+    kitId: number;
+    colors: BrandColor[];
+    /** Text and accent colors on surfaces that pass AA. */
+    pairs: {
+        text: string;
+        textHex: string;
+        surface: string;
+        surfaceHex: string;
+        ratio: string;
+        gradeLabel: string;
+    }[];
+    type: KitType;
+    sharedAt: string | null;
+    approvedAt: string | null;
+    approvedByName: string | null;
 };
