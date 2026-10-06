@@ -85,6 +85,15 @@ All of these must pass before committing. CI runs the same set.
   cockpit pieces in `resources/css/launch.css` (`lc-card` with `lc-edge-*`,
   `lc-label`, `lc-lamp`, `lc-pill`, `lc-console`/`lc-screen`, `lc-hud`) and
   `text-status-pass/warn/fail`; status is always also written out.
+- **Uploads:** only through `App\Support\Proofmark\ImageProcessor` and
+  `DesignFiles` (ADR 0009): content-checked, re-encoded with GD, private
+  disk, served by an authorized route. Demo files are shipped in
+  `resources/demo/` and referenced, never copied into sandboxes.
+- **Focus after a visit:** `focusById(id, fallbackId?)` and
+  `focusFirstError` from `form-field.tsx` wait two frames; one frame was
+  not enough after uploads and renames.
+- **TypeScript unit tests:** Vitest via Vite+, `*.test.ts` next to the code
+  (`npm run test:js`), for pure functions like `lib/pin-math.ts`.
 - **Wayfinder:** import controllers per file
   (`@/actions/App/Http/Controllers/Admin/ProjectController`), not from the
   folder index.
@@ -113,3 +122,10 @@ All of these must pass before committing. CI runs the same set.
 - **Local server without `.env`:** pass settings as environment variables
   (`APP_ENV=local APP_KEY=... DB_CONNECTION=sqlite DB_DATABASE=<file>`);
   Laravel refuses destructive commands when it thinks it's production.
+- **Tests and files:** `TestCase` fakes the `local` disk for every test;
+  `sandbox:prune` once deleted a real local upload folder from a test.
+- **Vitest in CI** needs `LARAVEL_BYPASS_ENV_CHECK=1`: laravel-vite-plugin
+  refuses any Vite server when `CI` is set.
+- **Shell edits, again:** even Python heredocs break in Git Bash when the
+  content has template literals and quotes. Write the script to the
+  scratchpad with the file editor, then run it.

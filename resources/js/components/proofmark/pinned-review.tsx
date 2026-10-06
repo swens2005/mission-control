@@ -407,6 +407,7 @@ function CommentList({
                                     value={value}
                                     checked={filter === value}
                                     onChange={() => onFilterChange(value)}
+                                    autoComplete="off"
                                     className="sr-only"
                                 />
                                 {label}
