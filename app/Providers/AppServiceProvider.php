@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Support\Http\Resolver;
+use App\Support\Http\SystemResolver;
 use App\Support\Launch\ChecklistWaitingItems;
 use App\Support\Waiting\WaitingOnClient;
 use Carbon\CarbonImmutable;
@@ -23,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // One registry per app, so modules can add their providers at boot.
         $this->app->singleton(WaitingOnClient::class);
+
+        // Real DNS for SafeFetcher; tests bind a fake (ADR 0007).
+        $this->app->bind(Resolver::class, SystemResolver::class);
     }
 
     /**
