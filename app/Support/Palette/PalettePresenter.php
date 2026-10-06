@@ -28,6 +28,27 @@ final class PalettePresenter
     }
 
     /**
+     * The three exports, for the studio (story 23).
+     *
+     * @return list<array{format: string, label: string, filename: string, content: string}>
+     */
+    public static function exports(BrandKit $kit): array
+    {
+        $exports = [];
+
+        foreach (TokenExporter::FORMATS as $format => $meta) {
+            $exports[] = [
+                'format' => $format,
+                'label' => $meta['label'],
+                'filename' => TokenExporter::filename($kit, $format),
+                'content' => TokenExporter::export($kit, $format),
+            ];
+        }
+
+        return $exports;
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public static function color(Color $color): array

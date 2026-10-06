@@ -21,13 +21,14 @@ class PaletteController extends Controller
     {
         Gate::authorize('view', $project);
 
-        $kit = $project->brandKit()->with('colors')->first();
+        $kit = $project->brandKit()->with(['colors', 'project'])->first();
 
         return Inertia::render('admin/palette/show', [
             'project' => ProjectController::present($project),
             'kit' => $kit ? PalettePresenter::kit($kit) : null,
             'roles' => PalettePresenter::roles(),
             'typeOptions' => PalettePresenter::typeOptions(),
+            'exports' => $kit ? PalettePresenter::exports($kit) : [],
         ]);
     }
 

@@ -268,3 +268,10 @@ export type TypeOptions = {
     fonts: { value: string; label: string }[];
     ratios: { value: string; label: string }[];
 };
+
+export type TokenExport = {
+    format: 'css' | 'tailwind' | 'json';
+    label: string;
+    filename: string;
+    content: string;
+};

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PaletteController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProofmarkController;
 use App\Http\Controllers\Admin\SignoffController;
+use App\Http\Controllers\Admin\TokenExportController;
 use App\Http\Controllers\Admin\TypeController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
@@ -97,6 +98,7 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::post('colors/{color}/move', [ColorController::class, 'move'])->name('colors.move');
     Route::post('colors/{color}/fix', [ColorController::class, 'fix'])->name('colors.fix');
     Route::put('kits/{kit}/type', [TypeController::class, 'update'])->name('type.update');
+    Route::get('kits/{kit}/export/{format}', TokenExportController::class)->name('tokens.export');
     Route::delete('colors/{color}', [ColorController::class, 'destroy'])->name('colors.destroy');
 });
 

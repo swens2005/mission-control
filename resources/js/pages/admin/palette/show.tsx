@@ -7,6 +7,7 @@ import { focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { ColorFields } from '@/components/palette/color-fields';
 import { ContrastMatrix } from '@/components/palette/contrast-matrix';
+import { ExportSection } from '@/components/palette/export-section';
 import { TypeSection } from '@/components/palette/type-section';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
@@ -16,6 +17,7 @@ import type {
     BrandKit,
     Project,
     RoleOption,
+    TokenExport,
     TypeOptions,
 } from '@/types';
 
@@ -24,6 +26,7 @@ type Props = {
     kit: BrandKit | null;
     roles: RoleOption[];
     typeOptions: TypeOptions;
+    exports: TokenExport[];
 };
 
 export default function ShowPalette({
@@ -31,6 +34,7 @@ export default function ShowPalette({
     kit,
     roles,
     typeOptions,
+    exports,
 }: Props) {
     useBreadcrumbs([
         { title: 'Projects', href: index() },
@@ -99,6 +103,7 @@ export default function ShowPalette({
                             options={typeOptions}
                             editable={!kit.locked}
                         />
+                        <ExportSection kitId={kit.id} exports={exports} />
                     </div>
                 )}
             </div>
