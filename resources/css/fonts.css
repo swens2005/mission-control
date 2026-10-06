@@ -1,8 +1,6 @@
 /* Self-hosted fonts (SIL Open Font License). Bricolage Grotesque, Figtree and
-   JetBrains Mono are the codelaunch.nl files; Archivo (expanded) is
-   Launchpad's display face (ADR 0005). Vite fingerprints and serves them. */
-
-@import '@fontsource-variable/archivo/wdth.css';
+   JetBrains Mono are the codelaunch.nl files, used by both portals (ADR 0008).
+   Vite fingerprints and serves them. */
 
 @font-face {
     font-family: 'Bricolage Grotesque';

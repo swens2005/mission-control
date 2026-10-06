@@ -2,8 +2,9 @@ import { Head, Link } from '@inertiajs/react';
 import ClientLaunchController from '@/actions/App/Http/Controllers/Client/LaunchController';
 import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
-import { GoBoard } from '@/components/launch/go-board';
+
 import { LaunchReadouts } from '@/components/launch/launch-readouts';
+import { MissionConsole } from '@/components/launch/mission-console';
 import { formatDate } from '@/lib/format';
 import { show } from '@/routes/client/projects';
 import type { Launch } from '@/types';
@@ -17,7 +18,7 @@ export default function ShowLaunch({ project, launch }: Props) {
     return (
         <>
             <Head title={`Launch: ${project.name}`} />
-            <div className="space-y-8">
+            <div className="space-y-10">
                 <div>
                     <Link
                         href={show(project.id)}
@@ -25,7 +26,7 @@ export default function ShowLaunch({ project, launch }: Props) {
                     >
                         {project.name}
                     </Link>
-                    <h1 className="mt-3 text-3xl font-extrabold">
+                    <h1 className="mt-3 text-4xl font-extrabold tracking-tight">
                         Launch Control
                     </h1>
                     <p className="mt-2 text-muted-foreground">
@@ -35,7 +36,10 @@ export default function ShowLaunch({ project, launch }: Props) {
                 </div>
 
                 <div className="max-w-4xl space-y-6">
-                    <GoBoard
+                    <MissionConsole
+                        projectName={project.name}
+                        url={launch.url}
+                        targetLaunchOn={project.targetLaunchOn}
                         board={launch.board}
                         signForm={ClientLaunchController.signoff.form(
                             project.id,
@@ -46,9 +50,9 @@ export default function ShowLaunch({ project, launch }: Props) {
 
                 <section
                     aria-labelledby="checks-heading"
-                    className="max-w-4xl space-y-3"
+                    className="max-w-4xl space-y-4"
                 >
-                    <h2 id="checks-heading" className="text-xl font-extrabold">
+                    <h2 id="checks-heading" className="text-2xl font-extrabold">
                         Automated checks
                     </h2>
                     <p>
@@ -61,11 +65,11 @@ export default function ShowLaunch({ project, launch }: Props) {
 
                 <section
                     aria-labelledby="checklist-heading"
-                    className="max-w-4xl space-y-3"
+                    className="max-w-4xl space-y-4"
                 >
                     <h2
                         id="checklist-heading"
-                        className="text-xl font-extrabold"
+                        className="text-2xl font-extrabold"
                     >
                         Pre-flight checklist
                     </h2>

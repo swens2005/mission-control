@@ -6,6 +6,7 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import AppLogoIcon from '@/components/app-logo-icon';
 import { SandboxBanner } from '@/components/sandbox-banner';
 import { UserMenuContent } from '@/components/user-menu-content';
 import { useCurrentUrl } from '@/hooks/use-current-url';
@@ -14,7 +15,8 @@ import { cn } from '@/lib/utils';
 import { edit as editProfile } from '@/routes/profile';
 
 /**
- * Launchpad: the client portal. A riso mission-poster top bar (ADR 0005).
+ * Launchpad: the client portal. Same codelaunch.nl look as Mission Control
+ * (ADR 0008): a navy bar with the rocket, and a day sky over the page.
  */
 export default function ClientLayout({ children }: { children: ReactNode }) {
     const { auth } = usePage().props;
@@ -38,16 +40,15 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
             <SandboxBanner />
 
-            <header className="border-b-2 border-foreground bg-card">
+            <header className="bg-sidebar text-sidebar-foreground">
                 <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
                     <Link
                         href={homeUrl}
-                        className="flex items-center gap-3 font-display text-xl font-extrabold tracking-tight uppercase [font-stretch:125%]"
+                        className="flex items-center gap-3 rounded-lg font-display text-xl font-extrabold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sidebar-ring"
                     >
-                        <span
-                            aria-hidden="true"
-                            className="riso-overprint inline-block size-6"
-                        />
+                        <span className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
+                            <AppLogoIcon className="size-5" />
+                        </span>
                         Launchpad
                     </Link>
 
@@ -65,9 +66,9 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                                             item.active ? 'page' : undefined
                                         }
                                         className={cn(
-                                            'block rounded-sm px-3 py-2 text-sm font-semibold underline-offset-4 hover:underline',
+                                            'block rounded-lg px-3 py-2 text-sm font-semibold text-sidebar-foreground hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-sidebar-ring',
                                             item.active &&
-                                                'bg-foreground text-background hover:no-underline',
+                                                'bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_0_-3px_0_var(--sidebar-primary)]',
                                         )}
                                     >
                                         {item.title}
@@ -80,7 +81,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                     {auth.user && (
                         <div className="ml-auto">
                             <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center gap-1 rounded-sm px-2 py-2 text-sm font-semibold">
+                                <DropdownMenuTrigger className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-sidebar-ring">
                                     <span className="max-w-[18ch] truncate">
                                         {auth.user.name}
                                     </span>
@@ -99,16 +100,17 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                         </div>
                     )}
                 </div>
-                <div aria-hidden="true" className="riso-halftone h-2" />
             </header>
 
-            <main
-                id="main"
-                tabIndex={-1}
-                className="mx-auto max-w-5xl px-4 py-8 focus:outline-none"
-            >
-                {children}
-            </main>
+            <div className="sky-fade">
+                <main
+                    id="main"
+                    tabIndex={-1}
+                    className="mx-auto max-w-5xl px-4 py-10 focus:outline-none"
+                >
+                    {children}
+                </main>
+            </div>
         </div>
     );
 }

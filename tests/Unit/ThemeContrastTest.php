@@ -52,10 +52,6 @@ dataset('theme pairs', function () {
         ['status-warn', 'card'],
         ['status-fail', 'background'],
         ['status-fail', 'card'],
-        ['space-foreground', 'space'],
-        ['space-muted', 'space'],
-        ['space-go', 'space'],
-        ['space-nogo', 'space'],
         ['screen-ink', 'screen-top'],
         ['screen-ink', 'screen-bottom'],
         ['screen-text', 'screen-bottom'],
@@ -64,6 +60,10 @@ dataset('theme pairs', function () {
         ['screen-status', 'screen-top'],
         ['screen-status', 'screen-bottom'],
         ['foreground', 'console'],
+        ['foreground', 'sky'],
+        ['muted-foreground', 'sky'],
+        ['primary', 'sky'],
+        ['destructive', 'sky'],
         ['muted-foreground', 'console'],
         ['sidebar-foreground', 'sidebar'],
         ['sidebar-muted', 'sidebar'],
@@ -102,12 +102,12 @@ test('theme color pairs meet WCAG 2.2 AA', function (string $portal, string $fg,
     );
 })->with('theme pairs');
 
-test('ink text on the riso pink shape color passes AA', function () {
-    $client = themeTokens()['client'];
+test('ink text on the brand accent shape color passes AA', function (string $portal) {
+    $theme = themeTokens()[$portal];
 
-    expect(Contrast::ratio($client['foreground'], $client['brand-accent']))
+    expect(Contrast::ratio($theme['foreground'], $theme['brand-accent']))
         ->toBeGreaterThanOrEqual(Contrast::AA_TEXT);
-});
+})->with(['admin', 'client']);
 
 test('the client theme defines every admin token', function () {
     $themes = themeTokens();

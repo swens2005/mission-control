@@ -1,6 +1,6 @@
 # 0005. Launchpad (client portal) theme
 
-- Status: accepted
+- Status: superseded by [0008](0008-one-look-for-both-portals.md) on 2026-10-06
 - Date: 2026-10-04
 
 ## Context

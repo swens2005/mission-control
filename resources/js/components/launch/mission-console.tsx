@@ -37,7 +37,7 @@ export function MissionConsole({
     targetLaunchOn: string | null;
     board: GoBoardState;
     signForm: FormDefinition;
-    launchedForm: FormDefinition;
+    launchedForm?: FormDefinition;
 }) {
     const tMinus = daysUntil(targetLaunchOn);
 
@@ -209,7 +209,7 @@ export function MissionConsole({
                 </Form>
             )}
 
-            {board.canMarkLaunched && (
+            {board.canMarkLaunched && launchedForm && (
                 <Form
                     {...launchedForm}
                     onSuccess={focusStatus}

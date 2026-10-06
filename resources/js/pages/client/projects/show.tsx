@@ -1,4 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
+import { Rocket } from 'lucide-react';
 import { ActivityList } from '@/components/activity-list';
 import { PhaseSteps } from '@/components/phase-steps';
 import { formatDate } from '@/lib/format';
@@ -28,26 +29,32 @@ export default function ShowProject({
                     >
                         All projects
                     </Link>
-                    <h1 className="mt-3 text-3xl font-extrabold">
+                    <p className="lc-label mt-4 text-muted-foreground">
+                        Mission · {project.phaseLabel}
+                    </p>
+                    <h1 className="mt-1 text-4xl font-extrabold tracking-tight">
                         {project.name}
                     </h1>
                     {project.phase === 'launched' && (
-                        <p className="mt-2 inline-block rounded-sm bg-foreground px-2 py-1 font-mono text-xs tracking-[0.14em] text-background uppercase">
+                        <p className="lc-label mt-3 inline-flex items-center gap-2 rounded-full bg-sidebar px-3 py-1.5 text-sidebar-foreground">
+                            <span
+                                aria-hidden="true"
+                                className="lc-lamp lc-lamp-go lc-lamp-lit size-2.5"
+                            />
                             Launched
                         </p>
                     )}
                 </div>
 
                 {hasLaunch && (
-                    <p>
-                        <Link
-                            href={showLaunch(project.id)}
-                            className="font-semibold text-primary underline"
-                            data-tour="open-launch-control"
-                        >
-                            Open the launch checklist
-                        </Link>
-                    </p>
+                    <Link
+                        href={showLaunch(project.id)}
+                        className="lc-pill w-fit"
+                        data-tour="open-launch-control"
+                    >
+                        <Rocket aria-hidden="true" className="size-5" />
+                        Open Launch Control
+                    </Link>
                 )}
 
                 <PhaseSteps
@@ -56,7 +63,7 @@ export default function ShowProject({
                     label="Project progress"
                 />
 
-                <dl className="grid max-w-xl grid-cols-[auto_1fr] gap-x-6 gap-y-3 rounded-sm border-2 border-foreground bg-card p-5">
+                <dl className="lc-card lc-edge-pass grid max-w-2xl grid-cols-[auto_1fr] gap-x-6 gap-y-3 p-6">
                     <dt className="text-muted-foreground">Current phase</dt>
                     <dd className="font-semibold">{project.phaseLabel}</dd>
                     <dt className="text-muted-foreground">Target launch</dt>
@@ -71,7 +78,10 @@ export default function ShowProject({
                     aria-labelledby="updates-heading"
                     className="max-w-2xl space-y-3"
                 >
-                    <h2 id="updates-heading" className="text-xl font-extrabold">
+                    <h2
+                        id="updates-heading"
+                        className="text-2xl font-extrabold"
+                    >
                         Updates
                     </h2>
                     <ActivityList

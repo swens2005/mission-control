@@ -2,9 +2,8 @@
  *
  * The console, screen, lamps, HUD and chunky buttons come from the CV site's
  * "toy cockpit" (meagan-swenson/css/style.css). Every color is a token from
- * themes.css; Launchpad gets riso versions through the same tokens plus a few
- * overrides at the bottom. Lamps, glows and card edges are decoration: the
- * markup always writes the status out too.
+ * themes.css, so both portals share it (ADR 0008). Lamps, glows and card
+ * edges are decoration: the markup always writes the status out too.
  */
 
 @layer components {
@@ -234,19 +233,6 @@
     .lc-gauge-value {
         stroke: var(--edge-pass);
     }
-}
-
-/* Launchpad: same structure, riso materials. Square corners, ink outlines,
-   flat print instead of glow. */
-[data-portal='client'] .lc-card {
-    border: 2px solid var(--foreground);
-    border-top: 6px solid var(--edge, var(--foreground));
-    border-radius: var(--radius);
-    box-shadow: none;
-}
-[data-portal='client'] .lc-card.lc-edge-pass,
-[data-portal='client'] .lc-card.lc-edge-skip {
-    border-top-color: var(--foreground);
 }
 
 @keyframes lc-blink {

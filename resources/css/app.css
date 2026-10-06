@@ -44,12 +44,6 @@
     --color-status-pass: var(--status-pass);
     --color-status-warn: var(--status-warn);
     --color-status-fail: var(--status-fail);
-    --color-space: var(--space);
-    --color-space-foreground: var(--space-foreground);
-    --color-space-muted: var(--space-muted);
-    --color-space-border: var(--space-border);
-    --color-space-go: var(--space-go);
-    --color-space-nogo: var(--space-nogo);
     --color-console: var(--console);
     --color-console-shade: var(--console-shade);
     --color-console-edge: var(--console-edge);
@@ -126,35 +120,10 @@
         @apply font-mono text-[11px] tracking-[0.14em] uppercase;
     }
 
-    /* Launchpad decoration: halftone dots and misregistered overprint shapes.
-       Purely decorative (aria-hidden in markup) and never behind text. */
-    .riso-halftone {
-        background-image: radial-gradient(
-            var(--brand-accent) 1.2px,
-            transparent 1.6px
-        );
-        background-size: 7px 7px;
-    }
-    .riso-overprint {
-        position: relative;
-        isolation: isolate;
-    }
-    .riso-overprint::before,
-    .riso-overprint::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        border-radius: 9999px;
-        mix-blend-mode: multiply;
-    }
-    .riso-overprint::before {
-        background: var(--brand-accent);
-    }
-    .riso-overprint::after {
-        background: var(--riso-teal);
-        opacity: 0.85;
-        translate: 4px 3px;
+    /* Launchpad: a pale day sky fading into the page, like the top of
+       codelaunch.nl. Text on it stays AA (the --sky pairs in the test). */
+    .sky-fade {
+        background: linear-gradient(var(--sky), var(--background) 22rem);
     }
 }
 

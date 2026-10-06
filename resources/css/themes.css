@@ -6,9 +6,9 @@
  *
  * Names follow the shadcn/ui tokens the UI components already use, plus a
  * few brand tokens. Rules carried over from the brand:
- *   - lime (--brand-accent, admin) and pink (--brand-accent, client) are for
- *     shapes only, never text on light backgrounds;
- *   - text-safe accents are --primary (dark green / teal ink).
+ *   - lime (--brand-accent) is for shapes only, never text on light
+ *     backgrounds;
+ *   - the text-safe accent is --primary (dark green).
  */
 
 /* Mission Control: matches codelaunch.nl. Guest pages (login) use it too. */
@@ -44,17 +44,12 @@
     --sidebar-border: #24405f;
     --sidebar-ring: #8ac800;
     --brand-accent: #8ac800;
+    /* Pale day sky at the top of Launchpad pages (text-safe, see test). */
+    --sky: #d4edfa;
     /* Launch check results: text-safe on background and card. */
     --status-pass: #4a7300;
     --status-warn: #8a5300;
     --status-fail: #b42318;
-    /* The go/no-go board: deep space, lime for GO. */
-    --space: #07102a;
-    --space-foreground: #eef3ff;
-    --space-muted: #a9b6c9;
-    --space-border: #24405f;
-    --space-go: #8ac800;
-    --space-nogo: #ff8f7d;
     /* Launch Control console, after the codelaunch.nl cockpit. Lamps and
        card edges are decoration; status is always written out too. */
     --console: #fffdf8;
@@ -81,71 +76,67 @@
     --radius: 0.75rem;
 }
 
-/* Launchpad: risograph mission poster (ADR 0005). */
+/* Launchpad: the same codelaunch.nl look as Mission Control (ADR 0008,
+   replacing the riso theme of ADR 0005). Kept as its own block so the two
+   portals can diverge again without touching markup. */
 [data-portal='client'] {
-    --background: #f4efe6;
-    --foreground: #1d1a17;
-    --card: #fbf8f2;
-    --card-foreground: #1d1a17;
-    --popover: #fbf8f2;
-    --popover-foreground: #1d1a17;
-    --primary: #007379;
+    --background: #f5f2ea;
+    --foreground: #10233a;
+    --card: #fffdf8;
+    --card-foreground: #10233a;
+    --popover: #fffdf8;
+    --popover-foreground: #10233a;
+    --primary: #4a7300;
     --primary-foreground: #ffffff;
-    --secondary: #ebe4d6;
-    --secondary-foreground: #1d1a17;
-    --muted: #ebe4d6;
-    --muted-foreground: #5a534b;
-    --accent: #ebe4d6;
-    --accent-foreground: #1d1a17;
+    --secondary: #ece7dc;
+    --secondary-foreground: #10233a;
+    --muted: #ece7dc;
+    --muted-foreground: #4a5a6c;
+    --accent: #ece7dc;
+    --accent-foreground: #10233a;
     --destructive: #b42318;
     --destructive-foreground: #b42318;
-    --border: #d9cfbf;
-    --input: #7d7468;
-    --ring: #007379;
-    --sidebar: #fbf8f2;
-    --sidebar-foreground: #1d1a17;
-    --sidebar-muted: #5a534b;
-    --sidebar-primary: #007379;
-    --sidebar-primary-foreground: #ffffff;
-    --sidebar-accent: #ebe4d6;
-    --sidebar-accent-foreground: #1d1a17;
-    --sidebar-border: #d9cfbf;
-    --sidebar-ring: #007379;
-    --brand-accent: #ff48b0;
+    --border: #e3ddd0;
+    --input: #857c6c;
+    --ring: #4a7300;
+    --sidebar: #10233a;
+    --sidebar-foreground: #eef3ff;
+    --sidebar-muted: #a9b6c9;
+    --sidebar-primary: #8ac800;
+    --sidebar-primary-foreground: #10233a;
+    --sidebar-accent: #1c3554;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #24405f;
+    --sidebar-ring: #8ac800;
+    --brand-accent: #8ac800;
+    /* Pale day sky at the top of Launchpad pages (text-safe, see test). */
+    --sky: #d4edfa;
     /* Launch check results: text-safe on background and card. */
-    --status-pass: #2f6b1f;
+    --status-pass: #4a7300;
     --status-warn: #8a5300;
     --status-fail: #b42318;
-    /* The go/no-go board: a riso ink panel, teal for GO, pink for NO-GO. */
-    --space: #1d1a17;
-    --space-foreground: #f4efe6;
-    --space-muted: #bdb3a6;
-    --space-border: #4a443d;
-    --space-go: #4cc9c0;
-    --space-nogo: #ff48b0;
-    /* Launch Control console in riso: paper, ink rim, teal and pink. */
-    --console: #fbf8f2;
-    --console-shade: #ebe4d6;
-    --console-edge: #1d1a17;
-    --screen-top: #f4efe6;
-    --screen-bottom: #ebe4d6;
-    --screen-rim: #1d1a17;
-    --screen-ink: #1d1a17;
-    --screen-text: #1d1a17;
-    --screen-label: #5a534b;
-    --screen-status: #00666b;
-    --lamp-go: #00838a;
-    --lamp-nogo: #ff48b0;
-    --lamp-clear: #f4efe6;
-    --lamp-off: #bdb3a6;
-    --edge-pass: #00838a;
+    /* Launch Control console, after the codelaunch.nl cockpit. Lamps and
+       card edges are decoration; status is always written out too. */
+    --console: #fffdf8;
+    --console-shade: #eef0f3;
+    --console-edge: #b3bac5;
+    --screen-top: #eaf7ff;
+    --screen-bottom: #cfe8fa;
+    --screen-rim: #b9d8f0;
+    --screen-ink: #10233a;
+    --screen-text: #22384f;
+    --screen-label: #33598a;
+    --screen-status: #355f00;
+    --lamp-go: #8ac800;
+    --lamp-nogo: #ef5a2a;
+    --lamp-clear: #f4f7ff;
+    --lamp-off: #c3cad4;
+    --edge-pass: #8ac800;
     --edge-warn: #f0a020;
-    --edge-fail: #ff48b0;
-    --edge-skip: #bdb3a6;
-    --riso-teal: #00838a;
+    --edge-fail: #ef5a2a;
+    --edge-skip: #c3cad4;
 
-    --font-portal-display:
-        'Archivo Variable', 'Bricolage Grotesque', ui-sans-serif, sans-serif;
-    --display-stretch: 125%;
-    --radius: 0.25rem;
+    --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
+    --display-stretch: 100%;
+    --radius: 0.75rem;
 }

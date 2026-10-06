@@ -32,9 +32,9 @@ export function PhaseSteps({
                         key={item.value}
                         aria-current={state === 'current' ? 'step' : undefined}
                         className={cn(
-                            'flex items-center gap-2 rounded-sm border-2 px-3 py-2 text-sm',
+                            'flex items-center gap-2 rounded-xl border-2 px-3 py-2 text-sm',
                             state === 'current' &&
-                                'border-foreground bg-card font-semibold',
+                                'border-brand-accent bg-card font-semibold shadow-sm',
                             state === 'done' && 'border-transparent bg-muted',
                             state === 'upcoming' &&
                                 'border-dashed border-input text-muted-foreground',
@@ -46,7 +46,8 @@ export function PhaseSteps({
                                 'flex size-6 shrink-0 items-center justify-center rounded-full font-mono text-xs',
                                 state === 'done' &&
                                     'bg-primary text-primary-foreground',
-                                state === 'current' && 'riso-overprint',
+                                state === 'current' &&
+                                    'lc-lamp lc-lamp-go lc-lamp-lit size-4',
                                 state === 'upcoming' && 'border border-input',
                             )}
                         >

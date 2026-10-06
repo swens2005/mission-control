@@ -80,8 +80,10 @@ All of these must pass before committing. CI runs the same set.
 - **Launch Control:** anything that can make a launch less ready must call
   `LaunchSignoffs::voidIfNotClear()`. Checks are `LaunchCheck` classes in
   `CheckRegistry`; unit test them with `CheckContext::fake()`.
-- **Status colors:** `text-status-pass/warn/fail` and the `space-*` board
-  tokens; status is always also written out.
+- **Look:** both portals share the codelaunch.nl look (ADR 0008). Reuse the
+  cockpit pieces in `resources/css/launch.css` (`lc-card` with `lc-edge-*`,
+  `lc-label`, `lc-lamp`, `lc-pill`, `lc-console`/`lc-screen`, `lc-hud`) and
+  `text-status-pass/warn/fail`; status is always also written out.
 - **Wayfinder:** import controllers per file
   (`@/actions/App/Http/Controllers/Admin/ProjectController`), not from the
   folder index.
