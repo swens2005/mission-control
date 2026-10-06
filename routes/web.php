@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\LaunchController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\ProjectController;
+use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Http\Controllers\DemoController;
@@ -54,6 +55,10 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::post('projects/{project}/launch/runs', [CheckRunController::class, 'store'])->name('checks.store');
     Route::post('projects/{project}/launch/waivers/{check}', [CheckWaiverController::class, 'store'])->name('waivers.store');
     Route::delete('projects/{project}/launch/waivers/{check}', [CheckWaiverController::class, 'destroy'])->name('waivers.destroy');
+
+    // Go/no-go (story 12).
+    Route::post('projects/{project}/launch/signoff', [SignoffController::class, 'store'])->name('signoffs.store');
+    Route::post('projects/{project}/launch/launched', [LaunchController::class, 'launched'])->name('launch.launched');
 });
 
 // Launchpad: the client's portal.
@@ -61,6 +66,7 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::get('/', [ClientProjectController::class, 'index'])->name('home');
     Route::get('projects/{project}', [ClientProjectController::class, 'show'])->name('projects.show');
     Route::get('projects/{project}/launch', [ClientLaunchController::class, 'show'])->name('launch.show');
+    Route::post('projects/{project}/launch/signoff', [ClientLaunchController::class, 'signoff'])->name('signoffs.store');
     Route::put('checklist-items/{item}/check', [ClientLaunchController::class, 'check'])->name('checklist.check');
     Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
 });

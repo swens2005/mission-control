@@ -68,3 +68,6 @@ Around it, Launch Control adds:
 - If the host blocks outbound traffic, the automated checks can't run there
   until the host allows it; the manual checklist and go/no-go board still
   work.
+- **Confirmed on 2026-10-06:** the first check run on production (a demo
+  sandbox against codelaunch.nl) passed all 10 checks, so the host allows
+  outbound HTTP(S), including to its own domain.

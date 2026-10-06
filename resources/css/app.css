@@ -43,6 +43,12 @@
     --color-status-pass: var(--status-pass);
     --color-status-warn: var(--status-warn);
     --color-status-fail: var(--status-fail);
+    --color-space: var(--space);
+    --color-space-foreground: var(--space-foreground);
+    --color-space-muted: var(--space-muted);
+    --color-space-border: var(--space-border);
+    --color-space-go: var(--space-go);
+    --color-space-nogo: var(--space-nogo);
 
     --color-border: var(--border);
     --color-input: var(--input);

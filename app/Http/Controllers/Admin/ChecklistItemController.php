@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\User;
 use App\Support\Activity;
 use App\Support\Launch\ChecklistToggle;
+use App\Support\Launch\LaunchSignoffs;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -40,6 +41,7 @@ class ChecklistItemController extends Controller
         $item->save();
 
         Activity::record('checklist.item_added', $launch, ['name' => $item->label, 'project' => $project->name]);
+        LaunchSignoffs::voidIfNotClear($launch, "{$item->label} was added to the checklist.", $request->user());
 
         Inertia::flash('toast', ['type' => 'success', 'message' => "{$item->label} added."]);
 

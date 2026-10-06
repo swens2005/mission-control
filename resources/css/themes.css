@@ -48,6 +48,13 @@
     --status-pass: #4a7300;
     --status-warn: #8a5300;
     --status-fail: #b42318;
+    /* The go/no-go board: deep space, lime for GO. */
+    --space: #07102a;
+    --space-foreground: #eef3ff;
+    --space-muted: #a9b6c9;
+    --space-border: #24405f;
+    --space-go: #8ac800;
+    --space-nogo: #ff8f7d;
 
     --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
     --display-stretch: 100%;
@@ -89,6 +96,13 @@
     --status-pass: #2f6b1f;
     --status-warn: #8a5300;
     --status-fail: #b42318;
+    /* The go/no-go board: a riso ink panel, teal for GO, pink for NO-GO. */
+    --space: #1d1a17;
+    --space-foreground: #f4efe6;
+    --space-muted: #bdb3a6;
+    --space-border: #4a443d;
+    --space-go: #4cc9c0;
+    --space-nogo: #ff48b0;
     --riso-teal: #00838a;
 
     --font-portal-display:

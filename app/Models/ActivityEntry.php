@@ -104,6 +104,8 @@ class ActivityEntry extends Model
             'launch.checked' => "ran the launch checks for {$name}: ".($p['summary'] ?? 'done'),
             'check.waived' => "waived the {$name} check: ".($p['reason'] ?? ''),
             'check.unwaived' => "withdrew the waiver for the {$name} check",
+            'launch.signed' => "signed off the launch of {$name} for the ".strtolower((string) ($p['role'] ?? 'team')),
+            'launch.signoffs_voided' => "cancelled the sign-offs for {$name}: ".($p['reason'] ?? 'the board changed'),
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };
     }

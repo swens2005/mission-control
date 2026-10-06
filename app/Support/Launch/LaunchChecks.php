@@ -29,7 +29,7 @@ final class LaunchChecks
 
         $count = fn (CheckStatus $status): int => count(array_filter($rows, fn (array $row) => $row['result']->status === $status));
 
-        return DB::transaction(function () use ($launch, $user, $rows, $durationMs, $count): CheckRun {
+        $run = DB::transaction(function () use ($launch, $user, $rows, $durationMs, $count): CheckRun {
             $run = new CheckRun;
             $run->forceFill([
                 'workspace_id' => $launch->workspace_id,
@@ -63,6 +63,10 @@ final class LaunchChecks
 
             return $run;
         });
+
+        LaunchSignoffs::voidIfNotClear($launch, "The latest check run isn't all clear.", $user);
+
+        return $run;
     }
 
     public function waive(Launch $launch, string $checkKey, string $reason, User $user): CheckWaiver
@@ -101,6 +105,8 @@ final class LaunchChecks
                 'name' => CheckRegistry::labels()[$checkKey] ?? $checkKey,
                 'project' => $launch->project->name,
             ], visibleToClient: true, actor: $user);
+
+            LaunchSignoffs::voidIfNotClear($launch, 'A waiver was withdrawn.', $user);
         }
     }
 }

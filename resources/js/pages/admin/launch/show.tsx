@@ -2,6 +2,7 @@ import { Form, Head, Link } from '@inertiajs/react';
 import ChecklistItemController from '@/actions/App/Http/Controllers/Admin/ChecklistItemController';
 import CheckRunController from '@/actions/App/Http/Controllers/Admin/CheckRunController';
 import LaunchController from '@/actions/App/Http/Controllers/Admin/LaunchController';
+import SignoffController from '@/actions/App/Http/Controllers/Admin/SignoffController';
 import {
     FormField,
     focusFirstError,
@@ -9,6 +10,7 @@ import {
 } from '@/components/form-field';
 import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
+import { GoBoard } from '@/components/launch/go-board';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -103,6 +105,18 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
                     </section>
                 ) : (
                     <>
+                        <div className="max-w-2xl">
+                            <GoBoard
+                                board={launch.board}
+                                signForm={SignoffController.store.form(
+                                    project.id,
+                                )}
+                                launchedForm={LaunchController.launched.form(
+                                    project.id,
+                                )}
+                            />
+                        </div>
+
                         <section
                             aria-labelledby="site-heading"
                             className="max-w-xl space-y-3"

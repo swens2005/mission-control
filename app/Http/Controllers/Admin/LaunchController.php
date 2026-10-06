@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Support\Activity;
 use App\Support\Launch\DefaultChecklist;
 use App\Support\Launch\LaunchPresenter;
+use App\Support\Launch\LaunchSignoffs;
 use App\Support\Launch\LaunchUrl;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -73,9 +74,29 @@ class LaunchController extends Controller
 
         if ($launch->wasChanged('url')) {
             Activity::record('launch.updated', $launch, ['name' => $project->name, 'url' => $launch->url]);
+
+            /** @var User $user */
+            $user = $request->user();
+            LaunchSignoffs::voidIfNotClear($launch, 'The site URL changed.', $user);
         }
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'Site URL saved.']);
+
+        return to_route('admin.launch.show', $project);
+    }
+
+    public function launched(Request $request, Project $project): RedirectResponse
+    {
+        Gate::authorize('update', $project);
+
+        $launch = $project->launch;
+        abort_if($launch === null, 404);
+
+        /** @var User $user */
+        $user = $request->user();
+        LaunchSignoffs::markLaunched($launch, $user);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "{$project->name} has launched."]);
 
         return to_route('admin.launch.show', $project);
     }

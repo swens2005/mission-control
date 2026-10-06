@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import ClientLaunchController from '@/actions/App/Http/Controllers/Client/LaunchController';
 import { CheckResults, RunSummary } from '@/components/launch/check-results';
 import { Checklist } from '@/components/launch/checklist';
+import { GoBoard } from '@/components/launch/go-board';
 import { formatDate } from '@/lib/format';
 import { show } from '@/routes/client/projects';
 import type { Launch } from '@/types';
@@ -30,6 +31,15 @@ export default function ShowLaunch({ project, launch }: Props) {
                         Target launch: {formatDate(project.targetLaunchOn)} ·{' '}
                         <span className="break-all">{launch.url}</span>
                     </p>
+                </div>
+
+                <div className="max-w-2xl">
+                    <GoBoard
+                        board={launch.board}
+                        signForm={ClientLaunchController.signoff.form(
+                            project.id,
+                        )}
+                    />
                 </div>
 
                 <section

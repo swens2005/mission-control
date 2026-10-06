@@ -25,5 +25,9 @@ final class ChecklistToggle
             'name' => $item->label,
             'project' => $item->launch->project->name,
         ], visibleToClient: true, actor: $user);
+
+        if (! $checked) {
+            LaunchSignoffs::voidIfNotClear($item->launch, "{$item->label} was unticked.", $user);
+        }
     }
 }

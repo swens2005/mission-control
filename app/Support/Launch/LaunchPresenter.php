@@ -3,11 +3,13 @@
 namespace App\Support\Launch;
 
 use App\Enums\ChecklistOwner;
+use App\Enums\ProjectPhase;
 use App\Models\ChecklistItem;
 use App\Models\CheckRun;
 use App\Models\CheckRunResult;
 use App\Models\CheckWaiver;
 use App\Models\Launch;
+use App\Models\Signoff;
 use App\Models\User;
 use App\Support\Launch\Checks\CheckRegistry;
 
@@ -28,6 +30,32 @@ final class LaunchPresenter
                 ->map(fn (ChecklistItem $item) => self::item($item, $viewer))
                 ->values(),
             'checks' => self::checks($launch),
+            'board' => self::board($launch, $viewer),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private static function board(Launch $launch, User $viewer): array
+    {
+        $board = GoNoGo::forLaunch($launch);
+        $launched = $launch->project->phase === ProjectPhase::Launched;
+        $role = $viewer->isAdmin() ? ChecklistOwner::Studio : ChecklistOwner::Client;
+
+        $signoffs = $launch->signoffs()->active()->get()->keyBy(fn (Signoff $signoff) => $signoff->role->value);
+
+        return [
+            'rows' => $board->rows,
+            'clear' => $board->clear,
+            'go' => $board->go,
+            'status' => $launched ? 'LAUNCHED' : $board->status(),
+            'headline' => $launched ? 'The site is live.' : $board->headline(),
+            'launched' => $launched,
+            'canSign' => $board->clear && ! $launched && ! $signoffs->has($role->value),
+            'signAs' => $role->label(),
+            'expectedName' => $viewer->name,
+            'canMarkLaunched' => $viewer->isAdmin() && $board->go && ! $launched,
         ];
     }
 

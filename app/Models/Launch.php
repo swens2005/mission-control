@@ -70,6 +70,14 @@ class Launch extends Model
     }
 
     /**
+     * @return HasMany<Signoff, $this>
+     */
+    public function signoffs(): HasMany
+    {
+        return $this->hasMany(Signoff::class);
+    }
+
+    /**
      * @return HasMany<CheckWaiver, $this>
      */
     public function waivers(): HasMany

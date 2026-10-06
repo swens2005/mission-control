@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Client;
 
+use App\Enums\ChecklistOwner;
 use App\Http\Controllers\Controller;
 use App\Models\ChecklistItem;
 use App\Models\Project;
 use App\Models\User;
 use App\Support\Launch\ChecklistToggle;
 use App\Support\Launch\LaunchPresenter;
+use App\Support\Launch\LaunchSignoffs;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -38,6 +40,27 @@ class LaunchController extends Controller
             ],
             'launch' => LaunchPresenter::present($launch, $client),
         ]);
+    }
+
+    /**
+     * The client's go/no-go signature: any contact of the organization.
+     */
+    public function signoff(Request $request, Project $project): RedirectResponse
+    {
+        Gate::authorize('viewAsClient', $project);
+
+        $launch = $project->launch;
+        abort_if($launch === null, 404);
+
+        $validated = $request->validate(['name' => ['required', 'string', 'max:120']]);
+
+        /** @var User $client */
+        $client = $request->user();
+        LaunchSignoffs::sign($launch, $client, ChecklistOwner::Client, $validated['name'], $request->ip());
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Thank you, your sign-off is recorded.']);
+
+        return back();
     }
 
     public function check(Request $request, ChecklistItem $item): RedirectResponse

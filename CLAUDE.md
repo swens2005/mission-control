@@ -74,6 +74,14 @@ All of these must pass before committing. CI runs the same set.
 - **Colors:** only through tokens in `resources/css/themes.css`;
   `ThemeContrastTest` checks every pair. Contrast math:
   `App\Support\Color\Contrast` (reuse it in Palette Lab).
+- **Outside URLs:** only through `App\Support\Http\SafeFetcher` (ADR 0007);
+  tests bind a fake `Resolver` and use `Http::fake()`. Its fakes can't
+  prove curl behavior, so check new fetch options against the real network.
+- **Launch Control:** anything that can make a launch less ready must call
+  `LaunchSignoffs::voidIfNotClear()`. Checks are `LaunchCheck` classes in
+  `CheckRegistry`; unit test them with `CheckContext::fake()`.
+- **Status colors:** `text-status-pass/warn/fail` and the `space-*` board
+  tokens; status is always also written out.
 - **Wayfinder:** import controllers per file
   (`@/actions/App/Http/Controllers/Admin/ProjectController`), not from the
   folder index.

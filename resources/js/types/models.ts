@@ -95,6 +95,7 @@ export type Launch = {
     url: string;
     checklist: ChecklistItem[];
     checks: LaunchChecks;
+    board: GoBoardState;
 };
 
 export type CheckStatus = 'pass' | 'warn' | 'fail' | 'skipped';
@@ -121,4 +122,18 @@ export type LaunchChecks = {
     } | null;
     previousRunAt: string | null;
     results: CheckResultItem[];
+};
+
+/** The go/no-go board (Launch Control, story 12). */
+export type GoBoardState = {
+    rows: { key: string; label: string; ok: boolean; detail: string }[];
+    clear: boolean;
+    go: boolean;
+    status: 'GO' | 'NO-GO' | 'CLEAR' | 'LAUNCHED';
+    headline: string;
+    launched: boolean;
+    canSign: boolean;
+    signAs: string;
+    expectedName: string;
+    canMarkLaunched: boolean;
 };
