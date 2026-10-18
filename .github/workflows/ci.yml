@@ -56,14 +56,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         with:
           php-version: ${{ env.PHP_VERSION }}
           extensions: ${{ env.PHP_EXTENSIONS }}
           tools: composer:v2
           coverage: none
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -166,7 +166,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+      - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 # v2
         if: steps.secrets.outputs.ready == 'true'
         with:
           php-version: ${{ env.PHP_VERSION }}
@@ -174,7 +174,7 @@ jobs:
           tools: composer:v2
           coverage: none
 
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.secrets.outputs.ready == 'true'
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -224,7 +224,7 @@ jobs:
 
       - name: Upload app (outside web root)
         if: steps.secrets.outputs.ready == 'true'
-        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b # v4.4.0
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
@@ -235,7 +235,7 @@ jobs:
 
       - name: Upload public folder (web root)
         if: steps.secrets.outputs.ready == 'true'
-        uses: SamKirkland/FTP-Deploy-Action@3a9c65ae0fc12ac924ccef8afc26941cc43aad0b # v4.4.0
+        uses: SamKirkland/FTP-Deploy-Action@110f9186c050f71550953127052e77650219c287 # v4.4.0
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
