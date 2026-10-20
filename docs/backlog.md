@@ -16,3 +16,4 @@ stories at most; anything extra lands here instead of in the build.
 - Proofmark: PDF and video uploads (images only for now, see story 15).
 - Palette Lab: a P3 (wide gamut) preview next to the sRGB swatch, for colors that had to be adjusted.
 - Palette Lab: compare the brand kit against the live site's CSS (would reuse SafeFetcher).
+- Scope: mixed VAT rates on one proposal (9% and 21%), with VAT per rate group (ADR 0010 uses one rate per proposal).
