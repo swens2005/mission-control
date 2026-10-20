@@ -107,6 +107,18 @@ All of these must pass before committing. CI runs the same set.
   not enough after uploads and renames.
 - **TypeScript unit tests:** Vitest via Vite+, `*.test.ts` next to the code
   (`npm run test:js`), for pure functions like `lib/pin-math.ts`.
+- **Money (ADR 0010):** `App\Support\Money\Money` (parse "1.250,50" or
+  "1,250.50", format "€1,234.56"), `Quantity` (hundredths), `Discount`
+  and `ProposalTotals` (half up with `intdiv`, VAT once on the total).
+  Validation rules `App\Rules\Price` and `QuarterQuantity`. Pages get
+  formatted amounts from presenters; no money maths in TypeScript.
+- **Frozen records:** a sent proposal stores its totals
+  (`Proposal::freeze()`) and shows those, not a recalculation. Accepted
+  proposals and lines of sent ones are also guarded in the models, behind
+  the policies.
+- **Printing:** `resources/css/print.css`; mark anything that shouldn't
+  print with `data-print="hide"` (layout chrome already is). Print colors
+  are tokens in `themes.css` under `@media print`.
 - **Wayfinder:** import controllers per file
   (`@/actions/App/Http/Controllers/Admin/ProjectController`), not from the
   folder index.
@@ -141,6 +153,14 @@ All of these must pass before committing. CI runs the same set.
   `sandbox:prune` once deleted a real local upload folder from a test.
 - **Vitest in CI** needs `LARAVEL_BYPASS_ENV_CHECK=1`: laravel-vite-plugin
   refuses any Vite server when `CI` is set.
+- **Inertia forms:** `<Form>` ignores which submit button was clicked;
+  set a ref in the button's `onClick` and read it in `transform`. With an
+  `errorBag` on the form, throw errors in the default bag on the server
+  (Inertia renames it); a hand-named bag never reaches the form.
+- **FormRequest:** don't name a helper `attributes()`; Laravel uses it for
+  field names in messages.
+- **Local port:** 8123 may already be serving another local app (Jobby);
+  check the page title, or pick another port.
 - **Shell edits, again:** even Python heredocs break in Git Bash when the
   content has template literals and quotes. Write the script to the
   scratchpad with the file editor, then run it.
