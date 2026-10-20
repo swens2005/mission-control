@@ -88,6 +88,16 @@ class Project extends Model
     }
 
     /**
+     * Scope proposal versions, newest first.
+     *
+     * @return HasMany<Proposal, $this>
+     */
+    public function proposals(): HasMany
+    {
+        return $this->hasMany(Proposal::class)->orderByDesc('number');
+    }
+
+    /**
      * Proofmark rounds, newest first.
      *
      * @return HasMany<ReviewRound, $this>

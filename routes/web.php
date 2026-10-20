@@ -15,6 +15,8 @@ use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\PaletteController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProofmarkController;
+use App\Http\Controllers\Admin\ProposalController;
+use App\Http\Controllers\Admin\ProposalLineController;
 use App\Http\Controllers\Admin\ScopeController;
 use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Admin\TokenExportController;
@@ -129,6 +131,16 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::post('line-items/{item}/move', [LineItemController::class, 'move'])->name('line-items.move');
     Route::post('line-items/{item}/archive', [LineItemController::class, 'archive'])->name('line-items.archive');
     Route::delete('line-items/{item}/archive', [LineItemController::class, 'restore'])->name('line-items.restore');
+
+    // Building a proposal (story 27).
+    Route::post('projects/{project}/scope/proposals', [ProposalController::class, 'store'])->name('proposals.store');
+    Route::patch('proposals/{proposal}', [ProposalController::class, 'update'])->name('proposals.update');
+    Route::put('proposals/{proposal}/discount', [ProposalController::class, 'discount'])->name('proposals.discount');
+    Route::post('proposals/{proposal}/lines', [ProposalLineController::class, 'store'])->name('proposal-lines.store');
+    Route::post('proposals/{proposal}/lines/library', [ProposalLineController::class, 'storeFromLibrary'])->name('proposal-lines.library');
+    Route::patch('proposal-lines/{line}', [ProposalLineController::class, 'update'])->name('proposal-lines.update');
+    Route::post('proposal-lines/{line}/move', [ProposalLineController::class, 'move'])->name('proposal-lines.move');
+    Route::delete('proposal-lines/{line}', [ProposalLineController::class, 'destroy'])->name('proposal-lines.destroy');
 });
 
 // Launchpad: the client's portal.

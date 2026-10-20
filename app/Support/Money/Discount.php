@@ -24,6 +24,26 @@ final readonly class Discount
         return new self($basisPoints, null);
     }
 
+    /**
+     * "10", "12.5" or "12,5" (percent) as basis points; null otherwise.
+     */
+    public static function parsePercentage(string $input): ?int
+    {
+        if (preg_match('/^(\d{1,3})(?:[.,](\d{1,2}))?\s*%?$/', trim($input), $match) !== 1) {
+            return null;
+        }
+
+        return (int) $match[1] * 100 + (int) str_pad($match[2] ?? '', 2, '0');
+    }
+
+    /**
+     * Basis points as "12.5%".
+     */
+    public static function formatPercentage(int $basisPoints): string
+    {
+        return Quantity::format($basisPoints).'%';
+    }
+
     public static function fixed(int $cents): self
     {
         if ($cents < 0) {
@@ -34,8 +54,9 @@ final readonly class Discount
     }
 
     /**
-     * The discount on this subtotal, in cents. A fixed discount larger than
-     * the subtotal is refused: a proposal never goes below zero.
+     * The discount on this subtotal, in cents. A fixed discount never takes
+     * more than the subtotal, so a proposal never goes below zero (the form
+     * refuses a larger one; removing lines later can still get here).
      */
     public function amountOf(int $subtotal): int
     {
@@ -43,10 +64,11 @@ final readonly class Discount
             return ProposalTotals::roundedShare($subtotal, $this->basisPoints);
         }
 
-        if ($this->cents > $subtotal) {
-            throw new InvalidArgumentException('The discount is larger than the subtotal.');
-        }
+        return min((int) $this->cents, $subtotal);
+    }
 
-        return (int) $this->cents;
+    public function exceeds(int $subtotal): bool
+    {
+        return $this->cents !== null && $this->cents > $subtotal;
     }
 }

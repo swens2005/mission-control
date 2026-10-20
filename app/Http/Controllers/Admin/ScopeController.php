@@ -4,16 +4,18 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Intake;
+use App\Models\LineItem;
 use App\Models\Project;
 use App\Support\Activity;
 use App\Support\Scope\IntakePresenter;
+use App\Support\Scope\ProposalPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Scope for one project (studio side): the intake, and later the proposal.
+ * Scope for one project (studio side): the intake and the proposal.
  */
 class ScopeController extends Controller
 {
@@ -22,10 +24,17 @@ class ScopeController extends Controller
         Gate::authorize('view', $project);
 
         $intake = $project->intake()->first();
+        $proposal = $project->proposals()->with(['lines', 'project'])->first();
 
         return Inertia::render('admin/scope/show', [
             'project' => ProjectController::present($project),
             'intake' => $intake ? IntakePresenter::intake($intake) : null,
+            'proposal' => $proposal ? ProposalPresenter::proposal($proposal) : null,
+            'library' => $proposal
+                ? ProposalPresenter::library(LineItem::query()->active()->orderBy('position')->orderBy('id')->get())
+                : [],
+            'kinds' => ProposalPresenter::kinds(),
+            'discountTypes' => ProposalPresenter::discountTypes(),
         ]);
     }
 

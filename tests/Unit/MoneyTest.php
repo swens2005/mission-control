@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\Money\Discount;
 use App\Support\Money\Money;
 use App\Support\Money\Quantity;
 
@@ -61,4 +62,15 @@ test('quantities are parsed as hundredths and formatted back', function () {
         ->and(Quantity::format(150))->toBe('1.5')
         ->and(Quantity::format(125))->toBe('1.25')
         ->and(Quantity::format(25))->toBe('0.25');
+});
+
+test('discount percentages are parsed as basis points', function () {
+    expect(Discount::parsePercentage('10'))->toBe(1000)
+        ->and(Discount::parsePercentage('12,5'))->toBe(1250)
+        ->and(Discount::parsePercentage('7.25 %'))->toBe(725)
+        ->and(Discount::parsePercentage('100'))->toBe(10000)
+        ->and(Discount::parsePercentage('-5'))->toBeNull()
+        ->and(Discount::parsePercentage('1000'))->toBeNull()
+        ->and(Discount::parsePercentage('ten'))->toBeNull()
+        ->and(Discount::formatPercentage(1250))->toBe('12.5%');
 });

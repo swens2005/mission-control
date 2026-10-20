@@ -66,12 +66,19 @@ test('a fixed discount comes off the subtotal', function () {
         ->and($totals->total)->toBe(272250);
 });
 
-test('a discount can take the whole subtotal but not more', function () {
+test('a discount can take the whole subtotal but never more', function () {
     expect(ProposalTotals::calculate([line(10000)], Discount::fixed(10000))->total)->toBe(0)
         ->and(ProposalTotals::calculate([line(10000)], Discount::percentage(10000))->total)->toBe(0);
 
-    ProposalTotals::calculate([line(10000)], Discount::fixed(10001));
-})->throws(InvalidArgumentException::class, 'larger than the subtotal');
+    // E.g. after a line was removed: capped, so the total never goes negative.
+    $capped = ProposalTotals::calculate([line(10000)], Discount::fixed(25000));
+
+    expect($capped->discount)->toBe(10000)
+        ->and($capped->total)->toBe(0)
+        ->and(Discount::fixed(25000)->exceeds(10000))->toBeTrue()
+        ->and(Discount::fixed(10000)->exceeds(10000))->toBeFalse()
+        ->and(Discount::percentage(10000)->exceeds(10000))->toBeFalse();
+});
 
 test('discounts outside 0 to 100% or below zero are refused', function (Closure $make) {
     $make();

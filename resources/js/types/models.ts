@@ -342,3 +342,56 @@ export type LibraryItem = {
     /** "×" or "h". */
     unit: string;
 };
+
+/** Scope: a proposal line, amounts already formatted (story 27). */
+export type ProposalLine = {
+    id: number;
+    name: string;
+    description: string | null;
+    kind: 'fixed' | 'hourly';
+    kindLabel: string;
+    unitPrice: string;
+    unitPriceInput: string;
+    quantity: string;
+    /** "×" or "h". */
+    unit: string;
+    total: string;
+};
+
+export type ProposalTotals = {
+    subtotal: string;
+    /** Negative, e.g. "−€250.00". */
+    discount: string;
+    net: string;
+    vat: string;
+    total: string;
+    hasDiscount: boolean;
+};
+
+export type Proposal = {
+    id: number;
+    number: number;
+    title: string;
+    introduction: string | null;
+    lines: ProposalLine[];
+    discount: {
+        type: 'none' | 'percentage' | 'fixed';
+        valueInput: string;
+        label: string | null;
+        /** "10%" or "€250.00". */
+        description: string | null;
+        /** A fixed discount larger than the subtotal, capped at it. */
+        capped: boolean;
+    };
+    totals: ProposalTotals;
+};
+
+export type LibraryGroup = {
+    label: string;
+    items: {
+        id: number;
+        name: string;
+        price: string;
+        defaultQuantity: string;
+    }[];
+};

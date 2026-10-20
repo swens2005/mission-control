@@ -4,15 +4,29 @@ import type { Intake } from '@/types';
 /**
  * The intake's answers, read-only. Used by both portals (story 25).
  */
-export function IntakeAnswers({ intake }: { intake: Intake }) {
+export function IntakeAnswers({
+    intake,
+    compact = false,
+}: {
+    intake: Intake;
+    /** One column, for the narrow side panel next to the proposal. */
+    compact?: boolean;
+}) {
     const features = [
         ...intake.featureLabels,
         ...(intake.featuresOther ? [intake.featuresOther] : []),
     ];
 
     return (
-        <div className="grid gap-5 lg:grid-cols-2" data-tour="intake-answers">
-            <AnswerCard number="01" title="Goals" className="lg:col-span-2">
+        <div
+            className={compact ? 'grid gap-4' : 'grid gap-5 lg:grid-cols-2'}
+            data-tour="intake-answers"
+        >
+            <AnswerCard
+                number="01"
+                title="Goals"
+                className={compact ? '' : 'lg:col-span-2'}
+            >
                 <p className="whitespace-pre-line">
                     {intake.goals || 'Not answered.'}
                 </p>
