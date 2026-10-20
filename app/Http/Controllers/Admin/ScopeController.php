@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Intake;
 use App\Models\LineItem;
 use App\Models\Project;
+use App\Models\Proposal;
 use App\Support\Activity;
 use App\Support\Scope\IntakePresenter;
 use App\Support\Scope\ProposalPresenter;
@@ -24,17 +25,35 @@ class ScopeController extends Controller
         Gate::authorize('view', $project);
 
         $intake = $project->intake()->first();
-        $proposal = $project->proposals()->with(['lines', 'project'])->first();
+        $versions = $project->proposals()->with(['lines', 'project.organization', 'project.workspace'])->get();
+        // The newest version: the draft being built, or the last one sent.
+        $proposal = $versions->first();
 
         return Inertia::render('admin/scope/show', [
             'project' => ProjectController::present($project),
             'intake' => $intake ? IntakePresenter::intake($intake) : null,
-            'proposal' => $proposal ? ProposalPresenter::proposal($proposal) : null,
-            'library' => $proposal
+            'proposal' => $proposal ? ProposalPresenter::proposal($proposal, $versions) : null,
+            'versions' => ProposalPresenter::versions($versions),
+            'library' => $proposal && ! $proposal->isSent()
                 ? ProposalPresenter::library(LineItem::query()->active()->orderBy('position')->orderBy('id')->get())
                 : [],
             'kinds' => ProposalPresenter::kinds(),
             'discountTypes' => ProposalPresenter::discountTypes(),
+        ]);
+    }
+
+    /**
+     * One version, read-only and printable.
+     */
+    public function version(Proposal $proposal): Response
+    {
+        Gate::authorize('view', $proposal);
+
+        $proposal->load(['lines', 'project.organization', 'project.workspace']);
+
+        return Inertia::render('admin/scope/version', [
+            'project' => ProjectController::present($proposal->project),
+            'proposal' => ProposalPresenter::proposal($proposal),
         ]);
     }
 

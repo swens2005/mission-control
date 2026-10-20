@@ -47,6 +47,7 @@ export function FlashToaster() {
         <div
             role="status"
             aria-live="polite"
+            data-print="hide"
             className="pointer-events-none fixed right-4 bottom-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2"
         >
             {toasts.map((toast) => (

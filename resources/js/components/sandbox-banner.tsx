@@ -16,6 +16,7 @@ export function SandboxBanner() {
     return (
         <aside
             aria-label="Demo"
+            data-print="hide"
             className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 bg-foreground px-4 py-2 text-center text-sm text-background"
         >
             <p>

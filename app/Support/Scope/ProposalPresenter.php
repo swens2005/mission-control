@@ -19,18 +19,26 @@ use Illuminate\Support\Collection;
 final class ProposalPresenter
 {
     /**
+     * @param  Collection<int, Proposal>|null  $versions  all of the project's versions, for the status
      * @return array<string, mixed>
      */
-    public static function proposal(Proposal $proposal): array
+    public static function proposal(Proposal $proposal, ?Collection $versions = null): array
     {
         $totals = $proposal->totals();
         $discount = $proposal->discount();
+        $project = $proposal->project;
 
         return [
             'id' => $proposal->id,
             'number' => $proposal->number,
             'title' => $proposal->title,
             'introduction' => $proposal->introduction,
+            ...self::status($proposal, $versions ?? $project->proposals()->get()),
+            'sentAt' => $proposal->sent_at?->toIso8601String(),
+            'sentByName' => $proposal->sent_by_name,
+            'projectName' => $project->name,
+            'organizationName' => $project->organization->name,
+            'studioName' => $project->workspace->name,
             'lines' => $proposal->lines->values()->map(
                 fn (ProposalLine $line, int $i) => self::line($line, $totals->lineTotals[$i]),
             )->all(),
@@ -47,6 +55,50 @@ final class ProposalPresenter
             ],
             'totals' => self::totals($totals),
         ];
+    }
+
+    /**
+     * Where a version stands: a draft, sent, or replaced by a later sent
+     * version.
+     *
+     * @param  Collection<int, Proposal>  $versions
+     * @return array{status: string, statusLabel: string}
+     */
+    public static function status(Proposal $proposal, Collection $versions): array
+    {
+        if (! $proposal->isSent()) {
+            return ['status' => 'draft', 'statusLabel' => 'Draft'];
+        }
+
+        $newer = $versions
+            ->filter(fn (Proposal $other) => $other->isSent() && $other->number > $proposal->number)
+            ->sortBy('number')
+            ->first();
+
+        return $newer
+            ? ['status' => 'superseded', 'statusLabel' => "Superseded by v{$newer->number}"]
+            : ['status' => 'sent', 'statusLabel' => 'Sent'];
+    }
+
+    /**
+     * The version list, newest first; clients see sent versions only.
+     *
+     * @param  Collection<int, Proposal>  $versions
+     * @return list<array{id: int, number: int, status: string, statusLabel: string, sentAt: string|null, total: string|null}>
+     */
+    public static function versions(Collection $versions, bool $sentOnly = false): array
+    {
+        return array_values($versions
+            ->filter(fn (Proposal $proposal) => ! $sentOnly || $proposal->isSent())
+            ->sortByDesc('number')
+            ->map(fn (Proposal $proposal) => [
+                'id' => $proposal->id,
+                'number' => $proposal->number,
+                ...self::status($proposal, $versions),
+                'sentAt' => $proposal->sent_at?->toIso8601String(),
+                'total' => $proposal->isSent() ? Money::format((int) $proposal->total_cents) : null,
+            ])
+            ->all());
     }
 
     /**

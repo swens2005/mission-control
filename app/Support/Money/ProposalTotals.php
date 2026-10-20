@@ -52,6 +52,16 @@ final readonly class ProposalTotals
         return new self($lineTotals, $subtotal, $discountCents, $vat, $net + $vat);
     }
 
+    /**
+     * Totals stored when a version was sent, shown as they were.
+     *
+     * @param  list<int>  $lineTotals
+     */
+    public static function frozen(array $lineTotals, int $subtotal, int $discount, int $vat, int $total): self
+    {
+        return new self($lineTotals, $subtotal, $discount, $vat, $total);
+    }
+
     public static function lineTotal(int $unitCents, int $quantity): int
     {
         return intdiv($unitCents * $quantity + 50, 100);

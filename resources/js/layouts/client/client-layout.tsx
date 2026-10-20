@@ -40,7 +40,10 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
             <SandboxBanner />
 
-            <header className="bg-sidebar text-sidebar-foreground">
+            <header
+                className="bg-sidebar text-sidebar-foreground"
+                data-print="hide"
+            >
                 <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
                     <Link
                         href={homeUrl}

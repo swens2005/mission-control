@@ -368,11 +368,20 @@ export type ProposalTotals = {
     hasDiscount: boolean;
 };
 
+export type ProposalStatus = 'draft' | 'sent' | 'superseded';
+
 export type Proposal = {
     id: number;
     number: number;
     title: string;
     introduction: string | null;
+    status: ProposalStatus;
+    statusLabel: string;
+    sentAt: string | null;
+    sentByName: string | null;
+    projectName: string;
+    organizationName: string;
+    studioName: string;
     lines: ProposalLine[];
     discount: {
         type: 'none' | 'percentage' | 'fixed';
@@ -394,4 +403,14 @@ export type LibraryGroup = {
         price: string;
         defaultQuantity: string;
     }[];
+};
+
+export type ProposalVersion = {
+    id: number;
+    number: number;
+    status: ProposalStatus;
+    statusLabel: string;
+    sentAt: string | null;
+    /** Sent versions only. */
+    total: string | null;
 };

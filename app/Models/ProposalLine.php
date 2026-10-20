@@ -23,6 +23,7 @@ use LogicException;
  * @property LineItemKind $kind
  * @property int $unit_price_cents
  * @property int $quantity hundredths: 1.5 hours is 150
+ * @property int|null $total_cents frozen when the proposal is sent
  * @property int $position
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at

@@ -140,3 +140,19 @@
     --display-stretch: 100%;
     --radius: 0.75rem;
 }
+
+/* Paper (story 28): black on white in both portals. Selected as
+   [data-portal] without a value, so it comes after the portal blocks and
+   ThemeContrastTest (which reads the [data-portal='…'] blocks) skips it. */
+@media print {
+    :root,
+    [data-portal] {
+        --background: #ffffff;
+        --foreground: #000000;
+        --card: #ffffff;
+        --card-foreground: #000000;
+        --muted-foreground: #333333;
+        --border: #555555;
+        --primary: #000000;
+    }
+}

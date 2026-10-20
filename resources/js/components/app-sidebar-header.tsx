@@ -15,7 +15,10 @@ export function AppSidebarHeader({
     const { workspace } = usePage().props;
 
     return (
-        <header className="flex min-h-16 shrink-0 flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-border px-4 py-3 md:px-6">
+        <header
+            data-print="hide"
+            className="flex min-h-16 shrink-0 flex-wrap items-center justify-between gap-x-6 gap-y-2 border-b border-border px-4 py-3 md:px-6"
+        >
             <div className="flex min-w-0 items-center gap-2">
                 <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />

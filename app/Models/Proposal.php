@@ -28,6 +28,12 @@ use LogicException;
  * @property DiscountType $discount_type
  * @property int $discount_value basis points or cents, by type
  * @property string|null $discount_label
+ * @property CarbonImmutable|null $sent_at
+ * @property string|null $sent_by_name
+ * @property int|null $subtotal_cents frozen when sent
+ * @property int|null $discount_cents frozen when sent
+ * @property int|null $vat_cents frozen when sent
+ * @property int|null $total_cents frozen when sent
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read Project $project
@@ -98,11 +104,27 @@ class Proposal extends Model
         };
     }
 
+    public function isSent(): bool
+    {
+        return $this->sent_at !== null;
+    }
+
     /**
-     * The sums, worked out from the lines and the discount (ADR 0010).
+     * The sums: for a draft worked out from the lines and the discount; for
+     * a sent version the totals stored when it was sent (ADR 0010).
      */
     public function totals(): ProposalTotals
     {
+        if ($this->isSent()) {
+            return ProposalTotals::frozen(
+                array_values($this->lines->map(fn (ProposalLine $line) => (int) $line->total_cents)->all()),
+                (int) $this->subtotal_cents,
+                (int) $this->discount_cents,
+                (int) $this->vat_cents,
+                (int) $this->total_cents,
+            );
+        }
+
         return ProposalTotals::calculate(
             array_values($this->lines->map(fn (ProposalLine $line) => [
                 'unitCents' => $line->unit_price_cents,
@@ -112,10 +134,37 @@ class Proposal extends Model
         );
     }
 
+    /**
+     * Sends this draft: works out the totals once and stores them with the
+     * version and each line. Call inside a transaction.
+     */
+    public function freeze(string $sentBy): void
+    {
+        if ($this->isSent()) {
+            throw new LogicException('This proposal version was already sent.');
+        }
+
+        $totals = $this->totals();
+
+        foreach ($this->lines->values() as $i => $line) {
+            $line->total_cents = $totals->lineTotals[$i];
+            $line->save();
+        }
+
+        $this->subtotal_cents = $totals->subtotal;
+        $this->discount_cents = $totals->discount;
+        $this->vat_cents = $totals->vat;
+        $this->total_cents = $totals->total;
+        $this->sent_at = now();
+        $this->sent_by_name = $sentBy;
+        $this->save();
+    }
+
     protected function casts(): array
     {
         return [
             'discount_type' => DiscountType::class,
+            'sent_at' => 'datetime',
         ];
     }
 }

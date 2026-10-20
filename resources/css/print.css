@@ -1,0 +1,53 @@
+/* Printing (story 28): a proposal prints as a plain black-on-white
+   document instead of a PDF. Mark anything that shouldn't print with
+   data-print="hide"; the print colors are tokens in themes.css. */
+@media print {
+    @page {
+        margin: 16mm 14mm;
+    }
+
+    .skip-link,
+    [data-slot='sidebar'],
+    [data-print='hide'] {
+        display: none !important;
+    }
+
+    body,
+    .sky-fade {
+        background: var(--background) !important;
+    }
+
+    /* The cockpit look stays on screen; paper gets plain boxes. */
+    .lc-card,
+    .lc-console,
+    .lc-screen {
+        box-shadow: none !important;
+        background: var(--card) !important;
+    }
+
+    .lc-card {
+        border-top: 1px solid var(--border) !important;
+    }
+
+    .lc-screen::after {
+        display: none !important;
+    }
+
+    .proposal-document {
+        border: 0 !important;
+        padding: 0 !important;
+    }
+
+    .proposal-document tr,
+    .proposal-document tfoot {
+        break-inside: avoid;
+    }
+
+    .proposal-document thead {
+        display: table-header-group;
+    }
+
+    a {
+        text-decoration: none;
+    }
+}

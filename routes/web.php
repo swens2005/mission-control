@@ -141,6 +141,11 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::patch('proposal-lines/{line}', [ProposalLineController::class, 'update'])->name('proposal-lines.update');
     Route::post('proposal-lines/{line}/move', [ProposalLineController::class, 'move'])->name('proposal-lines.move');
     Route::delete('proposal-lines/{line}', [ProposalLineController::class, 'destroy'])->name('proposal-lines.destroy');
+
+    // Sending, versions and printing (story 28).
+    Route::get('proposals/{proposal}', [ScopeController::class, 'version'])->name('proposals.show');
+    Route::post('proposals/{proposal}/send', [ProposalController::class, 'send'])->name('proposals.send');
+    Route::post('proposals/{proposal}/revise', [ProposalController::class, 'revise'])->name('proposals.revise');
 });
 
 // Launchpad: the client's portal.
@@ -157,6 +162,7 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
     Route::get('projects/{project}/scope', [ClientScopeController::class, 'show'])->name('scope.show');
     Route::put('intakes/{intake}', [ClientScopeController::class, 'updateIntake'])->name('intakes.update');
+    Route::get('proposals/{proposal}', [ClientScopeController::class, 'version'])->name('proposals.show');
 });
 
 require __DIR__.'/settings.php';

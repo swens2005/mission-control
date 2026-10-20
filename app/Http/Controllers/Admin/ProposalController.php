@@ -6,12 +6,14 @@ use App\Enums\DiscountType;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Proposal;
+use App\Models\User;
 use App\Rules\Price;
 use App\Support\Activity;
 use App\Support\Money\Discount;
 use App\Support\Money\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -40,6 +42,74 @@ class ProposalController extends Controller
         }
 
         return to_route('admin.scope.show', $project);
+    }
+
+    /**
+     * Sends the draft to the client: the version is frozen from now on.
+     */
+    public function send(Request $request, Proposal $proposal): RedirectResponse
+    {
+        Gate::authorize('update', $proposal);
+
+        $proposal->load('lines');
+
+        if ($proposal->lines->isEmpty()) {
+            throw ValidationException::withMessages(['send' => 'Add at least one line before sending.']);
+        }
+
+        if ($proposal->discount()?->exceeds($proposal->totals()->subtotal)) {
+            throw ValidationException::withMessages(['send' => 'The discount is more than the subtotal. Lower it before sending.']);
+        }
+
+        /** @var User $user */
+        $user = $request->user();
+
+        DB::transaction(fn () => $proposal->freeze($user->name));
+
+        Activity::record('scope.proposal_sent', $proposal, [
+            'name' => $proposal->project->name,
+            'version' => "v{$proposal->number}",
+            'total' => Money::format((int) $proposal->total_cents),
+        ], visibleToClient: true);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "Proposal v{$proposal->number} sent to the client."]);
+
+        return to_route('admin.scope.show', $proposal->project_id);
+    }
+
+    /**
+     * "Make changes": the next version as a draft copy of this one. The
+     * sent version stays exactly as it was.
+     */
+    public function revise(Proposal $proposal): RedirectResponse
+    {
+        Gate::authorize('revise', $proposal);
+
+        $next = DB::transaction(function () use ($proposal): Proposal {
+            $next = new Proposal;
+            $next->project_id = $proposal->project_id;
+            $next->number = $proposal->number + 1;
+            $next->title = $proposal->title;
+            $next->introduction = $proposal->introduction;
+            $next->discount_type = $proposal->discount_type;
+            $next->discount_value = $proposal->discount_value;
+            $next->discount_label = $proposal->discount_label;
+            $next->save();
+
+            foreach ($proposal->lines as $line) {
+                $copy = $line->replicate(['total_cents']);
+                $copy->proposal_id = $next->id;
+                $copy->save();
+            }
+
+            return $next;
+        });
+
+        Activity::record('scope.proposal_started', $next, ['name' => $proposal->project->name, 'version' => "v{$next->number}"]);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "Draft v{$next->number} started from v{$proposal->number}."]);
+
+        return to_route('admin.scope.show', $proposal->project_id);
     }
 
     public function update(Request $request, Proposal $proposal): RedirectResponse

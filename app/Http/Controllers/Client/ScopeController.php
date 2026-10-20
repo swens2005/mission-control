@@ -7,9 +7,11 @@ use App\Enums\IntakeFeature;
 use App\Http\Controllers\Controller;
 use App\Models\Intake;
 use App\Models\Project;
+use App\Models\Proposal;
 use App\Models\User;
 use App\Support\Activity;
 use App\Support\Scope\IntakePresenter;
+use App\Support\Scope\ProposalPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -18,7 +20,8 @@ use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * Scope in Launchpad: the intake questionnaire (story 25).
+ * Scope in Launchpad: the intake questionnaire (story 25) and the sent
+ * proposal versions (story 28).
  */
 class ScopeController extends Controller
 {
@@ -27,17 +30,47 @@ class ScopeController extends Controller
         Gate::authorize('viewAsClient', $project);
 
         $intake = $project->intake()->first();
-        abort_if($intake === null, 404);
+        // Sent versions only; a draft is never shown to the client.
+        $versions = $project->proposals()->whereNotNull('sent_at')
+            ->with(['lines', 'project.organization', 'project.workspace'])->get();
+        $proposal = $versions->first();
+
+        abort_if($intake === null && $proposal === null, 404);
 
         return Inertia::render('client/scope/show', [
-            'project' => [
-                'id' => $project->id,
-                'name' => $project->name,
-                'targetLaunchOn' => $project->target_launch_on?->toDateString(),
-            ],
-            'intake' => IntakePresenter::intake($intake),
+            'project' => $this->project($project),
+            'intake' => $intake ? IntakePresenter::intake($intake) : null,
             'options' => IntakePresenter::options(),
+            'proposal' => $proposal ? ProposalPresenter::proposal($proposal, $versions) : null,
+            'versions' => ProposalPresenter::versions($versions),
         ]);
+    }
+
+    /**
+     * One sent version, read-only and printable.
+     */
+    public function version(Proposal $proposal): Response
+    {
+        Gate::authorize('viewAsClient', $proposal);
+
+        $proposal->load(['lines', 'project.organization', 'project.workspace']);
+
+        return Inertia::render('client/scope/version', [
+            'project' => $this->project($proposal->project),
+            'proposal' => ProposalPresenter::proposal($proposal),
+        ]);
+    }
+
+    /**
+     * @return array{id: int, name: string, targetLaunchOn: string|null}
+     */
+    private function project(Project $project): array
+    {
+        return [
+            'id' => $project->id,
+            'name' => $project->name,
+            'targetLaunchOn' => $project->target_launch_on?->toDateString(),
+        ];
     }
 
     /**
