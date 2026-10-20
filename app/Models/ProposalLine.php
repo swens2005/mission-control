@@ -38,6 +38,19 @@ class ProposalLine extends Model
 
     protected static function booted(): void
     {
+        // A sent version is frozen (story 28); policies refuse first, this
+        // is the safety net.
+        static::updating(function (self $line): void {
+            if (Proposal::withoutGlobalScopes()->whereKey($line->proposal_id)->whereNotNull('sent_at')->exists()) {
+                throw new LogicException('Lines of a sent proposal cannot be changed.');
+            }
+        });
+        static::deleting(function (self $line): void {
+            if (Proposal::withoutGlobalScopes()->whereKey($line->proposal_id)->whereNotNull('sent_at')->exists()) {
+                throw new LogicException('Lines of a sent proposal cannot be removed.');
+            }
+        });
+
         static::saving(function (self $line): void {
             $proposal = Proposal::withoutGlobalScopes()->find($line->proposal_id);
 

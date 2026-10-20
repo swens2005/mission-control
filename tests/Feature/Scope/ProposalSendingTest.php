@@ -147,7 +147,7 @@ test('the client sees only sent versions', function () {
             ->has('versions', 1));
     $this->get(route('client.proposals.show', $v2))->assertNotFound();
     $this->get(route('client.projects.show', $this->project))->assertInertia(fn (Assert $page) => $page->where('hasScope', true));
-    expect(proposalWaitingTitles($this->client))->toBe(['Review proposal v1']);
+    expect(proposalWaitingTitles($this->client))->toBe(['Accept proposal v1']);
 
     sendProposal($this, $v2);
 
@@ -159,7 +159,7 @@ test('the client sees only sent versions', function () {
             ->where('versions.1.statusLabel', 'Superseded by v2'));
     $this->get(route('client.proposals.show', $this->proposal))
         ->assertInertia(fn (Assert $page) => $page->component('client/scope/version')->where('proposal.number', 1));
-    expect(proposalWaitingTitles($this->client))->toBe(['Review proposal v2']);
+    expect(proposalWaitingTitles($this->client))->toBe(['Accept proposal v2']);
 });
 
 test('other organizations and workspaces get a 404, clients a 403 on studio actions', function () {

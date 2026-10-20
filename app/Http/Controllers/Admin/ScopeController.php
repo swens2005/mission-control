@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\ProjectPhase;
 use App\Http\Controllers\Controller;
 use App\Models\Intake;
 use App\Models\LineItem;
@@ -12,6 +13,7 @@ use App\Support\Scope\IntakePresenter;
 use App\Support\Scope\ProposalPresenter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,20 +28,67 @@ class ScopeController extends Controller
 
         $intake = $project->intake()->first();
         $versions = $project->proposals()->with(['lines', 'project.organization', 'project.workspace'])->get();
-        // The newest version: the draft being built, or the last one sent.
-        $proposal = $versions->first();
+        // The accepted version once there is one; otherwise the newest: the
+        // draft being built, or the last one sent.
+        $proposal = $versions->first(fn (Proposal $version) => $version->isAccepted()) ?? $versions->first();
 
         return Inertia::render('admin/scope/show', [
             'project' => ProjectController::present($project),
+            'canMoveToPalette' => $project->phase === ProjectPhase::Scope && (bool) $proposal?->isAccepted(),
             'intake' => $intake ? IntakePresenter::intake($intake) : null,
             'proposal' => $proposal ? ProposalPresenter::proposal($proposal, $versions) : null,
             'versions' => ProposalPresenter::versions($versions),
+            // The newest sent version's change request, for "Make changes".
+            'changesRequest' => self::changesRequest($versions->first(fn (Proposal $version) => $version->isSent())),
             'library' => $proposal && ! $proposal->isSent()
                 ? ProposalPresenter::library(LineItem::query()->active()->orderBy('position')->orderBy('id')->get())
                 : [],
             'kinds' => ProposalPresenter::kinds(),
             'discountTypes' => ProposalPresenter::discountTypes(),
         ]);
+    }
+
+    /**
+     * @return array{version: int, note: string, byName: string|null, at: string|null}|null
+     */
+    private static function changesRequest(?Proposal $proposal): ?array
+    {
+        if ($proposal === null || ! $proposal->hasChangesRequested()) {
+            return null;
+        }
+
+        return [
+            'version' => $proposal->number,
+            'note' => (string) $proposal->changes_note,
+            'byName' => $proposal->changes_requested_by_name,
+            'at' => $proposal->changes_requested_at?->toIso8601String(),
+        ];
+    }
+
+    /**
+     * After the client accepts, the project moves on to Palette Lab.
+     */
+    public function toPalette(Project $project): RedirectResponse
+    {
+        Gate::authorize('update', $project);
+
+        $accepted = $project->proposals()->whereNotNull('accepted_at')->exists();
+
+        if ($project->phase !== ProjectPhase::Scope || ! $accepted) {
+            throw ValidationException::withMessages(['phase' => 'The project moves on once the client has accepted a proposal.']);
+        }
+
+        $project->update(['phase' => ProjectPhase::Palette]);
+
+        Activity::record('project.phase_changed', $project, [
+            'name' => $project->name,
+            'from' => ProjectPhase::Scope->label(),
+            'to' => ProjectPhase::Palette->label(),
+        ], visibleToClient: true);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => "{$project->name} moved to Palette Lab."]);
+
+        return to_route('admin.palette.show', $project);
     }
 
     /**

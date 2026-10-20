@@ -34,6 +34,14 @@ use LogicException;
  * @property int|null $discount_cents frozen when sent
  * @property int|null $vat_cents frozen when sent
  * @property int|null $total_cents frozen when sent
+ * @property CarbonImmutable|null $accepted_at
+ * @property int|null $accepted_by_id
+ * @property string|null $accepted_by_name the account's name
+ * @property string|null $accepted_signature the name as the client typed it
+ * @property string|null $accepted_ip
+ * @property CarbonImmutable|null $changes_requested_at
+ * @property string|null $changes_requested_by_name
+ * @property string|null $changes_note
  * @property CarbonImmutable|null $created_at
  * @property CarbonImmutable|null $updated_at
  * @property-read Project $project
@@ -56,6 +64,18 @@ class Proposal extends Model
 
     protected static function booted(): void
     {
+        // An accepted version is a record of an agreement: nothing changes it.
+        static::updating(function (self $proposal): void {
+            if ($proposal->getOriginal('accepted_at') !== null) {
+                throw new LogicException('An accepted proposal cannot be changed.');
+            }
+        });
+        static::deleting(function (self $proposal): void {
+            if ($proposal->isAccepted()) {
+                throw new LogicException('An accepted proposal cannot be deleted.');
+            }
+        });
+
         static::saving(function (self $proposal): void {
             $project = Project::withoutGlobalScopes()->find($proposal->project_id);
 
@@ -109,6 +129,24 @@ class Proposal extends Model
         return $this->sent_at !== null;
     }
 
+    public function isAccepted(): bool
+    {
+        return $this->accepted_at !== null;
+    }
+
+    public function hasChangesRequested(): bool
+    {
+        return $this->changes_requested_at !== null;
+    }
+
+    /**
+     * Sent, and the client hasn't accepted or asked for changes yet.
+     */
+    public function awaitsClient(): bool
+    {
+        return $this->isSent() && ! $this->isAccepted() && ! $this->hasChangesRequested();
+    }
+
     /**
      * The sums: for a draft worked out from the lines and the discount; for
      * a sent version the totals stored when it was sent (ADR 0010).
@@ -140,7 +178,7 @@ class Proposal extends Model
      */
     public function freeze(string $sentBy): void
     {
-        if ($this->isSent()) {
+        if ($this->isSent() || $this->isAccepted()) {
             throw new LogicException('This proposal version was already sent.');
         }
 
@@ -165,6 +203,8 @@ class Proposal extends Model
         return [
             'discount_type' => DiscountType::class,
             'sent_at' => 'datetime',
+            'accepted_at' => 'datetime',
+            'changes_requested_at' => 'datetime',
         ];
     }
 }

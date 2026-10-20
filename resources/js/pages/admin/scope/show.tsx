@@ -1,5 +1,5 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ClipboardList, FilePen, FilePlus2, Send } from 'lucide-react';
+import { ClipboardList, FilePen, FilePlus2, Palette, Send } from 'lucide-react';
 import ProposalController from '@/actions/App/Http/Controllers/Admin/ProposalController';
 import ScopeController from '@/actions/App/Http/Controllers/Admin/ScopeController';
 import { focusById } from '@/components/form-field';
@@ -21,6 +21,7 @@ import type {
     Option,
     Project,
     Proposal,
+    ProposalStatus,
     ProposalVersion,
 } from '@/types';
 
@@ -29,9 +30,27 @@ type Props = {
     intake: Intake | null;
     proposal: Proposal | null;
     versions: ProposalVersion[];
+    canMoveToPalette: boolean;
+    changesRequest: ChangesRequestInfo | null;
     library: LibraryGroup[];
     kinds: Option[];
     discountTypes: Option[];
+};
+
+/** The status in the page heading; the full label is in the card below. */
+const statusWord: Record<ProposalStatus, string> = {
+    draft: 'draft',
+    sent: 'sent',
+    changes: 'changes requested',
+    superseded: 'superseded',
+    accepted: 'accepted',
+};
+
+type ChangesRequestInfo = {
+    version: number;
+    note: string;
+    byName: string | null;
+    at: string | null;
 };
 
 export default function ShowScope({
@@ -39,6 +58,8 @@ export default function ShowScope({
     intake,
     proposal,
     versions,
+    canMoveToPalette,
+    changesRequest,
     library,
     kinds,
     discountTypes,
@@ -88,7 +109,7 @@ export default function ShowScope({
                                 data-tour="proposal-version"
                             >
                                 {proposal
-                                    ? `Proposal v${proposal.number} · ${proposal.statusLabel.toLowerCase()}`
+                                    ? `Proposal v${proposal.number} · ${statusWord[proposal.status]}`
                                     : 'Proposal'}
                             </h2>
                         </div>
@@ -125,6 +146,9 @@ export default function ShowScope({
                             </div>
                         ) : proposal.status === 'draft' ? (
                             <>
+                                {changesRequest && (
+                                    <ChangesRequest request={changesRequest} />
+                                )}
                                 <ProposalBuilder
                                     proposal={proposal}
                                     library={library}
@@ -134,7 +158,19 @@ export default function ShowScope({
                                 <SendCard proposal={proposal} />
                             </>
                         ) : (
-                            <SentProposal proposal={proposal} />
+                            <>
+                                {changesRequest &&
+                                    proposal.status === 'changes' && (
+                                        <ChangesRequest
+                                            request={changesRequest}
+                                        />
+                                    )}
+                                <SentProposal
+                                    proposal={proposal}
+                                    projectId={project.id}
+                                    canMoveToPalette={canMoveToPalette}
+                                />
+                            </>
                         )}
 
                         <ProposalVersions
@@ -199,42 +235,106 @@ function SendCard({ proposal }: { proposal: Proposal }) {
     );
 }
 
-function SentProposal({ proposal }: { proposal: Proposal }) {
+function SentProposal({
+    proposal,
+    projectId,
+    canMoveToPalette,
+}: {
+    proposal: Proposal;
+    projectId: number;
+    canMoveToPalette: boolean;
+}) {
+    const { acceptance } = proposal;
+
     return (
         <div className="space-y-5">
             <div
-                className="lc-card lc-edge-pass space-y-3 p-5"
+                className={`lc-card ${acceptance ? 'lc-edge-pass' : 'lc-edge-warn'} space-y-3 p-5`}
                 data-print="hide"
             >
-                <p className="text-sm text-muted-foreground">
-                    Sent to the client
-                    {proposal.sentAt &&
-                        ` on ${formatDateTime(proposal.sentAt)}`}
-                    {proposal.sentByName && ` by ${proposal.sentByName}`}. This
-                    version is frozen. To change anything, make a new version;
-                    the client keeps seeing v{proposal.number} until you send
-                    it.
-                </p>
+                {acceptance ? (
+                    <p className="text-sm">
+                        <span className="font-semibold">
+                            Accepted by {acceptance.byName}
+                        </span>{' '}
+                        on {formatDateTime(acceptance.at)}, signed as “
+                        {acceptance.signature}”. This version is final.
+                    </p>
+                ) : (
+                    <p className="text-sm text-muted-foreground">
+                        Sent to the client
+                        {proposal.sentAt &&
+                            ` on ${formatDateTime(proposal.sentAt)}`}
+                        {proposal.sentByName && ` by ${proposal.sentByName}`}.{' '}
+                        {proposal.status === 'changes'
+                            ? 'The client asked for changes; make a new version.'
+                            : 'Waiting for the client to accept. This version is frozen; to change anything, make a new version.'}
+                    </p>
+                )}
                 <div className="flex flex-wrap gap-3">
-                    <Form
-                        {...ProposalController.revise.form(proposal.id)}
-                        onSuccess={() => focusById('proposal-title')}
-                    >
-                        {({ processing }) => (
-                            <Button
-                                variant="secondary"
-                                disabled={processing}
-                                data-tour="make-changes"
+                    {acceptance ? (
+                        canMoveToPalette && (
+                            <Form
+                                {...ScopeController.toPalette.form(projectId)}
                             >
-                                <FilePen aria-hidden="true" />
-                                Make changes (v{proposal.number + 1})
-                            </Button>
-                        )}
-                    </Form>
+                                {({ processing }) => (
+                                    <button
+                                        className="lc-pill"
+                                        disabled={processing}
+                                        data-tour="move-to-palette"
+                                    >
+                                        <Palette
+                                            aria-hidden="true"
+                                            className="size-5"
+                                        />
+                                        Move to Palette Lab
+                                    </button>
+                                )}
+                            </Form>
+                        )
+                    ) : (
+                        <Form
+                            {...ProposalController.revise.form(proposal.id)}
+                            onSuccess={() => focusById('proposal-title')}
+                        >
+                            {({ processing }) => (
+                                <Button
+                                    variant="secondary"
+                                    disabled={processing}
+                                    data-tour="make-changes"
+                                >
+                                    <FilePen aria-hidden="true" />
+                                    Make changes (v{proposal.number + 1})
+                                </Button>
+                            )}
+                        </Form>
+                    )}
                     <PrintButton />
                 </div>
             </div>
             <ProposalDocument proposal={proposal} />
+        </div>
+    );
+}
+
+function ChangesRequest({ request }: { request: ChangesRequestInfo }) {
+    return (
+        <div
+            className="lc-card lc-edge-warn space-y-2 p-5"
+            data-print="hide"
+            role="note"
+            aria-label={`Changes requested to v${request.version}`}
+        >
+            <p className="lc-label text-muted-foreground">
+                Changes requested · v{request.version}
+            </p>
+            <p className="text-sm text-muted-foreground">
+                {request.byName ?? 'The client'} wrote on{' '}
+                {formatDateTime(request.at)}:
+            </p>
+            <blockquote className="border-l-4 border-border pl-3 whitespace-pre-line">
+                {request.note}
+            </blockquote>
         </div>
     );
 }

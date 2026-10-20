@@ -125,6 +125,15 @@ export function ProposalDocument({ proposal }: { proposal: Proposal }) {
                 </tfoot>
             </table>
 
+            {proposal.acceptance && (
+                <p className="border-t pt-4 text-sm">
+                    <span className="font-semibold">Accepted</span> by{' '}
+                    {proposal.acceptance.byName}, signed as “
+                    {proposal.acceptance.signature}”, on{' '}
+                    {formatDateTime(proposal.acceptance.at)}.
+                </p>
+            )}
+
             <p className="text-xs text-muted-foreground">
                 Prices in euros. Amounts excl. VAT unless marked otherwise.
                 {proposal.sentAt &&

@@ -146,6 +146,7 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::get('proposals/{proposal}', [ScopeController::class, 'version'])->name('proposals.show');
     Route::post('proposals/{proposal}/send', [ProposalController::class, 'send'])->name('proposals.send');
     Route::post('proposals/{proposal}/revise', [ProposalController::class, 'revise'])->name('proposals.revise');
+    Route::post('projects/{project}/scope/to-palette', [ScopeController::class, 'toPalette'])->name('scope.to-palette');
 });
 
 // Launchpad: the client's portal.
@@ -163,6 +164,8 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::get('projects/{project}/scope', [ClientScopeController::class, 'show'])->name('scope.show');
     Route::put('intakes/{intake}', [ClientScopeController::class, 'updateIntake'])->name('intakes.update');
     Route::get('proposals/{proposal}', [ClientScopeController::class, 'version'])->name('proposals.show');
+    Route::post('proposals/{proposal}/accept', [ClientScopeController::class, 'accept'])->name('proposals.accept');
+    Route::post('proposals/{proposal}/changes', [ClientScopeController::class, 'requestChanges'])->name('proposals.changes');
 });
 
 require __DIR__.'/settings.php';

@@ -2,6 +2,7 @@
 
 namespace App\Support\Sandbox;
 
+use App\Enums\DiscountType;
 use App\Enums\ProjectPhase;
 use App\Enums\Role;
 use App\Models\BrandKit;
@@ -9,9 +10,13 @@ use App\Models\ChecklistItem;
 use App\Models\Color;
 use App\Models\Comment;
 use App\Models\Design;
+use App\Models\Intake;
 use App\Models\Launch;
+use App\Models\LineItem;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Models\Proposal;
+use App\Models\ProposalLine;
 use App\Models\ReviewRound;
 use App\Models\User;
 use App\Models\Workspace;
@@ -19,6 +24,7 @@ use App\Support\Activity;
 use App\Support\Color\ColorInput;
 use App\Support\Launch\ChecklistToggle;
 use App\Support\Launch\DefaultChecklist;
+use App\Support\Money\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -95,6 +101,7 @@ final class SandboxFactory
             $this->createLaunch($workspace, $admin, $client);
             $this->createProofmark($workspace, $admin, $client);
             $this->createPalette($workspace, $admin);
+            $this->createScope($workspace, $admin, $client);
 
             return new Sandbox($workspace, $admin, $adminPassword, $client, $clientPassword);
         });
@@ -128,6 +135,107 @@ final class SandboxFactory
                 ChecklistToggle::set($item, $by === 'admin' ? $admin : $client, checked: true);
             }
         }
+    }
+
+    /**
+     * Scope (DemoTemplate::scope()): the library, then the intake, v1 sent
+     * with the client's change request, and v2 as a draft, oldest first.
+     */
+    private function createScope(Workspace $workspace, User $admin, User $client): void
+    {
+        $template = DemoTemplate::scope();
+
+        $project = Project::withoutGlobalScopes()
+            ->where('workspace_id', $workspace->id)
+            ->where('name', $template['project'])
+            ->firstOrFail();
+
+        $library = [];
+
+        foreach ($template['library'] as $position => [$name, $description, $kind, $price, $quantity]) {
+            $item = new LineItem;
+            $item->workspace_id = $workspace->id;
+            $item->name = $name;
+            $item->description = $description;
+            $item->kind = $kind;
+            $item->unit_price_cents = $price;
+            $item->default_quantity = $quantity;
+            $item->position = $position;
+            $item->save();
+
+            $library[$name] = $item;
+        }
+
+        $answers = $template['intake'];
+        $intake = new Intake;
+        $intake->project_id = $project->id;
+        $intake->requested_at = now()->subDays(8);
+        $intake->goals = $answers['goals'];
+        $intake->pages = $answers['pages'];
+        $intake->features = $answers['features'];
+        $intake->budget = $answers['budget'];
+        $intake->deadline_on = now()->addDays($answers['deadline_in_days'])->startOfDay();
+        $intake->deadline_reason = $answers['deadline_reason'];
+        $intake->submitted_at = now()->subDays(6);
+        $intake->submitted_by_id = $client->id;
+        $intake->submitted_by_name = $client->name;
+        $intake->save();
+
+        Activity::record('scope.intake_requested', $intake, ['name' => $project->name], visibleToClient: true, actor: $admin);
+        Activity::record('scope.intake_submitted', $intake, ['name' => $project->name], visibleToClient: true, actor: $client);
+
+        $v1 = $this->demoProposal($project, 1, $template, $template['v1'], $library);
+        $v1->freeze($admin->name);
+        $v1->sent_at = now()->subDays(4);
+        $v1->changes_requested_at = now()->subDays(3);
+        $v1->changes_requested_by_name = $client->name;
+        $v1->changes_note = $template['changes_note'];
+        $v1->save();
+
+        Activity::record('scope.proposal_sent', $v1, [
+            'name' => $project->name,
+            'version' => 'v1',
+            'total' => Money::format((int) $v1->total_cents),
+        ], visibleToClient: true, actor: $admin);
+        Activity::record('scope.changes_requested', $v1, ['name' => $project->name, 'version' => 'v1'], visibleToClient: true, actor: $client);
+
+        $v2 = $this->demoProposal($project, 2, $template, $template['v2'], $library);
+        Activity::record('scope.proposal_started', $v2, ['name' => $project->name, 'version' => 'v2'], actor: $admin);
+    }
+
+    /**
+     * @param  array{title: string, introduction: string, discount: array{basis_points: int, label: string}}  $template
+     * @param  list<array{item: string, name?: string, description?: string, quantity: int}>  $lines
+     * @param  array<string, LineItem>  $library
+     */
+    private function demoProposal(Project $project, int $number, array $template, array $lines, array $library): Proposal
+    {
+        $proposal = new Proposal;
+        $proposal->project_id = $project->id;
+        $proposal->number = $number;
+        $proposal->title = $template['title'];
+        $proposal->introduction = $template['introduction'];
+        $proposal->discount_type = DiscountType::Percentage;
+        $proposal->discount_value = $template['discount']['basis_points'];
+        $proposal->discount_label = $template['discount']['label'];
+        $proposal->save();
+
+        foreach ($lines as $position => $data) {
+            $item = $library[$data['item']] ?? throw new RuntimeException("Unknown demo line item {$data['item']}");
+
+            $line = new ProposalLine;
+            $line->proposal_id = $proposal->id;
+            $line->line_item_id = $item->id;
+            $line->name = $data['name'] ?? $item->name;
+            $line->description = $data['description'] ?? $item->description;
+            $line->kind = $item->kind;
+            $line->unit_price_cents = $item->unit_price_cents;
+            $line->quantity = $data['quantity'];
+            $line->position = $position;
+            $line->save();
+        }
+
+        return $proposal->load('lines');
     }
 
     /**

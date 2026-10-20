@@ -36,6 +36,16 @@ final class ProposalPresenter
             ...self::status($proposal, $versions ?? $project->proposals()->get()),
             'sentAt' => $proposal->sent_at?->toIso8601String(),
             'sentByName' => $proposal->sent_by_name,
+            'acceptance' => $proposal->isAccepted() ? [
+                'at' => $proposal->accepted_at?->toIso8601String(),
+                'byName' => $proposal->accepted_by_name,
+                'signature' => $proposal->accepted_signature,
+            ] : null,
+            'changes' => $proposal->hasChangesRequested() ? [
+                'at' => $proposal->changes_requested_at?->toIso8601String(),
+                'byName' => $proposal->changes_requested_by_name,
+                'note' => $proposal->changes_note,
+            ] : null,
             'projectName' => $project->name,
             'organizationName' => $project->organization->name,
             'studioName' => $project->workspace->name,
@@ -70,14 +80,20 @@ final class ProposalPresenter
             return ['status' => 'draft', 'statusLabel' => 'Draft'];
         }
 
+        if ($proposal->isAccepted()) {
+            return ['status' => 'accepted', 'statusLabel' => 'Accepted by '.$proposal->accepted_by_name.', '.$proposal->accepted_at?->format('j M Y')];
+        }
+
         $newer = $versions
             ->filter(fn (Proposal $other) => $other->isSent() && $other->number > $proposal->number)
             ->sortBy('number')
             ->first();
 
-        return $newer
-            ? ['status' => 'superseded', 'statusLabel' => "Superseded by v{$newer->number}"]
-            : ['status' => 'sent', 'statusLabel' => 'Sent'];
+        return match (true) {
+            $newer !== null => ['status' => 'superseded', 'statusLabel' => "Superseded by v{$newer->number}"],
+            $proposal->hasChangesRequested() => ['status' => 'changes', 'statusLabel' => 'Changes requested'],
+            default => ['status' => 'sent', 'statusLabel' => 'Sent'],
+        };
     }
 
     /**

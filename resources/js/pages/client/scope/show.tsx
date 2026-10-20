@@ -2,10 +2,11 @@ import { Head, Link } from '@inertiajs/react';
 import ClientScopeController from '@/actions/App/Http/Controllers/Client/ScopeController';
 import { IntakeAnswers } from '@/components/scope/intake-answers';
 import { IntakeForm } from '@/components/scope/intake-form';
+import { ProposalDocument } from '@/components/scope/proposal-document';
 import {
-    PrintButton,
-    ProposalDocument,
-} from '@/components/scope/proposal-document';
+    ProposalRespond,
+    ProposalResponse,
+} from '@/components/scope/proposal-response';
 import { ProposalVersions } from '@/components/scope/proposal-versions';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { show } from '@/routes/client/projects';
@@ -17,6 +18,7 @@ type Props = {
     options: IntakeOptions;
     proposal: Proposal | null;
     versions: ProposalVersion[];
+    canRespond: boolean;
 };
 
 export default function ShowScope({
@@ -25,6 +27,7 @@ export default function ShowScope({
     options,
     proposal,
     versions,
+    canRespond,
 }: Props) {
     return (
         <>
@@ -51,32 +54,14 @@ export default function ShowScope({
                         aria-labelledby="proposal-status"
                         className="max-w-3xl space-y-5"
                     >
-                        <div
-                            className="lc-card lc-edge-warn space-y-3 p-5"
-                            data-print="hide"
-                        >
-                            <p className="lc-label text-muted-foreground">
-                                Proposal · v{proposal.number}
-                            </p>
-                            <h2
-                                id="proposal-status"
-                                tabIndex={-1}
-                                className="text-xl font-bold"
-                                data-tour="proposal-status"
-                            >
-                                Proposal v{proposal.number} is ready for you
-                            </h2>
-                            <p className="text-sm text-muted-foreground">
-                                {proposal.studioName} sent it
-                                {proposal.sentAt &&
-                                    ` on ${formatDateTime(proposal.sentAt)}`}
-                                . Read it through; you can print it or save it
-                                as a PDF.
-                            </p>
-                            <PrintButton />
-                        </div>
+                        <ProposalResponse
+                            proposal={proposal}
+                            canRespond={canRespond}
+                        />
 
                         <ProposalDocument proposal={proposal} />
+
+                        {canRespond && <ProposalRespond proposal={proposal} />}
 
                         <ProposalVersions
                             versions={versions}

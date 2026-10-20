@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\Proposal;
 use App\Models\User;
 use App\Support\Activity;
+use App\Support\Money\Money;
 use App\Support\Scope\IntakePresenter;
 use App\Support\Scope\ProposalPresenter;
 use Illuminate\Http\RedirectResponse;
@@ -33,7 +34,7 @@ class ScopeController extends Controller
         // Sent versions only; a draft is never shown to the client.
         $versions = $project->proposals()->whereNotNull('sent_at')
             ->with(['lines', 'project.organization', 'project.workspace'])->get();
-        $proposal = $versions->first();
+        $proposal = $versions->first(fn (Proposal $version) => $version->isAccepted()) ?? $versions->first();
 
         abort_if($intake === null && $proposal === null, 404);
 
@@ -42,6 +43,7 @@ class ScopeController extends Controller
             'intake' => $intake ? IntakePresenter::intake($intake) : null,
             'options' => IntakePresenter::options(),
             'proposal' => $proposal ? ProposalPresenter::proposal($proposal, $versions) : null,
+            'canRespond' => $proposal !== null && Gate::allows('respond', $proposal),
             'versions' => ProposalPresenter::versions($versions),
         ]);
     }
@@ -59,6 +61,73 @@ class ScopeController extends Controller
             'project' => $this->project($proposal->project),
             'proposal' => ProposalPresenter::proposal($proposal),
         ]);
+    }
+
+    /**
+     * Accepts the latest sent version: typed name, tick box, time and IP.
+     * The version is immutable from then on.
+     */
+    public function accept(Request $request, Proposal $proposal): RedirectResponse
+    {
+        Gate::authorize('respond', $proposal);
+
+        $data = $request->validate([
+            'signature' => ['required', 'string', 'max:120'],
+            'agree' => ['accepted'],
+        ], [
+            'signature.required' => 'Type your full name to accept.',
+            'agree.accepted' => 'Tick the box to confirm you accept this proposal.',
+        ]);
+
+        /** @var User $client */
+        $client = $request->user();
+
+        $proposal->accepted_at = now();
+        $proposal->accepted_by_id = $client->id;
+        $proposal->accepted_by_name = $client->name;
+        $proposal->accepted_signature = trim($data['signature']);
+        $proposal->accepted_ip = $request->ip();
+        $proposal->save();
+
+        Activity::record('scope.proposal_accepted', $proposal, [
+            'name' => $proposal->project->name,
+            'version' => "v{$proposal->number}",
+            'total' => Money::format((int) $proposal->total_cents),
+        ], visibleToClient: true);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Proposal accepted. Thank you!']);
+
+        return to_route('client.scope.show', $proposal->project_id);
+    }
+
+    /**
+     * "Ask for changes": the note goes to the studio, who makes a new
+     * version.
+     */
+    public function requestChanges(Request $request, Proposal $proposal): RedirectResponse
+    {
+        Gate::authorize('respond', $proposal);
+
+        $data = $request->validate([
+            'note' => ['required', 'string', 'max:2000'],
+        ], ['note.required' => 'Tell the studio what you’d like to change.']);
+
+        /** @var User $client */
+        $client = $request->user();
+
+        $proposal->changes_requested_at = now();
+        $proposal->changes_requested_by_name = $client->name;
+        $proposal->changes_note = trim($data['note']);
+        $proposal->save();
+
+        Activity::record('scope.changes_requested', $proposal, [
+            'name' => $proposal->project->name,
+            'version' => "v{$proposal->number}",
+        ], visibleToClient: true);
+
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Sent to the studio. They’ll make a new version.']);
+
+        return to_route('client.scope.show', $proposal->project_id);
     }
 
     /**

@@ -130,6 +130,8 @@ class ActivityEntry extends Model
             'scope.intake_reopened' => "reopened the intake of {$name} for changes",
             'scope.proposal_started' => 'started proposal '.($p['version'] ?? '')." for {$name}",
             'scope.proposal_sent' => 'sent proposal '.($p['version'] ?? '')." of {$name}".(isset($p['total']) ? " ({$p['total']} incl. VAT)" : ''),
+            'scope.proposal_accepted' => 'accepted proposal '.($p['version'] ?? '')." of {$name}".(isset($p['total']) ? " ({$p['total']} incl. VAT)" : ''),
+            'scope.changes_requested' => 'asked for changes to proposal '.($p['version'] ?? '')." of {$name}",
             'scope.line_added' => 'added '.($p['line'] ?? 'a line').' to proposal '.($p['version'] ?? '')." of {$name}",
             'scope.line_changed' => 'changed '.($p['line'] ?? 'a line').' in proposal '.($p['version'] ?? '')." of {$name}",
             'scope.line_removed' => 'removed '.($p['line'] ?? 'a line').' from proposal '.($p['version'] ?? '')." of {$name}",

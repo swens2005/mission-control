@@ -3,6 +3,8 @@
 namespace App\Support\Sandbox;
 
 use App\Enums\ColorRole;
+use App\Enums\IntakeBudget;
+use App\Enums\LineItemKind;
 use App\Enums\ProjectPhase;
 use App\Enums\RoundStatus;
 
@@ -35,6 +37,69 @@ final class DemoTemplate
                 '404 page' => 'admin',
                 'Favicon' => 'admin',
                 'Forms tested' => 'client',
+            ],
+        ];
+    }
+
+    /**
+     * Scope's demo (story 29): the studio's price list, and Bakkerij de
+     * Vries's "Seasonal menu pages" part-way through: the intake sent, v1
+     * sent with Anna's request for Easter pages, and v2 as a draft with
+     * them added, ready for the full-story tour to send and accept.
+     *
+     * Prices in cents, quantities in hundredths (ADR 0010). Lines name a
+     * library item and may override its name, description or quantity.
+     *
+     * @return array{
+     *     project: string,
+     *     library: list<array{0: string, 1: string, 2: LineItemKind, 3: int, 4: int}>,
+     *     intake: array{goals: string, pages: list<string>, features: list<string>, budget: IntakeBudget, deadline_in_days: int, deadline_reason: string},
+     *     title: string,
+     *     introduction: string,
+     *     discount: array{basis_points: int, label: string},
+     *     v1: list<array{item: string, name?: string, description?: string, quantity: int}>,
+     *     changes_note: string,
+     *     v2: list<array{item: string, name?: string, description?: string, quantity: int}>
+     * }
+     */
+    public static function scope(): array
+    {
+        return [
+            'project' => 'Seasonal menu pages',
+            'library' => [
+                ['Design: home page and templates', 'The look of the site, the home page and the page templates.', LineItemKind::Fixed, 180000, 100],
+                ['Seasonal page', 'A page with its own photos, menu and pre-order link.', LineItemKind::Fixed, 45000, 100],
+                ['Extra page', 'A standard content page in the existing templates.', LineItemKind::Fixed, 35000, 100],
+                ['Online pre-order form', 'Pick-up day, items and a confirmation email.', LineItemKind::Fixed, 65000, 100],
+                ['Content and copywriting', 'Writing and editing the text with you.', LineItemKind::Hourly, 8500, 400],
+                ['Photo editing', 'Cropping and colour-correcting your product photos.', LineItemKind::Hourly, 6500, 200],
+                ['Hosting setup and launch', 'Domain, SSL, backups and going live.', LineItemKind::Fixed, 25000, 100],
+                ['Training: updating the site yourself', 'A session on changing menus and photos each season.', LineItemKind::Hourly, 8500, 150],
+            ],
+            'intake' => [
+                'goals' => "Customers should see our Christmas and New Year specials and pre-order them online, so we don't have to take every order by phone.\n\nWe'd like to change the pages ourselves each season.",
+                'pages' => ['Christmas specials', "New Year's treats"],
+                'features' => ['contact_form'],
+                'budget' => IntakeBudget::From2500,
+                'deadline_in_days' => 45,
+                'deadline_reason' => 'Before the Christmas pre-orders open',
+            ],
+            'title' => 'Seasonal menu pages',
+            'introduction' => "Hi Anna,\n\nThanks for the intake. Here's what we propose: a page per season with its own photos and pre-order link, written together with you, and a short training so you can update them yourself.",
+            'discount' => ['basis_points' => 1000, 'label' => 'Returning client'],
+            'v1' => [
+                ['item' => 'Seasonal page', 'description' => 'Christmas specials and New Year’s treats, each with its own photos and pre-order link.', 'quantity' => 200],
+                ['item' => 'Content and copywriting', 'quantity' => 400],
+                ['item' => 'Photo editing', 'quantity' => 250],
+                ['item' => 'Training: updating the site yourself', 'quantity' => 150],
+            ],
+            'changes_note' => 'Could you add the Easter pages too? We do hot cross buns and Easter bread every spring.',
+            'v2' => [
+                ['item' => 'Seasonal page', 'description' => 'Christmas specials and New Year’s treats, each with its own photos and pre-order link.', 'quantity' => 200],
+                ['item' => 'Seasonal page', 'name' => 'Easter pages', 'description' => 'Easter bread and hot cross buns, with their own photos and pre-order link.', 'quantity' => 200],
+                ['item' => 'Content and copywriting', 'quantity' => 600],
+                ['item' => 'Photo editing', 'quantity' => 350],
+                ['item' => 'Training: updating the site yourself', 'quantity' => 150],
             ],
         ];
     }

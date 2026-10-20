@@ -8,7 +8,8 @@ use App\Models\User;
 use App\Support\Waiting\WaitingItem;
 
 /**
- * "Waiting on you": review the latest sent proposal (story 28).
+ * "Waiting on you": accept (or ask for changes to) the latest sent
+ * proposal (stories 28 and 29).
  */
 final class ProposalWaitingItems
 {
@@ -20,6 +21,8 @@ final class ProposalWaitingItems
         $items = Proposal::query()
             ->where('workspace_id', $client->workspace_id)
             ->whereNotNull('sent_at')
+            ->whereNull('accepted_at')
+            ->whereNull('changes_requested_at')
             // Only the latest sent version of each project.
             ->whereNotExists(fn ($query) => $query->selectRaw('1')
                 ->from('proposals as newer')
@@ -34,7 +37,7 @@ final class ProposalWaitingItems
             ->orderBy('id')
             ->get()
             ->map(fn (Proposal $proposal) => new WaitingItem(
-                title: "Review proposal v{$proposal->number}",
+                title: "Accept proposal v{$proposal->number}",
                 module: 'Scope',
                 projectId: $proposal->project->id,
                 projectName: $proposal->project->name,

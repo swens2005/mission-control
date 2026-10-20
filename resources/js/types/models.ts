@@ -368,7 +368,12 @@ export type ProposalTotals = {
     hasDiscount: boolean;
 };
 
-export type ProposalStatus = 'draft' | 'sent' | 'superseded';
+export type ProposalStatus =
+    | 'draft'
+    | 'sent'
+    | 'superseded'
+    | 'changes'
+    | 'accepted';
 
 export type Proposal = {
     id: number;
@@ -379,6 +384,18 @@ export type Proposal = {
     statusLabel: string;
     sentAt: string | null;
     sentByName: string | null;
+    /** The client's acceptance (story 29); the version is immutable. */
+    acceptance: {
+        at: string | null;
+        byName: string | null;
+        signature: string | null;
+    } | null;
+    /** The client asked for changes to this version. */
+    changes: {
+        at: string | null;
+        byName: string | null;
+        note: string | null;
+    } | null;
     projectName: string;
     organizationName: string;
     studioName: string;
