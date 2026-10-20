@@ -3,6 +3,7 @@ import OrganizationController from '@/actions/App/Http/Controllers/Admin/Organiz
 import PaletteController from '@/actions/App/Http/Controllers/Admin/PaletteController';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
 import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
+import ScopeController from '@/actions/App/Http/Controllers/Admin/ScopeController';
 import { ActivityList } from '@/components/activity-list';
 import { PageHeader } from '@/components/page-header';
 import { PhaseBadge } from '@/components/phase-badge';
@@ -57,6 +58,14 @@ export default function ShowProject({
                                     data-tour="open-launch-control"
                                 >
                                     Launch Control
+                                </Link>
+                            </Button>
+                            <Button variant="secondary" asChild>
+                                <Link
+                                    href={ScopeController.show(project.id)}
+                                    data-tour="open-scope"
+                                >
+                                    Scope
                                 </Link>
                             </Button>
                             <Button variant="secondary" asChild>

@@ -1,7 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
-import { Palette, PenTool, Rocket } from 'lucide-react';
+import { ClipboardList, Palette, PenTool, Rocket } from 'lucide-react';
 import ClientPaletteController from '@/actions/App/Http/Controllers/Client/PaletteController';
 import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
+import ClientScopeController from '@/actions/App/Http/Controllers/Client/ScopeController';
 import { ActivityList } from '@/components/activity-list';
 import { PhaseSteps } from '@/components/phase-steps';
 import { formatDate } from '@/lib/format';
@@ -13,6 +14,7 @@ export default function ShowProject({
     project,
     steps,
     activity,
+    hasScope,
     hasLaunch,
     hasPalette,
     hasProofmark,
@@ -20,6 +22,7 @@ export default function ShowProject({
     project: ClientProject;
     steps: Option[];
     activity: ActivityItem[];
+    hasScope: boolean;
     hasLaunch: boolean;
     hasPalette: boolean;
     hasProofmark: boolean;
@@ -51,6 +54,17 @@ export default function ShowProject({
                         </p>
                     )}
                 </div>
+
+                {hasScope && (
+                    <Link
+                        href={ClientScopeController.show(project.id)}
+                        className="lc-pill w-fit"
+                        data-tour="open-scope"
+                    >
+                        <ClipboardList aria-hidden="true" className="size-5" />
+                        Open Scope
+                    </Link>
+                )}
 
                 {hasPalette && (
                     <Link

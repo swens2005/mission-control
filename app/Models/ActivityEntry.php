@@ -125,6 +125,9 @@ class ActivityEntry extends Model
             'palette.kit_approved' => "approved the brand kit of {$name}",
             'palette.kit_revised' => "started a revision of the brand kit of {$name}",
             'palette.color_removed' => 'removed the color '.($p['color'] ?? '')." from {$name}",
+            'scope.intake_requested' => "asked for the intake of {$name}",
+            'scope.intake_submitted' => "sent the intake of {$name}",
+            'scope.intake_reopened' => "reopened the intake of {$name} for changes",
             'proofmark.design_removed' => 'removed the design '.($p['design'] ?? '').' from round '.($p['round'] ?? '')." of {$name}",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };

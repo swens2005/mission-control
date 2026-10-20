@@ -80,6 +80,14 @@ class Project extends Model
     }
 
     /**
+     * @return HasOne<Intake, $this>
+     */
+    public function intake(): HasOne
+    {
+        return $this->hasOne(Intake::class);
+    }
+
+    /**
      * Proofmark rounds, newest first.
      *
      * @return HasMany<ReviewRound, $this>

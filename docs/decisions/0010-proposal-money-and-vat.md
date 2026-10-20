@@ -23,9 +23,9 @@ more on the same proposal.
 - **Rounding:** half up (away from zero; all amounts are positive), done
   with integer arithmetic only: `intdiv(a * b + half, divisor)`.
 - **Order:** line total → subtotal → discount → VAT → total.
-  - Each line total is rounded to the cent.
-  - The discount is rounded once.
-  - **VAT is calculated once, on the discounted subtotal**, not per line.
+    - Each line total is rounded to the cent.
+    - The discount is rounded once.
+    - **VAT is calculated once, on the discounted subtotal**, not per line.
 - **Prices are entered excluding VAT** (business clients), and proposals
   show subtotal, discount, VAT and total.
 - **Frozen totals:** sending a version stores its computed totals. Pages

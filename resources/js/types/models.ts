@@ -303,3 +303,26 @@ export type StyleGuide = {
     approvedAt: string | null;
     approvedByName: string | null;
 };
+
+/** Scope: the client's intake questionnaire (story 25). */
+export type Intake = {
+    id: number;
+    submitted: boolean;
+    requestedAt: string;
+    submittedAt: string | null;
+    submittedByName: string | null;
+    goals: string | null;
+    pages: string[];
+    features: string[];
+    featureLabels: string[];
+    featuresOther: string | null;
+    budget: string | null;
+    budgetLabel: string | null;
+    deadlineOn: string | null;
+    deadlineReason: string | null;
+};
+
+export type IntakeOptions = {
+    features: Option[];
+    budgets: Option[];
+};

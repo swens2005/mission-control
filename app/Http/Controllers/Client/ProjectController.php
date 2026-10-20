@@ -50,6 +50,7 @@ class ProjectController extends Controller
         return Inertia::render('client/projects/show', [
             'project' => $this->present($project),
             'steps' => self::steps(),
+            'hasScope' => $project->intake()->exists(),
             'hasLaunch' => $project->launch()->exists(),
             'hasPalette' => $project->brandKit()->whereNotNull('shared_at')->exists(),
             'hasProofmark' => $project->reviewRounds()->where('status', '!=', RoundStatus::Draft)->exists(),

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\PaletteController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProofmarkController;
+use App\Http\Controllers\Admin\ScopeController;
 use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Admin\TokenExportController;
 use App\Http\Controllers\Admin\TypeController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\PaletteController as ClientPaletteController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
 use App\Http\Controllers\Client\ProofmarkController as ClientProofmarkController;
+use App\Http\Controllers\Client\ScopeController as ClientScopeController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DesignImageController;
@@ -113,6 +115,11 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::delete('kits/{kit}/public-link', [KitSharingController::class, 'disablePublicLink'])->name('kits.public-link.destroy');
     Route::post('kits/{kit}/revision', [KitSharingController::class, 'revise'])->name('kits.revise');
     Route::delete('colors/{color}', [ColorController::class, 'destroy'])->name('colors.destroy');
+
+    // Scope: the intake (story 25).
+    Route::get('projects/{project}/scope', [ScopeController::class, 'show'])->name('scope.show');
+    Route::post('projects/{project}/scope/intake', [ScopeController::class, 'askIntake'])->name('intakes.store');
+    Route::post('intakes/{intake}/reopen', [ScopeController::class, 'reopenIntake'])->name('intakes.reopen');
 });
 
 // Launchpad: the client's portal.
@@ -127,6 +134,8 @@ Route::middleware(['auth', 'portal:client'])->prefix('client')->name('client.')-
     Route::post('kits/{kit}/approve', [ClientPaletteController::class, 'approve'])->name('kits.approve');
     Route::put('checklist-items/{item}/check', [ClientLaunchController::class, 'check'])->name('checklist.check');
     Route::delete('checklist-items/{item}/check', [ClientLaunchController::class, 'uncheck'])->name('checklist.uncheck');
+    Route::get('projects/{project}/scope', [ClientScopeController::class, 'show'])->name('scope.show');
+    Route::put('intakes/{intake}', [ClientScopeController::class, 'updateIntake'])->name('intakes.update');
 });
 
 require __DIR__.'/settings.php';
