@@ -32,6 +32,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                                     href={item.href}
                                     prefetch
                                     aria-current={active ? 'page' : undefined}
+                                    data-tour={item.tour}
                                 >
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>

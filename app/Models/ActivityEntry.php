@@ -128,6 +128,10 @@ class ActivityEntry extends Model
             'scope.intake_requested' => "asked for the intake of {$name}",
             'scope.intake_submitted' => "sent the intake of {$name}",
             'scope.intake_reopened' => "reopened the intake of {$name} for changes",
+            'scope.item_added' => "added {$name} (".($p['price'] ?? '').') to the line-item library',
+            'scope.item_changed' => "changed {$name} (".($p['price'] ?? '').') in the line-item library',
+            'scope.item_archived' => "archived {$name} in the line-item library",
+            'scope.item_restored' => "restored {$name} to the line-item library",
             'proofmark.design_removed' => 'removed the design '.($p['design'] ?? '').' from round '.($p['round'] ?? '')." of {$name}",
             default => str_replace(['.', '_'], ' ', $this->event)." {$name}",
         };

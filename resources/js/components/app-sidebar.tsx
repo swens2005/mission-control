@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { Activity, Building2, FolderKanban, LayoutGrid } from 'lucide-react';
+import {
+    Activity,
+    Building2,
+    FolderKanban,
+    LayoutGrid,
+    ReceiptText,
+} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
@@ -14,6 +20,7 @@ import {
 } from '@/components/ui/sidebar';
 import { usePortal } from '@/hooks/use-portal';
 import { index as activity } from '@/routes/admin/activity';
+import { index as lineItems } from '@/routes/admin/line-items';
 import { index as organizations } from '@/routes/admin/organizations';
 import { index as projects } from '@/routes/admin/projects';
 import type { NavItem } from '@/types';
@@ -32,6 +39,12 @@ export function AppSidebar() {
             ? [
                   { title: 'Clients', href: organizations(), icon: Building2 },
                   { title: 'Projects', href: projects(), icon: FolderKanban },
+                  {
+                      title: 'Scope library',
+                      href: lineItems(),
+                      icon: ReceiptText,
+                      tour: 'scope-library',
+                  },
                   { title: 'Activity', href: activity(), icon: Activity },
               ]
             : []),

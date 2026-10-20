@@ -326,3 +326,19 @@ export type IntakeOptions = {
     features: Option[];
     budgets: Option[];
 };
+
+/** Scope: an item in the studio's price list (story 26). */
+export type LibraryItem = {
+    id: number;
+    name: string;
+    description: string | null;
+    kind: 'fixed' | 'hourly';
+    kindLabel: string;
+    /** Formatted for display, e.g. "€1,250.00". */
+    unitPrice: string;
+    /** For the form field, e.g. "1250.50". */
+    unitPriceInput: string;
+    defaultQuantity: string;
+    /** "×" or "h". */
+    unit: string;
+};

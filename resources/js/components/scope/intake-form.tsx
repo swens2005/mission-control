@@ -94,6 +94,7 @@ export function IntakeForm({
                                     rows={5}
                                     maxLength={5000}
                                     className={textareaClassName}
+                                    autoComplete="off"
                                     defaultValue={intake.goals ?? ''}
                                 />
                             )}
@@ -136,6 +137,7 @@ export function IntakeForm({
                                                 <Input
                                                     {...props}
                                                     maxLength={80}
+                                                    autoComplete="off"
                                                     value={row.value}
                                                     {...(i === 0 &&
                                                         errors.pages && {
@@ -244,6 +246,7 @@ export function IntakeForm({
                                 <Input
                                     {...props}
                                     maxLength={200}
+                                    autoComplete="off"
                                     defaultValue={intake.featuresOther ?? ''}
                                 />
                             )}
@@ -270,6 +273,7 @@ export function IntakeForm({
                                 <select
                                     {...props}
                                     className={selectClassName}
+                                    autoComplete="off"
                                     defaultValue={intake.budget ?? ''}
                                 >
                                     <option value="">Choose a range</option>
@@ -296,6 +300,7 @@ export function IntakeForm({
                                     type="date"
                                     min={today}
                                     className="w-48 max-w-full"
+                                    autoComplete="off"
                                     defaultValue={intake.deadlineOn ?? ''}
                                 />
                             )}
@@ -311,6 +316,7 @@ export function IntakeForm({
                                     <Input
                                         {...props}
                                         maxLength={120}
+                                        autoComplete="off"
                                         defaultValue={
                                             intake.deadlineReason ?? ''
                                         }

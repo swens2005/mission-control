@@ -13,4 +13,6 @@ export type NavItem = {
     isActive?: boolean;
     /** Only highlight on this exact URL, not on pages below it. */
     exact?: boolean;
+    /** A data-tour hook for the autopilot. */
+    tour?: string;
 };

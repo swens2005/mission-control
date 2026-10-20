@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\ContactController;
 use App\Http\Controllers\Admin\DesignController;
 use App\Http\Controllers\Admin\KitSharingController;
 use App\Http\Controllers\Admin\LaunchController;
+use App\Http\Controllers\Admin\LineItemController;
 use App\Http\Controllers\Admin\OrganizationController;
 use App\Http\Controllers\Admin\PaletteController;
 use App\Http\Controllers\Admin\ProjectController;
@@ -120,6 +121,14 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::get('projects/{project}/scope', [ScopeController::class, 'show'])->name('scope.show');
     Route::post('projects/{project}/scope/intake', [ScopeController::class, 'askIntake'])->name('intakes.store');
     Route::post('intakes/{intake}/reopen', [ScopeController::class, 'reopenIntake'])->name('intakes.reopen');
+
+    // The line-item library (story 26).
+    Route::get('scope/library', [LineItemController::class, 'index'])->name('line-items.index');
+    Route::post('scope/library', [LineItemController::class, 'store'])->name('line-items.store');
+    Route::patch('line-items/{item}', [LineItemController::class, 'update'])->name('line-items.update');
+    Route::post('line-items/{item}/move', [LineItemController::class, 'move'])->name('line-items.move');
+    Route::post('line-items/{item}/archive', [LineItemController::class, 'archive'])->name('line-items.archive');
+    Route::delete('line-items/{item}/archive', [LineItemController::class, 'restore'])->name('line-items.restore');
 });
 
 // Launchpad: the client's portal.
