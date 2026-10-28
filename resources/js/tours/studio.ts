@@ -137,7 +137,7 @@ export const studioTour: Tour = {
     id: 'studio',
     group: 'tour',
     title: 'The studio tour',
-    duration: 'About 3 minutes',
+    duration: 'About 2½ minutes',
     description:
         'The four modules in the order a website project moves through them, from the studio’s side.',
     steps: [

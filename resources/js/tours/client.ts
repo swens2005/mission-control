@@ -34,7 +34,7 @@ export const clientTour: Tour = {
     id: 'client',
     group: 'tour',
     title: 'The client tour',
-    duration: 'About 2 minutes',
+    duration: 'About 1½ minutes',
     description:
         'Launchpad, the client’s portal: one list of everything waiting on them, and each module from their side.',
     steps: [
@@ -98,7 +98,7 @@ export const fullStory: Tour = {
     id: 'full-story',
     group: 'tour',
     title: 'The full story',
-    duration: 'About 4 minutes',
+    duration: 'About 2 minutes',
     description:
         'One proposal from the studio to the client and back: sent, accepted with a typed name, and on to the next module.',
     steps: [

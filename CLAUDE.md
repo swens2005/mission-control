@@ -173,6 +173,18 @@ All of these must pass before committing. CI runs the same set.
   field names in messages.
 - **Local port:** 8123 may already be serving another local app (Jobby);
   check the page title, or pick another port.
+- **OneDrive and `bootstrap/cache`:** OneDrive once set the folder
+  read-only; PHP could still write files but `is_writable()` said no, so
+  `artisan` refused to start ("must be present and writable"). Clear the
+  ReadOnly attribute on that folder; it's not a code problem.
+- **Pinned actions:** CI pins every GitHub Action to a commit. Look the
+  commit up (`gh api repos/<owner>/<action>/git/ref/tags/<tag>`); never
+  write one from memory.
+- **CI hangs:** a job stuck on `npm ci` is usually GitHub's network:
+  cancel and `gh run rerun <id> --failed`. Jobs have `timeout-minutes`.
+- **Autopilot in the browser:** the tour answers its own `window.confirm`
+  only during its own click. When testing tours locally, raise the demo
+  limit (`DEMO_PER_IP_PER_HOUR`) or every run after the fifth is refused.
 - **Shell edits, again:** even Python heredocs break in Git Bash when the
   content has template literals and quotes. Write the script to the
   scratchpad with the file editor, then run it.
