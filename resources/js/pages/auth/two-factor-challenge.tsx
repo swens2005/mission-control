@@ -65,7 +65,10 @@ export default function TwoFactorChallenge() {
                             {showRecoveryInput ? (
                                 <>
                                     <Input
+                                        id="recovery_code"
                                         name="recovery_code"
+                                        aria-label="Recovery code"
+                                        autoComplete="off"
                                         type="text"
                                         placeholder="Enter recovery code"
                                         autoFocus={showRecoveryInput}
@@ -79,7 +82,10 @@ export default function TwoFactorChallenge() {
                                 <div className="flex flex-col items-center justify-center space-y-3 text-center">
                                     <div className="flex w-full items-center justify-center">
                                         <InputOTP
+                                            id="code"
                                             name="code"
+                                            aria-label="Authentication code"
+                                            autoComplete="one-time-code"
                                             maxLength={OTP_MAX_LENGTH}
                                             value={code}
                                             onChange={(value) => setCode(value)}

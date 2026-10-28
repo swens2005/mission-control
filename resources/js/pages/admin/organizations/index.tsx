@@ -4,7 +4,6 @@ import { EmptyState } from '@/components/empty-state';
 import { PageHeader } from '@/components/page-header';
 import { Pagination } from '@/components/pagination';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { index } from '@/routes/admin/organizations';
@@ -51,11 +50,13 @@ export default function OrganizationsIndex({ organizations, filters }: Props) {
                         />
                     </div>
                     <div className="flex items-center gap-2 pb-2">
-                        <Checkbox
+                        <input
+                            type="checkbox"
                             id="archived"
                             name="archived"
                             value="1"
                             defaultChecked={filters.archived}
+                            className="size-5 shrink-0 accent-primary"
                         />
                         <Label htmlFor="archived">Show archived</Label>
                     </div>

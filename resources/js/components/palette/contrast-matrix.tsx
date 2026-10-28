@@ -62,7 +62,7 @@ export function ContrastMatrix({
             {matrix.columns.length > 0 && matrix.rows.length > 0 && (
                 <div
                     role="region"
-                    aria-labelledby="matrix-heading"
+                    aria-label="Contrast matrix table"
                     tabIndex={0}
                     className="lc-card overflow-x-auto focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >

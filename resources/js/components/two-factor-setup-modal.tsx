@@ -75,6 +75,8 @@ function TwoFactorSetupStep({
                             <div className="z-10 flex h-full w-full items-center justify-center p-5">
                                 {qrCodeSvg ? (
                                     <div
+                                        role="img"
+                                        aria-label="QR code with your setup key, for your authenticator app"
                                         className="aspect-square w-full rounded-lg bg-white p-2 [&_svg]:size-full"
                                         dangerouslySetInnerHTML={{
                                             __html: qrCodeSvg,
@@ -108,18 +110,37 @@ function TwoFactorSetupStep({
                                 </div>
                             ) : (
                                 <>
+                                    <label
+                                        htmlFor="two-factor-setup-key"
+                                        className="sr-only"
+                                    >
+                                        Setup key
+                                    </label>
                                     <input
+                                        id="two-factor-setup-key"
+                                        name="setup_key"
                                         type="text"
                                         readOnly
+                                        autoComplete="off"
                                         value={manualSetupKey}
-                                        className="h-full w-full bg-background p-3 text-foreground outline-none"
+                                        className="h-full w-full bg-background p-3 text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset"
                                     />
                                     <button
+                                        type="button"
                                         onClick={() => copy(manualSetupKey)}
-                                        className="border-l border-border px-3 hover:bg-muted"
+                                        aria-label="Copy setup key"
+                                        className="border-l border-border px-3 outline-none hover:bg-muted focus-visible:ring-3 focus-visible:ring-ring focus-visible:ring-inset"
                                     >
-                                        <IconComponent className="w-4" />
+                                        <IconComponent
+                                            aria-hidden="true"
+                                            className="w-4"
+                                        />
                                     </button>
+                                    <span role="status" className="sr-only">
+                                        {copiedText === manualSetupKey
+                                            ? 'Setup key copied'
+                                            : ''}
+                                    </span>
                                 </>
                             )}
                         </div>
@@ -169,6 +190,8 @@ function TwoFactorVerificationStep({
                             <InputOTP
                                 id="otp"
                                 name="code"
+                                aria-label="Authentication code"
+                                autoComplete="one-time-code"
                                 maxLength={OTP_MAX_LENGTH}
                                 onChange={setCode}
                                 disabled={processing}

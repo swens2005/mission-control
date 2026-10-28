@@ -12,7 +12,7 @@ the demo sandboxes, so I can use Mission Control for real work.
 - [ ] It refuses to run if the email is already in use, and never
       prints the password.
 - [ ] It runs in-process from cPanel's Terminal (`php artisan
-      studio:create`), the manual fallback from ADR 0003; no new web
+studio:create`), the manual fallback from ADR 0003; no new web
       endpoint, no secret in CI, nothing in the repo with the details.
 - [ ] The new workspace is never touched by `sandbox:prune` or the demo
       limits, and its users don't get the sandbox guardrails.

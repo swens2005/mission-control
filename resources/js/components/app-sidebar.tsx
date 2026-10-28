@@ -56,7 +56,12 @@ export function AppSidebar() {
     ];
 
     return (
-        <Sidebar collapsible="icon" variant="sidebar">
+        <Sidebar
+            collapsible="icon"
+            variant="sidebar"
+            role="navigation"
+            aria-label="Main"
+        >
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

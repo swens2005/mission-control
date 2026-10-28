@@ -171,6 +171,12 @@ All of these must pass before committing. CI runs the same set.
   (Inertia renames it); a hand-named bag never reaches the form.
 - **FormRequest:** don't name a helper `attributes()`; Laravel uses it for
   field names in messages.
+- **Local server and `sockets`:** with `sockets` loaded, PHP 8.5.6's
+  built-in web server (`php -S`, so also `artisan serve`) fails with
+  internal class errors ("Cannot instantiate interface
+  RecursiveIterator"); the CLI is fine. Serve with a copy of php.ini
+  without `extension=sockets` (`php -c <copy> -S ...`, run from
+  `public/` with Laravel's `server.php` as the router).
 - **Local port:** 8123 may already be serving another local app (Jobby);
   check the page title, or pick another port.
 - **OneDrive and `bootstrap/cache`:** OneDrive once set the folder

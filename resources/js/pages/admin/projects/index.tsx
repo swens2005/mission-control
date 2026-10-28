@@ -6,7 +6,6 @@ import { PageHeader } from '@/components/page-header';
 import { Pagination } from '@/components/pagination';
 import { PhaseBadge } from '@/components/phase-badge';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { formatDate } from '@/lib/format';
 import { index } from '@/routes/admin/projects';
@@ -92,11 +91,13 @@ export default function ProjectsIndex({
                         </select>
                     </div>
                     <div className="flex items-center gap-2 pb-2">
-                        <Checkbox
+                        <input
+                            type="checkbox"
                             id="archived"
                             name="archived"
                             value="1"
                             defaultChecked={filters.archived}
+                            className="size-5 shrink-0 accent-primary"
                         />
                         <Label htmlFor="archived">Show archived</Label>
                     </div>
