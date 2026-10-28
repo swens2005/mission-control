@@ -22,7 +22,14 @@ npm run check                  # lint + format check (npm run check:fix to fix)
 npm run types:check            # tsc
 npm run test:js                # Vitest (vp test), *.test.ts next to the code
 npm run build                  # production build
+composer test:browser          # autopilot tours in headless Chromium (after npm run build)
 ```
+
+Pest's browser plugin needs PHP's `sockets` extension for every test run,
+browser or not. Locally, if it isn't enabled in php.ini, run Pest directly
+with it: `php -d extension=sockets vendor/bin/pest --compact` (and
+`... vendor/bin/pest tests/Browser`). `artisan test` starts a new PHP
+process, which doesn't get the `-d` flag.
 
 All of these must pass before committing. CI runs the same set.
 
@@ -105,6 +112,11 @@ All of these must pass before committing. CI runs the same set.
 - **Focus after a visit:** `focusById(id, fallbackId?)` and
   `focusFirstError` from `form-field.tsx` wait two frames; one frame was
   not enough after uploads and renames.
+- **Autopilot (ADR 0011):** tours are scripts in `resources/js/tours/`
+  driving `data-tour` hooks; the engine is `lib/tour/runner.ts` (pure,
+  Vitest) with `lib/tour/dom.ts`. Renaming or removing a `data-tour`
+  attribute breaks the Vitest target check and the browser tests on
+  purpose: update the tour. Demo data changes can break tours too.
 - **TypeScript unit tests:** Vitest via Vite+, `*.test.ts` next to the code
   (`npm run test:js`), for pure functions like `lib/pin-math.ts`.
 - **Money (ADR 0010):** `App\Support\Money\Money` (parse "1.250,50" or

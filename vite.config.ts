@@ -33,6 +33,10 @@ export default defineConfig({
             ],
         },
     },
+    // Only our own unit tests; vendor packages ship example specs.
+    test: {
+        include: ['resources/js/**/*.test.ts'],
+    },
     lint: {
         ignorePatterns: [
             'vendor/**',
