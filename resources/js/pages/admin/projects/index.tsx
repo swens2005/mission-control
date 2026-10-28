@@ -177,6 +177,7 @@ export default function ProjectsIndex({
                                                     project.id,
                                                 )}
                                                 className="underline-offset-4 hover:underline"
+                                                data-tour="project-link"
                                             >
                                                 {project.name}
                                             </Link>

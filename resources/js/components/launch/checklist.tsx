@@ -127,6 +127,7 @@ function ChecklistRow({
             <input
                 id={id}
                 type="checkbox"
+                autoComplete="off"
                 className="mt-0.5 size-5 shrink-0 accent-primary"
                 checked={item.checked}
                 disabled={!item.canToggle}

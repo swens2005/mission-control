@@ -82,6 +82,7 @@ export default function Login({
                                 autoComplete="email"
                                 placeholder="email@example.com"
                                 defaultValue={demo?.admin.email}
+                                data-tour="login-email"
                                 aria-invalid={errors.email ? true : undefined}
                                 aria-describedby={
                                     errors.email ? 'email-error' : undefined
@@ -112,6 +113,7 @@ export default function Login({
                                 autoComplete="current-password"
                                 placeholder="Password"
                                 defaultValue={demo?.admin.password}
+                                data-tour="login-password"
                             />
                             <InputError message={errors.password} />
                         </div>

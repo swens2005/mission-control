@@ -238,6 +238,7 @@ function FixPanel({
     return (
         <div
             id="fix-panel"
+            data-tour="fix-panel"
             className="lc-card lc-edge-warn max-w-2xl space-y-4 p-5"
         >
             <h3 id="fix-heading" tabIndex={-1} className="text-lg font-bold">
@@ -282,7 +283,9 @@ function FixPanel({
             >
                 {({ processing, errors }) => (
                     <>
-                        <Button disabled={processing}>Use {fix.hex}</Button>
+                        <Button disabled={processing} data-tour="apply-fix">
+                            Use {fix.hex}
+                        </Button>
                         <Button
                             type="button"
                             variant="ghost"

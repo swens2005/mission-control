@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ScopeController;
 use App\Http\Controllers\Admin\SignoffController;
 use App\Http\Controllers\Admin\TokenExportController;
 use App\Http\Controllers\Admin\TypeController;
+use App\Http\Controllers\AutopilotController;
 use App\Http\Controllers\Client\LaunchController as ClientLaunchController;
 use App\Http\Controllers\Client\PaletteController as ClientPaletteController;
 use App\Http\Controllers\Client\ProjectController as ClientProjectController;
@@ -43,6 +44,10 @@ Route::get('/', function (Request $request) {
 
 // The public demo: a sandbox per visitor (ADR 0004, story 08).
 Route::post('demo', [DemoController::class, 'store'])->middleware(['guest', 'throttle:demo'])->name('demo.store');
+// The autopilot, "Watch it fly" (story 31).
+Route::get('autopilot', [AutopilotController::class, 'show'])->name('autopilot.show');
+Route::post('autopilot/fresh', [AutopilotController::class, 'fresh'])->middleware('throttle:30,1')->name('autopilot.fresh');
+
 Route::post('demo/switch', [DemoController::class, 'switch'])->middleware('auth')->name('demo.switch');
 
 // Design images for both portals, through their policy (ADR 0009).

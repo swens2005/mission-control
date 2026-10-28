@@ -1,11 +1,14 @@
+import { usePage } from '@inertiajs/react';
 import type { ReactNode } from 'react';
 import AppLogoIcon from '@/components/app-logo-icon';
 
 /**
- * Pages shared by link, without login (the public style guide, story 24):
- * the Launchpad bar and sky, but no navigation and no account menu.
+ * Pages without login (the public style guide, story 24; the autopilot,
+ * story 31): the Launchpad bar and sky, but no navigation or account menu.
  */
 export default function PublicLayout({ children }: { children: ReactNode }) {
+    const { component } = usePage();
+
     return (
         <div className="min-h-svh bg-background">
             <a href="#main" className="skip-link">
@@ -16,7 +19,9 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                     <span className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
                         <AppLogoIcon className="size-5" />
                     </span>
-                    Style guide
+                    {component === 'public/autopilot'
+                        ? 'Mission Control · Autopilot'
+                        : 'Style guide'}
                 </div>
             </header>
             <div className="sky-fade">

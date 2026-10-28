@@ -40,7 +40,9 @@ export const TourBar = forwardRef<
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
                 <p className="lc-label text-sidebar-muted">
                     Autopilot · {tour.title}
-                    {state.chapter && ` · ${state.chapter}`}
+                    {state.chapter &&
+                        state.chapter !== tour.title &&
+                        ` · ${state.chapter}`}
                 </p>
                 <p className="lc-label text-sidebar-muted tabular-nums">
                     {finished ? 'The end' : `Step ${step} of ${state.total}`}
@@ -53,9 +55,10 @@ export const TourBar = forwardRef<
                 className="min-h-[3rem] text-base leading-snug"
             >
                 {state.message ??
+                    state.caption ??
                     (finished
                         ? 'That’s the tour. The demo studio is yours now: take the controls.'
-                        : (state.caption ?? '…'))}
+                        : '…')}
             </p>
 
             <div className="flex flex-wrap items-center gap-1">

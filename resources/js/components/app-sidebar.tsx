@@ -38,7 +38,12 @@ export function AppSidebar() {
         ...(portal === 'admin'
             ? [
                   { title: 'Clients', href: organizations(), icon: Building2 },
-                  { title: 'Projects', href: projects(), icon: FolderKanban },
+                  {
+                      title: 'Projects',
+                      href: projects(),
+                      icon: FolderKanban,
+                      tour: 'nav-projects',
+                  },
                   {
                       title: 'Scope library',
                       href: lineItems(),

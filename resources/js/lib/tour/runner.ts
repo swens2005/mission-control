@@ -1,4 +1,4 @@
-import type { Step } from './types';
+import type { Match, Step } from './types';
 
 /**
  * What the runner needs from the page. The browser implementation is in
@@ -6,11 +6,14 @@ import type { Step } from './types';
  */
 export type TourAdapter<Target = unknown> = {
     /** The element for a data-tour name, or null when it isn't there. */
-    find(target: string, text?: string, nth?: number): Target | null;
+    find(target: string, match?: Match): Target | null;
     moveTo(target: Target, durationMs: number): Promise<void>;
-    type(target: Target, text: string, perCharMs: number): Promise<void>;
+    /** text null retypes the field's current value. */
+    type(target: Target, text: string | null, perCharMs: number): Promise<void>;
     click(target: Target): void | Promise<void>;
     visit(url: string): Promise<void>;
+    /** Logs out of any demo and lands on the login page. */
+    fresh(): Promise<void>;
     sleep(ms: number): Promise<void>;
 };
 
@@ -232,7 +235,8 @@ export class TourRunner<Target = unknown> {
     private async run(step: Step, generation: number): Promise<boolean> {
         switch (step.kind) {
             case 'chapter':
-                this.update({ chapter: step.title });
+                // The last chapter's caption shouldn't linger on the next.
+                this.update({ chapter: step.title, caption: null });
 
                 return true;
 
@@ -247,12 +251,18 @@ export class TourRunner<Target = unknown> {
 
                 return true;
 
+            case 'fresh':
+                await this.adapter.fresh();
+
+                return true;
+
             case 'waitFor':
                 return (
                     (await this.findTarget(
                         step.target,
                         generation,
-                        step.text,
+                        step.match,
+                        step.timeoutMs,
                     )) !== null
                 );
 
@@ -262,8 +272,7 @@ export class TourRunner<Target = unknown> {
                 const target = await this.findTarget(
                     step.target,
                     generation,
-                    undefined,
-                    step.kind === 'click' ? step.nth : undefined,
+                    step.match,
                 );
 
                 if (target === null) {
@@ -300,19 +309,19 @@ export class TourRunner<Target = unknown> {
     private async findTarget(
         name: string,
         generation: number,
-        text?: string,
-        nth?: number,
+        match?: Match,
+        timeoutMs = WAIT_TIMEOUT_MS,
     ): Promise<Target | null> {
         let waited = 0;
 
         while (generation === this.generation) {
-            const target = this.adapter.find(name, text, nth);
+            const target = this.adapter.find(name, match);
 
             if (target !== null) {
                 return target;
             }
 
-            if (waited >= WAIT_TIMEOUT_MS) {
+            if (waited >= timeoutMs) {
                 return null;
             }
 

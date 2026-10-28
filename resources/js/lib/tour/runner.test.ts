@@ -7,16 +7,26 @@ import {
     WAIT_TIMEOUT_MS,
 } from './runner';
 import type { TourAdapter, TourState, TourTiming } from './runner';
-import { caption, chapter, click, type, visit, waitFor } from './types';
+import { caption, chapter, click, fresh, type, visit, waitFor } from './types';
 
 const normal: TourTiming = { speed: 100, reducedMotion: false };
 
-/** A fake page: targets are names in a set; actions are logged. */
+/**
+ * A fake page: targets are names in a set, or "name:text" for a match by
+ * text; actions are logged.
+ */
 function fakePage(present: string[] = []) {
     const targets = new Set(present);
     const log: string[] = [];
     const adapter: TourAdapter<string> = {
-        find: (name) => (targets.has(name) ? name : null),
+        find: (name, match) => {
+            const key = match?.text ? `${name}:${match.text}` : name;
+
+            return targets.has(key) ? key : null;
+        },
+        fresh: async () => {
+            log.push('fresh');
+        },
         moveTo: async (name, ms) => {
             log.push(`move ${name} ${ms}`);
             await new Promise((r) => setTimeout(r, ms));
@@ -223,6 +233,50 @@ describe('TourRunner', () => {
         await vi.advanceTimersByTimeAsync(WAIT_TIMEOUT_MS * 3);
         page.targets.add('slow');
         runner.resume();
+        await vi.runAllTimersAsync();
+        await done;
+
+        expect(runner.current.status).toBe('done');
+    });
+
+    it('starts fresh, finds targets by text, and retypes prefilled values', async () => {
+        const page = fakePage(['project-link:Seasonal menu pages', 'email']);
+        const runner = new TourRunner(
+            [
+                fresh(),
+                type('email', null),
+                click('project-link', { text: 'Seasonal menu pages' }),
+            ],
+            page.adapter,
+            { speed: 0, reducedMotion: true },
+        );
+
+        const done = runner.play();
+        await vi.runAllTimersAsync();
+        await done;
+
+        expect(page.log).toEqual([
+            'fresh',
+            'move email 0',
+            'type email null 0',
+            'move project-link:Seasonal menu pages 0',
+            'click project-link:Seasonal menu pages',
+        ]);
+    });
+
+    it('lets a step wait longer than the default, e.g. for live checks', async () => {
+        const page = fakePage();
+        const runner = new TourRunner(
+            [waitFor('check-result', undefined, 30_000)],
+            page.adapter,
+            normal,
+        );
+
+        const done = runner.play();
+        await vi.advanceTimersByTimeAsync(WAIT_TIMEOUT_MS + 5000);
+        expect(runner.current.status).toBe('playing');
+
+        page.targets.add('check-result');
         await vi.runAllTimersAsync();
         await done;
 

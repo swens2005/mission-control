@@ -323,6 +323,7 @@ function ChangesRequest({ request }: { request: ChangesRequestInfo }) {
             className="lc-card lc-edge-warn space-y-2 p-5"
             data-print="hide"
             role="note"
+            data-tour="changes-request"
             aria-label={`Changes requested to v${request.version}`}
         >
             <p className="lc-label text-muted-foreground">

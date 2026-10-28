@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import AutopilotController from '@/actions/App/Http/Controllers/AutopilotController';
 import type { TourAdapter } from './runner';
 
 export type Point = { x: number; y: number };
@@ -27,15 +28,25 @@ export function domAdapter(draw: {
     ring: (box: Box | null) => void;
 }): TourAdapter<HTMLElement> {
     return {
-        find(name, text, nth = 0) {
+        find(name, match = {}) {
             const matches = tourElements(name).filter(
                 (element) =>
                     isVisible(element) &&
-                    (text === undefined ||
-                        (element.textContent ?? '').includes(text)),
+                    (match.text === undefined ||
+                        (element.textContent ?? '').includes(match.text)),
             );
 
-            return matches[nth] ?? null;
+            return matches[match.nth ?? 0] ?? null;
+        },
+
+        fresh() {
+            return new Promise((resolve) =>
+                router.post(
+                    AutopilotController.fresh.url(),
+                    {},
+                    { onFinish: () => resolve() },
+                ),
+            );
         },
 
         async moveTo(element, durationMs) {
@@ -72,6 +83,7 @@ export function domAdapter(draw: {
             }
 
             element.focus();
+            text ??= element.value;
             // React tracks the value; set it through the prototype's native
             // setter so its onChange (and Inertia's form) see each character.
             const prototype: object = Object.getPrototypeOf(element);
