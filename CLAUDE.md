@@ -26,10 +26,10 @@ composer test:browser          # autopilot tours in headless Chromium (after npm
 ```
 
 Pest's browser plugin needs PHP's `sockets` extension for every test run,
-browser or not. Locally, if it isn't enabled in php.ini, run Pest directly
-with it: `php -d extension=sockets vendor/bin/pest --compact` (and
-`... vendor/bin/pest tests/Browser`). `artisan test` starts a new PHP
-process, which doesn't get the `-d` flag.
+browser or not. It's enabled in the local php.ini
+(`C:\tools\php85\php.ini`) and listed in CI. On a machine without it, run
+Pest directly with `php -d extension=sockets vendor/bin/pest` (`artisan
+test` starts a new PHP process, which doesn't get the `-d` flag).
 
 All of these must pass before committing. CI runs the same set.
 
