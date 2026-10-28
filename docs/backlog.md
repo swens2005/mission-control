@@ -3,7 +3,7 @@
 Ideas that are out of scope for the current phase. Each module gets 3 to 5
 stories at most; anything extra lands here instead of in the build.
 
-- Run the app under `/mission-control` locally too, and add a post-deploy browser smoke test (log in through the demo) to CI. Two subfolder bugs so far only showed up on production: the CSP header override (ADR 0006) and route prefixes (ADR 0002).
+- Run the app under `/mission-control` locally too. Two subfolder bugs so far only showed up on production: the CSP header override (ADR 0006) and route prefixes (ADR 0002). (The post-deploy browser smoke test is done, story 34.)
 - Starter-kit 2FA setup dialog: the code input has no name/id (browser warning); fix in the Phase 7 accessibility audit.
 - Login page: Radix's hidden mirror input for "Remember me" has no autocomplete attribute (Chrome autofill issue); fix in the Phase 7 accessibility audit.
 - Email invitations for client contacts (needs working mail on the host; story 04 shows a one-time password instead).

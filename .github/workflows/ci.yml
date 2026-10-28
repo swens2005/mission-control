@@ -39,6 +39,9 @@ jobs:
   checks:
     name: Lint, analyse, test, build
     runs-on: ubuntu-latest
+    # Normally about 3 minutes; once `npm ci` hung for 15 (GitHub's own
+    # default limit is 6 hours).
+    timeout-minutes: 20
 
     services:
       mariadb:
@@ -318,3 +321,46 @@ jobs:
       - name: Smoke test
         if: steps.secrets.outputs.ready == 'true'
         run: curl --fail --silent --show-error --max-time 30 "$SITE_URL/up" > /dev/null
+
+  # Story 34: a real browser clicks through the live site as a demo visitor,
+  # because subfolder URLs and the .htaccess headers (ADRs 0002, 0006) only
+  # misbehave there. Uses the public demo; no secrets. A failure means the
+  # files are already live: fix forward with a new commit.
+  smoke:
+    name: Browser smoke test on codelaunch.nl
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Playwright version
+        id: playwright
+        run: echo "version=$(node -p "require('playwright/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright's browser
+        id: playwright-cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ steps.playwright.outputs.version }}
+
+      - name: Install Chromium
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
+
+      - name: Install Chromium's system libraries
+        run: npx playwright install-deps chromium
+
+      - name: Click through production as a demo visitor
+        run: node tests/Smoke/production.mjs "$SITE_URL"
