@@ -11,6 +11,7 @@ import {
 import type { ReactNode } from 'react';
 import { TourBar } from '@/components/tour/tour-bar';
 import { TourCursor } from '@/components/tour/tour-cursor';
+import { focusById } from '@/components/form-field';
 import { domAdapter } from '@/lib/tour/dom';
 import type { Box, Point } from '@/lib/tour/dom';
 import { TourRunner } from '@/lib/tour/runner';
@@ -113,6 +114,12 @@ export function TourProvider({ children }: { children: ReactNode }) {
     }, [begin]);
 
     const exit = useCallback(() => {
+        // The bar is about to disappear; don't leave keyboard focus on a
+        // button that no longer exists.
+        const focusWasInBar =
+            barRef.current?.contains(document.activeElement) ||
+            document.activeElement === document.body;
+
         runnerRef.current?.exit();
         runnerRef.current = null;
         clear();
@@ -120,6 +127,10 @@ export function TourProvider({ children }: { children: ReactNode }) {
         setState(null);
         setCursor(null);
         setRing(null);
+
+        if (focusWasInBar) {
+            focusById('main');
+        }
     }, []);
 
     const active =

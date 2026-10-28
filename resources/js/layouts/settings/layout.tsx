@@ -1,6 +1,5 @@
 import { Link } from '@inertiajs/react';
 import type { PropsWithChildren } from 'react';
-import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCurrentUrl } from '@/hooks/use-current-url';
@@ -27,10 +26,14 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
 
     return (
         <div className="px-4 py-6">
-            <Heading
-                title="Settings"
-                description="Manage your profile and account settings"
-            />
+            {/* Not a heading: each settings page has its own h1, which
+                should be the first heading on the page. */}
+            <header className="mb-8 space-y-0.5">
+                <p className="text-xl font-semibold tracking-tight">Settings</p>
+                <p className="text-sm text-muted-foreground">
+                    Manage your profile and account settings
+                </p>
+            </header>
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">

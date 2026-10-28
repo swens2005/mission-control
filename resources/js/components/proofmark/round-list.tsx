@@ -18,7 +18,11 @@ export function RoundList({
     href: (round: ReviewRoundSummary) => RouteDefinition<'get'>;
 }) {
     return (
-        <nav aria-labelledby="rounds-heading" data-tour="round-list">
+        <nav
+            aria-labelledby="rounds-heading"
+            className="min-w-0"
+            data-tour="round-list"
+        >
             <h2
                 id="rounds-heading"
                 className="lc-label mb-3 text-muted-foreground"

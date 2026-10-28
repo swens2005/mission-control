@@ -234,6 +234,55 @@ test('the two-factor login challenge passes axe', function () {
     expect($found)->toBeEmpty(implode("\n", $found));
 });
 
+/**
+ * Pages that scroll sideways at 320 px (WCAG 1.4.10, reflow; story 36).
+ *
+ * @param  array<string, string>  $pages
+ * @return list<string>
+ */
+function sidewaysAt320(array $pages): array
+{
+    $found = [];
+
+    foreach ($pages as $name => $url) {
+        $page = visit($url)->resize(320, 800);
+        $width = $page->script('document.documentElement.scrollWidth - document.documentElement.clientWidth');
+
+        if ($width > 0) {
+            $found[] = "[{$name}] scrolls sideways by {$width}px at 320px";
+        }
+    }
+
+    return $found;
+}
+
+test('no page scrolls sideways at 320 px', function () {
+    $this->actingAs($this->sandbox->admin);
+    $found = sidewaysAt320(studioPages($this->sandbox));
+
+    $this->actingAs($this->sandbox->client);
+    $found = [...$found, ...sidewaysAt320(launchpadPages($this->sandbox))];
+
+    expect($found)->toBeEmpty(implode("\n", $found));
+});
+
+test('Esc ends a tour and puts focus on the page', function () {
+    config(['tour.speed' => 100]);
+
+    $page = visit('/autopilot');
+    $page->click('[data-tour="start-studio"]')
+        ->assertSee('Pause')
+        ->click('Pause')
+        ->assertSee('Resume');
+
+    // Esc pressed with focus on one of the bar's own buttons.
+    $page->keys('[aria-label="Autopilot"] [aria-keyshortcuts="Escape"]', 'Escape');
+    $page->wait(0.2);
+
+    expect($page->script("document.querySelector('[aria-label=\"Autopilot\"]') === null"))->toBeTrue()
+        ->and($page->script('document.activeElement?.id'))->toBe('main');
+});
+
 test('the sweep catches a planted issue', function () {
     $page = visit('/login');
     $page->script("document.body.append(Object.assign(document.createElement('img'), { src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=' }))");

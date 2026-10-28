@@ -14,7 +14,8 @@ export default function AuthSimpleLayout({
         <div className="sky flex min-h-svh flex-col items-center justify-center p-4 sm:p-10">
             <main
                 id="main"
-                className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-xl sm:p-8"
+                tabIndex={-1}
+                className="w-full max-w-sm rounded-2xl bg-card p-6 shadow-xl focus:outline-none sm:p-8"
             >
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col items-center gap-4 text-center">
