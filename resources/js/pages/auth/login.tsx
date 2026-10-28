@@ -42,6 +42,7 @@ export default function Login({
             {demo && (
                 <div
                     role="status"
+                    data-tour="demo-ready"
                     className="space-y-2 rounded-md border-2 border-primary px-4 py-3 text-sm"
                 >
                     <p className="font-semibold">

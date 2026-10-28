@@ -73,6 +73,7 @@ export default function Home({
                                     </p>
                                     <Link
                                         href={item.url}
+                                        data-tour="waiting-item"
                                         className="group flex items-center gap-2 font-display text-lg font-bold text-primary underline-offset-4 hover:underline"
                                     >
                                         {item.title}
@@ -133,6 +134,7 @@ export default function Home({
                                                         project.id,
                                                     )}
                                                     className="underline-offset-4 hover:underline"
+                                                    data-tour="client-project"
                                                 >
                                                     {project.name}
                                                 </Link>

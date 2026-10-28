@@ -109,7 +109,29 @@ export function domAdapter(draw: {
         click(element) {
             draw.ring(null);
             element.focus({ preventScroll: true });
-            element.click();
+
+            // The autopilot answers its own "Are you sure?" (sending a
+            // proposal, approving a kit). Only during this click: the
+            // visitor's own clicks still get the question.
+            const confirm = window.confirm;
+            window.confirm = () => true;
+
+            try {
+                element.click();
+            } finally {
+                window.confirm = confirm;
+            }
+        },
+
+        press(element, key) {
+            element.focus({ preventScroll: true });
+            element.dispatchEvent(
+                new KeyboardEvent('keydown', {
+                    key,
+                    bubbles: true,
+                    cancelable: true,
+                }),
+            );
         },
 
         visit(url) {

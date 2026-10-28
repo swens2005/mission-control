@@ -12,6 +12,14 @@ export type Step =
     /** text null: retype the field's current value (e.g. demo credentials). */
     | { kind: 'type'; target: string; text: string | null; match?: Match }
     | { kind: 'click'; target: string; match?: Match }
+    /** Presses a key on the target, e.g. arrow keys on the pin crosshair. */
+    | {
+          kind: 'press';
+          target: string;
+          key: string;
+          times: number;
+          match?: Match;
+      }
     | { kind: 'visit'; url: string }
     | { kind: 'waitFor'; target: string; match?: Match; timeoutMs?: number }
     | { kind: 'chapter'; title: string }
@@ -46,6 +54,12 @@ export const click = (target: string, match?: Match): Step => ({
     target,
     match,
 });
+export const press = (
+    target: string,
+    key: string,
+    times = 1,
+    match?: Match,
+): Step => ({ kind: 'press', target, key, times, match });
 export const visit = (url: string): Step => ({ kind: 'visit', url });
 /** Waits for the target to appear (after a request, say). */
 export const waitFor = (

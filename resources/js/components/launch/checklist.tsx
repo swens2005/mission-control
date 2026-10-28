@@ -136,7 +136,11 @@ function ChecklistRow({
                 onChange={(event) => onToggle(item, event.target.checked)}
             />
             <div className="min-w-0 flex-1">
-                <label htmlFor={id} className="font-semibold">
+                <label
+                    htmlFor={id}
+                    className="font-semibold"
+                    data-tour="checklist-label"
+                >
                     {item.label}
                 </label>
                 <div

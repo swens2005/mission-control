@@ -11,6 +11,7 @@ export type TourAdapter<Target = unknown> = {
     /** text null retypes the field's current value. */
     type(target: Target, text: string | null, perCharMs: number): Promise<void>;
     click(target: Target): void | Promise<void>;
+    press(target: Target, key: string): void;
     visit(url: string): Promise<void>;
     /** Logs out of any demo and lands on the login page. */
     fresh(): Promise<void>;
@@ -268,6 +269,7 @@ export class TourRunner<Target = unknown> {
 
             case 'moveTo':
             case 'click':
+            case 'press':
             case 'type': {
                 const target = await this.findTarget(
                     step.target,
@@ -288,6 +290,13 @@ export class TourRunner<Target = unknown> {
 
                 if (step.kind === 'click') {
                     await this.adapter.click(target);
+                }
+
+                if (step.kind === 'press') {
+                    for (let i = 0; i < step.times; i++) {
+                        this.adapter.press(target, step.key);
+                        await this.wait(charMs(this.timing) * 2, generation);
+                    }
                 }
 
                 if (step.kind === 'type') {

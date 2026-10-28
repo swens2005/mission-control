@@ -69,7 +69,11 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('deploy', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
 
         // New demo sandboxes per visitor IP (story 08).
-        RateLimiter::for('demo', fn (Request $request) => Limit::perHour(config()->integer('demo.per_ip_per_hour'))->by($request->ip()));
+        // Back to the login page with a plain message, not a bare 429 page
+        // (the autopilot starts with a new demo too, story 31).
+        RateLimiter::for('demo', fn (Request $request) => Limit::perHour(config()->integer('demo.per_ip_per_hour'))
+            ->by($request->ip())
+            ->response(fn () => to_route('login')->with('status', 'You’ve started a few demos in the last hour. Please try again a bit later.')));
 
         // Proofmark uploads: decoding images costs CPU on a shared host (ADR 0009).
         RateLimiter::for('comments', fn (Request $request) => Limit::perMinute(30)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));

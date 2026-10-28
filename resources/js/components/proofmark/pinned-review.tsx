@@ -325,6 +325,7 @@ function CommentForm({
                                 maxLength={2000}
                                 autoComplete="off"
                                 className={textareaClassName}
+                                data-tour="comment-body"
                             />
                         )}
                     </FormField>
@@ -337,7 +338,12 @@ function CommentForm({
                         </p>
                     )}
                     <div className="flex gap-2">
-                        <Button disabled={processing}>Pin comment</Button>
+                        <Button
+                            disabled={processing}
+                            data-tour="comment-submit"
+                        >
+                            Pin comment
+                        </Button>
                         <Button
                             type="button"
                             variant="ghost"

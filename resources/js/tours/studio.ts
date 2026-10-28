@@ -27,7 +27,9 @@ export const logIn: Step[] = [
     ),
     waitFor('take-the-controls'),
     click('take-the-controls'),
-    waitFor('login-submit'),
+    // Not there when the demo is busy or this visitor started too many;
+    // the login page then says why.
+    waitFor('demo-ready'),
     caption(
         'That made a fresh demo studio, just for this visit. Now I log in as Sam, the studio’s designer.',
     ),

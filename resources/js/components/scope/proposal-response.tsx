@@ -166,7 +166,11 @@ export function ProposalRespond({ proposal }: { proposal: Proposal }) {
                                 </p>
                             )}
                         </div>
-                        <button className="lc-pill" disabled={processing}>
+                        <button
+                            className="lc-pill"
+                            disabled={processing}
+                            data-tour="accept-submit"
+                        >
                             <BadgeCheck aria-hidden="true" className="size-5" />
                             Accept proposal v{proposal.number}
                         </button>

@@ -58,7 +58,9 @@ export const TourBar = forwardRef<
                     state.caption ??
                     (finished
                         ? 'That’s the tour. The demo studio is yours now: take the controls.'
-                        : '…')}
+                        : state.chapter
+                          ? `On to: ${state.chapter}…`
+                          : '…')}
             </p>
 
             <div className="flex flex-wrap items-center gap-1">

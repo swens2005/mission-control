@@ -81,6 +81,7 @@ export default function ShowPalette({
                                 <button
                                     className="lc-pill"
                                     disabled={processing}
+                                    data-tour="start-kit"
                                 >
                                     <Palette
                                         aria-hidden="true"

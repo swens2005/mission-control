@@ -101,7 +101,11 @@ test('a visitor can start at most five demos an hour', function () {
         $this->flushSession();
     }
 
-    $this->post(route('demo.store'))->assertTooManyRequests();
+    // A plain message on the login page, not a bare 429 page.
+    $this->post(route('demo.store'))
+        ->assertRedirect(route('login'))
+        ->assertSessionHas('status', 'You’ve started a few demos in the last hour. Please try again a bit later.')
+        ->assertSessionMissing('demo');
     expect(Workspace::count())->toBe(5);
 });
 

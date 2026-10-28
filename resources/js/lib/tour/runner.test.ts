@@ -7,7 +7,16 @@ import {
     WAIT_TIMEOUT_MS,
 } from './runner';
 import type { TourAdapter, TourState, TourTiming } from './runner';
-import { caption, chapter, click, fresh, type, visit, waitFor } from './types';
+import {
+    caption,
+    chapter,
+    click,
+    fresh,
+    press,
+    type,
+    visit,
+    waitFor,
+} from './types';
 
 const normal: TourTiming = { speed: 100, reducedMotion: false };
 
@@ -36,6 +45,9 @@ function fakePage(present: string[] = []) {
         },
         click: (name) => {
             log.push(`click ${name}`);
+        },
+        press: (name, key) => {
+            log.push(`press ${name} ${key}`);
         },
         visit: async (url) => {
             log.push(`visit ${url}`);
@@ -261,6 +273,25 @@ describe('TourRunner', () => {
             'type email null 0',
             'move project-link:Seasonal menu pages 0',
             'click project-link:Seasonal menu pages',
+        ]);
+    });
+
+    it('presses a key a number of times', async () => {
+        const page = fakePage(['crosshair']);
+        const runner = new TourRunner(
+            [press('crosshair', 'ArrowRight', 3)],
+            page.adapter,
+            normal,
+        );
+
+        const done = runner.play();
+        await vi.runAllTimersAsync();
+        await done;
+
+        expect(page.log.filter((l) => l.startsWith('press'))).toEqual([
+            'press crosshair ArrowRight',
+            'press crosshair ArrowRight',
+            'press crosshair ArrowRight',
         ]);
     });
 
