@@ -32,8 +32,8 @@ Good is LCP under 2.5 s and CLS under 0.1.
 
 ## What changed
 
-- **Caching.** The portfolio's root `.htaccess` sends `Cache-Control:
-no-cache` for every `.js` and `.css`, which is right for its own files
+- **Caching.** The portfolio's root `.htaccess` sends
+  `Cache-Control: no-cache` for every `.js` and `.css`, which is right for its own files
   but made browsers re-check every Mission Control build file on every
   page. The build files have a content hash in their names, so
   `public/.htaccess` now caches them for a year (`immutable`). The

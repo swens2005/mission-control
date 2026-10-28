@@ -71,6 +71,18 @@ cPanel → Cron Jobs → every minute:
 If `php` there is not 8.5, use the full path that cPanel's PHP Selector shows
 (CloudLinux usually has `/opt/alt/php85/usr/bin/php`).
 
+## 5. Your own studio account (once)
+
+cPanel → Terminal:
+
+```
+cd ~/mission-control-app
+php artisan studio:create
+```
+
+It asks for the studio name, your name, email and password (hidden). See
+ADR 0012 and story 38 for details.
+
 ---
 
 ## Giving Claude server access (optional)
