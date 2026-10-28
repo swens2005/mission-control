@@ -12,6 +12,8 @@ declare module '@inertiajs/core' {
             name: string;
             auth: Auth;
             sidebarOpen: boolean;
+            /** Autopilot speed in percent; 0 in tests (ADR 0011). */
+            tourSpeed: number;
             portal: Portal | null;
             workspace: {
                 name: string;

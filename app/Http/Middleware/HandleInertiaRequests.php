@@ -53,6 +53,8 @@ class HandleInertiaRequests extends Middleware
                 'isSandbox' => $user->workspace->is_sandbox,
                 'expiresAt' => $user->workspace->expires_at?->toIso8601String(),
             ],
+            // Autopilot speed in percent (ADR 0011); 0 in tests.
+            'tourSpeed' => config()->integer('tour.speed'),
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }

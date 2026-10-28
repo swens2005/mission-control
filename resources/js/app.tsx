@@ -1,6 +1,7 @@
 import { createInertiaApp, router } from '@inertiajs/react';
 import { setNonce } from 'get-nonce';
 import { FlashToaster } from '@/components/flash-toaster';
+import { TourProvider } from '@/components/tour/tour-provider';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import AppLayout from '@/layouts/app-layout';
 import AuthLayout from '@/layouts/auth-layout';
@@ -33,8 +34,11 @@ void createInertiaApp({
     withApp(app) {
         return (
             <TooltipProvider delayDuration={0}>
-                {app}
-                <FlashToaster />
+                {/* Above the pages, so a tour survives visits (ADR 0011). */}
+                <TourProvider>
+                    {app}
+                    <FlashToaster />
+                </TourProvider>
             </TooltipProvider>
         );
     },
