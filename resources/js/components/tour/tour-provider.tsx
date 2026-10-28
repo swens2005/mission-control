@@ -130,6 +130,17 @@ export function TourProvider({ children }: { children: ReactNode }) {
 
         if (focusWasInBar) {
             focusById('main');
+
+            // If the tour was mid-visit, the next page replaces main; catch
+            // focus there too unless that page focuses something itself.
+            const off = router.on('navigate', () => {
+                off();
+
+                if (document.activeElement === document.body) {
+                    focusById('main');
+                }
+            });
+            window.setTimeout(off, 5000);
         }
     }, []);
 
