@@ -21,9 +21,7 @@ export default function Autopilot({
 
     return (
         <>
-            <Head title="Autopilot">
-                <meta name="robots" content="noindex, nofollow" />
-            </Head>
+            <Head title="Autopilot" />
             <div className="max-w-3xl space-y-10">
                 <div className="space-y-3">
                     <p className="lc-label text-muted-foreground">

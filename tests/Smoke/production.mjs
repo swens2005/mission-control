@@ -82,6 +82,23 @@ try {
 
     await page.goto(`${base}/autopilot`);
     await arrive('autopilot page', 'start-full-story');
+
+    // Hashed build files are cached for a year (story 37). The portfolio's
+    // .htaccess says no-cache for all .js, so only the real host can tell.
+    const script = await page
+        .locator('script[type="module"][src*="/build/assets/"]')
+        .first()
+        .getAttribute('src');
+    const cache = (
+        await page.request.head(new URL(script, base).href)
+    ).headers()['cache-control'];
+
+    if (cache?.includes('immutable')) {
+        console.log('pass  build assets cached for a year');
+    } else {
+        problems.push(`build assets: Cache-Control is "${cache}"`);
+        console.log('FAIL  build assets cached for a year');
+    }
 } catch (error) {
     problems.push(`stopped at ${path()}: ${error.message.split('\n')[0]}`);
 } finally {

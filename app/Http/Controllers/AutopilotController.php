@@ -19,15 +19,13 @@ class AutopilotController extends Controller
     {
         $user = $request->user();
 
-        $response = Inertia::render('public/autopilot', [
+        // Indexable (story 37): it's the page a search for the project
+        // should land on. Nothing on it changes until a tour is started.
+        return Inertia::render('public/autopilot', [
             'demoEnabled' => config()->boolean('demo.enabled'),
             // A signed-in visitor is told a tour starts a new demo.
             'signedInAs' => $user instanceof User ? $user->name : null,
         ])->toResponse($request);
-
-        $response->headers->set('X-Robots-Tag', 'noindex, nofollow');
-
-        return $response;
     }
 
     /**

@@ -3,10 +3,11 @@
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
-test('guests get the autopilot page, kept out of search engines', function () {
+test('guests get the autopilot page, open to search engines', function () {
     $this->get(route('autopilot.show'))
         ->assertOk()
-        ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
+        ->assertHeaderMissing('X-Robots-Tag')
+        ->assertSee('<meta name="description" content="Mission Control runs a small web studio', false)
         ->assertInertia(fn (Assert $page) => $page->component('public/autopilot')
             ->where('demoEnabled', true)
             ->where('signedInAs', null));
