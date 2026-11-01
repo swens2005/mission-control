@@ -29,7 +29,7 @@ same strict Content-Security-Policy as production.
 | Keyboard flows                           | Pinning a comment (button, arrow keys, Enter, type, submit), the 2FA dialog, the tour bar                      | All work without a mouse; focus lands on the result (the new comment, the copied key's status, the page after Esc) |
 | 320 px                                   | Every page at 320 × 800                                                                                        | One overflow, fixed (below)                                                                                        |
 | 200% zoom                                | Every page at 640 px wide (a 1280 px window at 200%)                                                           | No overflow                                                                                                        |
-| Screen reader                            | NVDA on Windows, five flows (below)                                                                            | Pending                                                                                                            |
+| Screen reader                            | What a screen reader receives (accessibility tree, focus, live regions) in five flows, in Chrome               | All five flows pass (below); a listen-through with NVDA is still open                                              |
 
 ### Found and fixed
 
@@ -53,8 +53,28 @@ same strict Content-Security-Policy as production.
 
 ### Screen reader spot check
 
-Flows: log in, "Waiting on you", accept a proposal, pin a comment, and the
-autopilot captions. Results will be recorded here.
+Checked in Chrome's accessibility tree, following focus and live
+regions through each flow (November 2026):
+
+- **Log in:** "Take the controls" puts the new demo logins in a polite
+  status region ("Your demo studio is ready for 24 hours…"), and focus
+  moves to "Log in". Every field has its label.
+- **Waiting on you:** a region named "Waiting on you" with a level 2
+  heading; each item is a link whose name says what to do ("Review design
+  round v2"), with its module and due date as text. Project progress is
+  written out ("Step 3 of 4: Proofmark, current").
+- **Accept a proposal:** after accepting, focus moves to the status
+  heading, which reads "v2 · Accepted by Anna de Vries".
+- **Pin a comment:** "Add comment" moves focus to a crosshair that
+  explains its keys; Enter moves focus to the comment field, labelled
+  with the spot ("New comment at 60% across, 7% down"); after submitting,
+  "Comment pinned." is announced and focus is on the new comment.
+- **Autopilot captions:** a region named "Autopilot" holds the caption
+  in an `aria-live="polite"`, `aria-atomic` element, so each caption is
+  read whole without interrupting; Esc ends the tour.
+
+This checks what a screen reader is given, not how it sounds. A
+listen-through with NVDA is still worth doing (in the backlog).
 
 ## Known limits
 

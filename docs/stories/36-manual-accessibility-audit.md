@@ -45,5 +45,7 @@ of real problems.
 - New browser tests: no studio or Launchpad page scrolls sideways at
   320 px; Esc ends a tour and focus lands on `main`.
 - Write-up: `docs/accessibility.md`.
-- **Open:** the NVDA spot check. Meagan runs it from a short script; the
-  results go into `docs/accessibility.md` and this story.
+- Screen reader: the five flows were checked in Chrome's accessibility
+  tree (focus, names, live regions), all fine; see `docs/accessibility.md`.
+  That isn't a real screen reader, so the criterion stays open and a
+  listen-through with NVDA is in the backlog.

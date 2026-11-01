@@ -15,3 +15,4 @@ stories at most; anything extra lands here instead of in the build.
 - Palette Lab: a P3 (wide gamut) preview next to the sRGB swatch, for colors that had to be adjusted.
 - Palette Lab: compare the brand kit against the live site's CSS (would reuse SafeFetcher).
 - Scope: mixed VAT rates on one proposal (9% and 21%), with VAT per rate group (ADR 0010 uses one rate per proposal).
+- Accessibility: a listen-through of the five main flows with NVDA (story 36 checked what a screen reader receives, in the accessibility tree, but not how it sounds).
