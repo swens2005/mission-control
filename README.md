@@ -1,6 +1,6 @@
 # Mission Control
 
-**The tool I wish I'd had during 14 years of running a web design
+**The tool I wish I'd had during 13 years of running a web design
 business.** One Laravel app that runs a small web studio from first
 conversation to launch day: a priced proposal, a brand kit, design
 review, and a go/no-go launch. The studio works in **Mission Control**;

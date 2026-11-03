@@ -73,15 +73,12 @@ If `php` there is not 8.5, use the full path that cPanel's PHP Selector shows
 
 ## 5. Your own studio account (once)
 
-cPanel → Terminal:
-
-```
-cd ~/mission-control-app
-php artisan studio:create
-```
-
-It asks for the studio name, your name, email and password (hidden). See
-ADR 0012 and story 38 for details.
+This host has no shell access, so the first real studio is created on a
+one-time page, `/mission-control/setup` (ADR 0013, story 41): make a
+token on your own PC, give Claude only its fingerprint, deploy, then fill
+in the page with the token. The page closes for good once the studio
+exists. On a host with shell access, `php artisan studio:create` does the
+same (ADR 0012).
 
 ---
 

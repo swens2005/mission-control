@@ -31,6 +31,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\DesignImageController;
 use App\Http\Controllers\PublicStyleGuideController;
+use App\Http\Controllers\StudioSetupController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,11 @@ Route::get('/', function (Request $request) {
 
 // The public demo: a sandbox per visitor (ADR 0004, story 08).
 Route::post('demo', [DemoController::class, 'store'])->middleware(['guest', 'throttle:demo'])->name('demo.store');
+// One-time setup of the first real studio, for a host without shell access
+// (story 41, ADR 0013). 404 unless a token fingerprint is set and no real
+// studio exists yet.
+Route::get('setup', [StudioSetupController::class, 'show'])->middleware('guest')->name('studio-setup.show');
+Route::post('setup', [StudioSetupController::class, 'store'])->middleware(['guest', 'throttle:5,1'])->name('studio-setup.store');
 // The autopilot, "Watch it fly" (story 31).
 Route::get('autopilot', [AutopilotController::class, 'show'])->name('autopilot.show');
 Route::post('autopilot/fresh', [AutopilotController::class, 'fresh'])->middleware('throttle:30,1')->name('autopilot.fresh');

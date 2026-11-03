@@ -6,7 +6,7 @@ reading.
 
 ## Acceptance criteria
 
-- [x] Opens with the one sentence ("the tool I wish I'd had during 14
+- [x] Opens with the one sentence ("the tool I wish I'd had during 13
       years of running a web design business"), then **Watch it fly** and
       **Take the controls** links, then a short GIF of the autopilot.
 - [x] Four screenshots, one per module, from a demo sandbox.

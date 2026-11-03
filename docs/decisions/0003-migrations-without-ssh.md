@@ -35,3 +35,7 @@ Option (a) stays as the manual fallback.
 Deploys are fully automatic: push to `main`, CI checks, uploads, migrates and
 smoke-tests. The token is a credential and is stored only in GitHub secrets
 and the production environment secret. Tests: `tests/Feature/DeployTest.php`.
+
+Update (2026-11-03): cPanel's Terminal turned out not to be available on
+this host ("Shell access is not enabled"), so option (a) is not a working
+fallback here. See ADR 0013.

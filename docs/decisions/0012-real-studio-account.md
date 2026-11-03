@@ -1,6 +1,6 @@
 # 0012. Creating a real studio account without SSH
 
-- Status: accepted
+- Status: accepted; amended by 0013 (no shell access on this host)
 - Date: 2026-10-28
 
 ## Context
@@ -47,3 +47,9 @@ Option (c): `php artisan studio:create`
 - If cPanel's Terminal can't hide typed input, Symfony falls back to
   visible input; the steps say to clear the terminal afterwards.
 - Tests: `tests/Feature/CreateStudioTest.php`.
+
+## Update (2026-11-03)
+
+The host has shell access switched off, so the command can't run in
+production. ADR 0013 adds a one-time setup page that uses the same rules
+(`StudioCreator`). The command stays for hosts with shell access.

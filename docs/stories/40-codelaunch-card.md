@@ -14,7 +14,7 @@ touched there until Meagan has approved the plan.
       (`/mission-control/login`).
 - [x] The portfolio's CSP and `.htaccess` keep working; no new outside
       sources. Mission Control's own pages are unaffected (ADR 0006).
-- [ ] The CV timeline gets Meagan's 14-year design business, with
+- [x] The CV timeline gets Meagan's 13-year design business, with
       details she provides (name, years, what it did). Nothing invented.
 - [x] The card works with a keyboard, at 320 px, and passes the
       portfolio's own Lighthouse budget (`lighthouserc.json`).
@@ -38,6 +38,9 @@ touched there until Meagan has approved the plan.
 - Committed in `../meagan-swenson` (21a8d27) but **not pushed**: pushing
   deploys codelaunch.nl, and that's Meagan's call. After the push: click
   both buttons on the live site.
-- Open: the CV timeline entry for the design business (needs Meagan's
-  details), and whether Jobby's CV should list Mission Control too (the
-  portfolio's README asks to keep both in step).
+- The design business: Meagan added Adroidea herself (a "Side mission"
+  floor and a Client work page, portfolio commit f427343): 13 years,
+  2009–2022. The Mission 05 card and this repo's README now say 13 years,
+  not 14 as the plan had it.
+- Jobby's CV lists Mission Control too (Meagan asked; see the Jobby
+  repo), and the portfolio's CV PDF is regenerated from it.

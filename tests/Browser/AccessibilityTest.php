@@ -142,18 +142,25 @@ test('the public pages pass axe', function () {
     $kit->public_token = Str::random(40);
     $kit->save();
 
-    $found = [];
+    // The one-time setup page (story 41) only exists while setup is open.
+    config(['studio.setup_token_sha256' => hash('sha256', 'test-setup-token')]);
 
-    foreach ([
+    $pages = [
         'login' => '/login',
         'forgot password' => '/forgot-password',
         'autopilot' => '/autopilot',
         'public style guide' => "/style-guide/{$kit->public_token}",
-    ] as $name => $url) {
+        'studio setup' => '/setup',
+    ];
+    $found = [];
+
+    foreach ($pages as $name => $url) {
         $page = visit($url);
         $page->assertNoJavaScriptErrors();
         $found = [...$found, ...axeViolations($page, $name)];
     }
+
+    $found = [...$found, ...sidewaysAt320($pages)];
 
     expect($found)->toBeEmpty(implode("\n", $found));
 });
