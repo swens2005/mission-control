@@ -4,3 +4,10 @@ useDefault = true
 [[allowlists]]
 description = "Throwaway APP_KEY used only by the test suite; never used in any real environment"
 paths = ['''^phpunit\.xml$''']
+
+[[allowlists]]
+description = "The one-time studio setup's token fingerprint (SHA-256, ADR 0013): a hash of a secret, not the secret, and only on this line"
+condition = "AND"
+paths = ['''^config/studio\.php$''']
+regexTarget = "line"
+regexes = ['''setup_token_sha256''']
