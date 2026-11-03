@@ -15,7 +15,7 @@ return [
     |
     */
 
-    // Meagan's token, set 2026-11-03; remove once her studio exists.
-    'setup_token_sha256' => env('STUDIO_SETUP_TOKEN_SHA256') ?: 'ea3455508609d19291a5a9fba8cbba389b0b6813f946f709545d79a8536a15a2',
+    // Used once, on 2026-11-03, to create Meagan's studio; empty since.
+    'setup_token_sha256' => env('STUDIO_SETUP_TOKEN_SHA256', ''),
 
 ];

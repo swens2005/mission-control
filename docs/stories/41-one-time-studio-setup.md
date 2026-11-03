@@ -23,7 +23,7 @@ because the host has shell access switched off, so story 38's
       token, because a real studio exists.
 - [x] The page uses the login page's look, works by keyboard, passes axe
       and fits 320 px.
-- [ ] An ADR records why (and amends ADR 0003 and 0012: cPanel Terminal
+- [x] An ADR records why (and amends ADR 0003 and 0012: cPanel Terminal
       isn't available on this host); the fingerprint is removed from the
       code once the studio exists.
 
@@ -34,3 +34,16 @@ because the host has shell access switched off, so story 38's
       the right token creates the studio, logs in and closes setup;
       validation errors; rate limit; signed-in users are redirected.
 - [x] The page in the axe browser sweep.
+
+## Done notes
+
+- Meagan made the token on her own PC and sent only its fingerprint;
+  the page opened on 2026-11-03, she created her studio, and `/setup`
+  answered 404 straight after (checked on production).
+- Cleanup: the fingerprint is out of `config/studio.php` again, and so
+  is the gitleaks exception that let it through the secret scan (gitleaks
+  read the 64-character hash as a secret; the exception was limited to
+  that one line).
+- Lesson for CLAUDE.md: CI's gitleaks scans only the newest commit, so
+  a change to `.gitleaks.toml` alone proves nothing; touch the flagged
+  line in the same commit.

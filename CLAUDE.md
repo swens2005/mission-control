@@ -177,6 +177,13 @@ All of these must pass before committing. CI runs the same set.
   RecursiveIterator"); the CLI is fine. Serve with a copy of php.ini
   without `extension=sockets` (`php -c <copy> -S ...`, run from
   `public/` with Laravel's `server.php` as the router).
+- **No shell on production:** cPanel Terminal says "Shell access is not
+  enabled". One-off server tasks need a web route (see ADR 0013's
+  one-time setup page) or the deploy endpoint.
+- **Secret scan:** gitleaks in CI scans only the newest commit, and
+  reads any long hex string (a hash too) as a secret. To allow one,
+  add a narrow `.gitleaks.toml` exception and touch the flagged line in
+  the same commit, or the scan proves nothing.
 - **Local port:** 8123 may already be serving another local app (Jobby);
   check the page title, or pick another port.
 - **OneDrive and `bootstrap/cache`:** OneDrive once set the folder
