@@ -18,11 +18,11 @@ touched there until Meagan has approved the plan.
       details she provides (name, years, what it did). Nothing invented.
 - [x] The card works with a keyboard, at 320 px, and passes the
       portfolio's own Lighthouse budget (`lighthouserc.json`).
-- [ ] After it's live, both buttons are clicked on the real site.
+- [x] After it's live, both buttons are clicked on the real site.
 
 ## Tests
 
-- [ ] Whatever the portfolio repo already runs in CI; plus the click-
+- [x] Whatever the portfolio repo already runs in CI; plus the click-
       through above.
 
 ## Done notes
@@ -35,12 +35,13 @@ touched there until Meagan has approved the plan.
 - Checked locally: html-validate 11.16.1 (the portfolio CI's version),
   `node --check`, 320 px without sideways scroll, visible focus, a clean
   console, Lighthouse 100/100/100 on mobile.
-- Committed in `../meagan-swenson` (21a8d27) but **not pushed**: pushing
-  deploys codelaunch.nl, and that's Meagan's call. After the push: click
-  both buttons on the live site.
+- Live since 2 November (portfolio 21a8d27, pushed by Meagan); "13 years"
+  fix and the new CV PDF in 19cae3b. Both buttons clicked on the live
+  site: the autopilot and the login page open.
 - The design business: Meagan added Adroidea herself (a "Side mission"
   floor and a Client work page, portfolio commit f427343): 13 years,
   2009–2022. The Mission 05 card and this repo's README now say 13 years,
   not 14 as the plan had it.
-- Jobby's CV lists Mission Control too (Meagan asked; see the Jobby
-  repo), and the portfolio's CV PDF is regenerated from it.
+- Jobby's CV lists Adroidea and Mission Control too (Meagan asked; Jobby
+  34e1b39), and the portfolio's CV PDF was regenerated from it (4 pages
+  now, readability check passed).
