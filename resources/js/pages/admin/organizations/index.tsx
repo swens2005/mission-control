@@ -44,6 +44,7 @@ export default function OrganizationsIndex({ organizations, filters }: Props) {
                         <Input
                             id="search"
                             name="search"
+                            autoComplete="off"
                             type="search"
                             defaultValue={filters.search}
                             className="w-64 max-w-full"

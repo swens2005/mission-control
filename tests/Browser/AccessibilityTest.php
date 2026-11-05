@@ -109,6 +109,23 @@ function axeViolations(mixed $page, string $name): array
     return array_map(fn (string $line) => "[{$name}] {$line}", is_array($violations) ? $violations : []);
 }
 
+/**
+ * Named form fields without an autocomplete attribute: Chrome reports them
+ * as issues, and autofill guesses wrong (story 37 wrap-up).
+ *
+ * @return list<string>
+ */
+function fieldsWithoutAutocomplete(mixed $page, string $name): array
+{
+    $fields = $page->script(<<<'JS'
+        [...document.querySelectorAll('input[name], select[name], textarea[name]')]
+            .filter((el) => !el.hasAttribute('autocomplete') && !['hidden', 'checkbox', 'radio', 'file'].includes(el.type))
+            .map((el) => `${el.tagName.toLowerCase()} name=${el.name}`)
+        JS);
+
+    return array_map(fn (string $field) => "[{$name}] no autocomplete: {$field}", is_array($fields) ? $fields : []);
+}
+
 test('every studio page passes axe', function () {
     $this->actingAs($this->sandbox->admin);
 
@@ -117,7 +134,7 @@ test('every studio page passes axe', function () {
     foreach (studioPages($this->sandbox) as $name => $url) {
         $page = visit($url);
         $page->assertNoJavaScriptErrors();
-        $found = [...$found, ...axeViolations($page, $name)];
+        $found = [...$found, ...axeViolations($page, $name), ...fieldsWithoutAutocomplete($page, $name)];
     }
 
     expect($found)->toBeEmpty(implode("\n", $found));
@@ -131,7 +148,7 @@ test('every Launchpad page passes axe', function () {
     foreach (launchpadPages($this->sandbox) as $name => $url) {
         $page = visit($url);
         $page->assertNoJavaScriptErrors();
-        $found = [...$found, ...axeViolations($page, $name)];
+        $found = [...$found, ...axeViolations($page, $name), ...fieldsWithoutAutocomplete($page, $name)];
     }
 
     expect($found)->toBeEmpty(implode("\n", $found));
@@ -157,7 +174,7 @@ test('the public pages pass axe', function () {
     foreach ($pages as $name => $url) {
         $page = visit($url);
         $page->assertNoJavaScriptErrors();
-        $found = [...$found, ...axeViolations($page, $name)];
+        $found = [...$found, ...axeViolations($page, $name), ...fieldsWithoutAutocomplete($page, $name)];
     }
 
     $found = [...$found, ...sidewaysAt320($pages)];

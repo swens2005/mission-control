@@ -36,6 +36,7 @@ export default function ActivityIndex({ entries, filters, projects }: Props) {
                         <select
                             id="filter-project"
                             name="project"
+                            autoComplete="off"
                             defaultValue={filters.project ?? ''}
                             className={`${selectClassName} w-64 max-w-full`}
                         >

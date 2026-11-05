@@ -60,6 +60,7 @@ export default function ProjectsIndex({
                         <select
                             id="filter-organization"
                             name="organization"
+                            autoComplete="off"
                             defaultValue={filters.organization ?? ''}
                             className={`${selectClassName} w-56`}
                         >
@@ -79,6 +80,7 @@ export default function ProjectsIndex({
                         <select
                             id="filter-phase"
                             name="phase"
+                            autoComplete="off"
                             defaultValue={filters.phase ?? ''}
                             className={`${selectClassName} w-44`}
                         >

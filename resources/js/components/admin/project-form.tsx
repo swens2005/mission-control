@@ -41,6 +41,7 @@ export function ProjectForm({
                         {(props) => (
                             <select
                                 {...props}
+                                autoComplete="off"
                                 required
                                 className={selectClassName}
                                 defaultValue={
@@ -68,6 +69,7 @@ export function ProjectForm({
                         {(props) => (
                             <Input
                                 {...props}
+                                autoComplete="off"
                                 required
                                 defaultValue={project?.name}
                             />
@@ -83,6 +85,7 @@ export function ProjectForm({
                         {(props) => (
                             <textarea
                                 {...props}
+                                autoComplete="off"
                                 rows={4}
                                 className="w-full rounded-md border border-input bg-card px-3 py-2 text-sm shadow-xs"
                                 defaultValue={project?.description ?? ''}
@@ -94,6 +97,7 @@ export function ProjectForm({
                         {(props) => (
                             <select
                                 {...props}
+                                autoComplete="off"
                                 required
                                 className={selectClassName}
                                 defaultValue={project?.phase ?? 'scope'}
@@ -119,6 +123,7 @@ export function ProjectForm({
                         {(props) => (
                             <Input
                                 {...props}
+                                autoComplete="off"
                                 type="date"
                                 className="w-48 max-w-full"
                                 defaultValue={project?.targetLaunchOn ?? ''}
