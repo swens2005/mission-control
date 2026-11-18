@@ -8,10 +8,13 @@ use App\Models\Intake;
 use App\Models\LineItem;
 use App\Models\Project;
 use App\Models\Proposal;
+use App\Models\User;
 use App\Support\Activity;
+use App\Support\Ai\DraftLimits;
 use App\Support\Scope\IntakePresenter;
 use App\Support\Scope\ProposalPresenter;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -22,7 +25,7 @@ use Inertia\Response;
  */
 class ScopeController extends Controller
 {
-    public function show(Project $project): Response
+    public function show(Request $request, Project $project): Response
     {
         Gate::authorize('view', $project);
 
@@ -45,7 +48,33 @@ class ScopeController extends Controller
                 : [],
             'kinds' => ProposalPresenter::kinds(),
             'discountTypes' => ProposalPresenter::discountTypes(),
+            'ai' => self::assistant($request, $proposal, $intake?->isSubmitted() ?? false),
         ]);
+    }
+
+    /**
+     * "Draft with AI" (story 42): null hides it (no key, no draft version,
+     * or no submitted intake).
+     *
+     * @return array{refusal: string|null, remaining: int|null, draft: array<string, mixed>|null}|null
+     */
+    private static function assistant(Request $request, ?Proposal $proposal, bool $intakeSubmitted): ?array
+    {
+        $limits = app(DraftLimits::class);
+
+        if (! $limits->configured() || $proposal === null || $proposal->isSent() || ! $intakeSubmitted) {
+            return null;
+        }
+
+        /** @var User $user */
+        $user = $request->user();
+        $draft = ProposalDraftController::current($request, $proposal);
+
+        return [
+            'refusal' => $limits->refusal($user->workspace),
+            'remaining' => $limits->remaining($user->workspace),
+            'draft' => $draft === null ? null : ProposalDraftController::present($draft),
+        ];
     }
 
     /**

@@ -4,6 +4,7 @@ import ProposalController from '@/actions/App/Http/Controllers/Admin/ProposalCon
 import ScopeController from '@/actions/App/Http/Controllers/Admin/ScopeController';
 import { focusById } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
+import { AiDraftPanel } from '@/components/scope/ai-draft';
 import { IntakeAnswers } from '@/components/scope/intake-answers';
 import { ProposalBuilder } from '@/components/scope/proposal-builder';
 import {
@@ -16,6 +17,7 @@ import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
 import { formatDateTime } from '@/lib/format';
 import { index, show } from '@/routes/admin/projects';
 import type {
+    AiAssistant,
     Intake,
     LibraryGroup,
     Option,
@@ -35,6 +37,7 @@ type Props = {
     library: LibraryGroup[];
     kinds: Option[];
     discountTypes: Option[];
+    ai: AiAssistant | null;
 };
 
 /** The status in the page heading; the full label is in the card below. */
@@ -63,6 +66,7 @@ export default function ShowScope({
     library,
     kinds,
     discountTypes,
+    ai,
 }: Props) {
     useBreadcrumbs([
         { title: 'Projects', href: index() },
@@ -148,6 +152,9 @@ export default function ShowScope({
                             <>
                                 {changesRequest && (
                                     <ChangesRequest request={changesRequest} />
+                                )}
+                                {ai && (
+                                    <AiDraftPanel proposal={proposal} ai={ai} />
                                 )}
                                 <ProposalBuilder
                                     proposal={proposal}

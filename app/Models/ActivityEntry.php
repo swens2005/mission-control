@@ -135,6 +135,7 @@ class ActivityEntry extends Model
             'scope.line_added' => 'added '.($p['line'] ?? 'a line').' to proposal '.($p['version'] ?? '')." of {$name}",
             'scope.line_changed' => 'changed '.($p['line'] ?? 'a line').' in proposal '.($p['version'] ?? '')." of {$name}",
             'scope.line_removed' => 'removed '.($p['line'] ?? 'a line').' from proposal '.($p['version'] ?? '')." of {$name}",
+            'scope.ai_draft_created' => 'added an AI draft ('.(($p['lines'] ?? '0') === '1' ? '1 line' : ($p['lines'] ?? '0').' lines').') to proposal '.($p['version'] ?? '')." of {$name}",
             'scope.discount_changed' => 'set the discount of proposal '.($p['version'] ?? '')." of {$name} to ".($p['discount'] ?? 'none'),
             'scope.item_added' => "added {$name} (".($p['price'] ?? '').') to the line-item library',
             'scope.item_changed' => "changed {$name} (".($p['price'] ?? '').') in the line-item library',

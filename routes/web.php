@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\PaletteController;
 use App\Http\Controllers\Admin\ProjectController;
 use App\Http\Controllers\Admin\ProofmarkController;
 use App\Http\Controllers\Admin\ProposalController;
+use App\Http\Controllers\Admin\ProposalDraftController;
 use App\Http\Controllers\Admin\ProposalLineController;
 use App\Http\Controllers\Admin\ScopeController;
 use App\Http\Controllers\Admin\SignoffController;
@@ -152,6 +153,11 @@ Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->gr
     Route::patch('proposal-lines/{line}', [ProposalLineController::class, 'update'])->name('proposal-lines.update');
     Route::post('proposal-lines/{line}/move', [ProposalLineController::class, 'move'])->name('proposal-lines.move');
     Route::delete('proposal-lines/{line}', [ProposalLineController::class, 'destroy'])->name('proposal-lines.destroy');
+
+    // The proposal assistant (story 42, ADR 0014).
+    Route::post('proposals/{proposal}/ai-draft', [ProposalDraftController::class, 'store'])->middleware('throttle:ai-draft')->name('ai-drafts.store');
+    Route::post('proposals/{proposal}/ai-draft/apply', [ProposalDraftController::class, 'apply'])->name('ai-drafts.apply');
+    Route::delete('proposals/{proposal}/ai-draft', [ProposalDraftController::class, 'destroy'])->name('ai-drafts.destroy');
 
     // Sending, versions and printing (story 28).
     Route::get('proposals/{proposal}', [ScopeController::class, 'version'])->name('proposals.show');

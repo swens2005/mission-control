@@ -79,6 +79,10 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('comments', fn (Request $request) => Limit::perMinute(30)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
 
         RateLimiter::for('uploads', fn (Request $request) => Limit::perMinute(20)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
+
+        // Each AI draft is a paid API call (story 42); the per-sandbox, daily
+        // and monthly limits sit behind this one.
+        RateLimiter::for('ai-draft', fn (Request $request) => Limit::perMinute(5)->by((string) ($request->user()?->getAuthIdentifier() ?? $request->ip())));
     }
 
     /**

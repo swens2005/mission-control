@@ -95,21 +95,6 @@ function launchpadPages(Sandbox $sandbox): array
 }
 
 /**
- * Every axe violation on the page, at any level, one line each.
- *
- * @return list<string>
- */
-function axeViolations(mixed $page, string $name): array
-{
-    $violations = $page->script(<<<'JS'
-        (async () => (await window.axe.run()).violations
-            .map((v) => `${v.id}: ${v.help} -> ${v.nodes.map((n) => n.target.join(' ')).slice(0, 5).join(' | ')}`))()
-        JS);
-
-    return array_map(fn (string $line) => "[{$name}] {$line}", is_array($violations) ? $violations : []);
-}
-
-/**
  * Named form fields without an autocomplete attribute: Chrome reports them
  * as issues, and autofill guesses wrong (story 37 wrap-up).
  *

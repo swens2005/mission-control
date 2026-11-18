@@ -412,6 +412,35 @@ export type Proposal = {
     totals: ProposalTotals;
 };
 
+/** One line the proposal assistant suggests (story 42). */
+export type AiDraftLine = {
+    lineItemId: number;
+    name: string;
+    kind: 'fixed' | 'hourly';
+    /** "×" or "h". */
+    unit: string;
+    /** From the library, never from the model. */
+    price: string;
+    quantity: string;
+    /** The intake answer it covers, as the model wrote it. */
+    reason: string;
+};
+
+/** "Draft with AI" on a draft proposal; null when it isn't offered. */
+export type AiAssistant = {
+    /** Why drafting isn't possible now (a limit or the monthly cap). */
+    refusal: string | null;
+    /** Drafts left in a demo sandbox; null for a real studio. */
+    remaining: number | null;
+    /** A draft waiting for review. */
+    draft: {
+        introduction: string;
+        /** Suggestions left out for an unknown item or a bad quantity. */
+        dropped: number;
+        lines: AiDraftLine[];
+    } | null;
+};
+
 export type LibraryGroup = {
     label: string;
     items: {
