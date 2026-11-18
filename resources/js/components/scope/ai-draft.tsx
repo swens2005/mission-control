@@ -208,6 +208,7 @@ function Review({
                                                     inputMode="decimal"
                                                     autoComplete="off"
                                                     className="w-32 tabular-nums"
+                                                    data-tour="ai-line-quantity"
                                                 />
                                             )}
                                         </FormField>

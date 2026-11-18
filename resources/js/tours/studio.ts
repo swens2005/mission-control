@@ -73,6 +73,37 @@ export const scope: Step[] = [
     ),
 ];
 
+/**
+ * Draft with AI (story 42): a real call to Claude, so the wait for the
+ * review allows for the API's answer time.
+ */
+export const aiDraft: Step[] = [
+    chapter('Draft with AI'),
+    ...openProject('Seasonal menu pages', 'open-scope'),
+    waitFor('ai-draft'),
+    moveTo('ai-draft'),
+    caption(
+        'Scope has an AI assistant. Claude reads Anna’s intake and picks lines from the studio’s own price list. It never sets a price.',
+    ),
+    click('ai-draft'),
+    caption('Now Claude is reading the intake. This takes a few seconds.'),
+    waitFor('ai-draft-review', undefined, 45_000),
+    moveTo('ai-draft-review'),
+    caption(
+        'Every suggestion says which intake answer it covers. Nothing is added yet: the studio keeps, changes or unticks each line.',
+    ),
+    type('ai-line-quantity', '2', { nth: 0 }),
+    caption(
+        'Here the studio changes a quantity. The server checks it like any hand-made line.',
+    ),
+    click('ai-draft-add'),
+    waitFor('proposal-lines'),
+    moveTo('proposal-lines'),
+    caption(
+        'The kept lines are in v2 at the library’s prices, and the server redoes the totals. The client sees nothing until the studio sends it.',
+    ),
+];
+
 export const palette: Step[] = [
     chapter('Palette Lab'),
     ...openProject('codelaunch.nl', 'open-palette'),
@@ -157,6 +188,7 @@ function chapterTour(
     title: string,
     description: string,
     steps: Step[],
+    needs?: Tour['needs'],
 ): Tour {
     return {
         id,
@@ -164,6 +196,7 @@ function chapterTour(
         title,
         duration: 'About a minute',
         description,
+        needs,
         steps: [
             ...logIn,
             ...steps,
@@ -180,6 +213,13 @@ export const chapterTours: Tour[] = [
         'Scope',
         'Price list, versions, and money maths in whole cents.',
         scope,
+    ),
+    chapterTour(
+        'chapter-ai',
+        'Draft with AI',
+        'Claude drafts a proposal from the intake; the studio reviews every line.',
+        aiDraft,
+        'ai',
     ),
     chapterTour(
         'chapter-palette',

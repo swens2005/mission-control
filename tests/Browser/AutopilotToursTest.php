@@ -3,7 +3,9 @@
 use App\Enums\ProjectPhase;
 use App\Models\Project;
 use App\Models\Proposal;
+use App\Support\Ai\ProposalAssistant;
 use App\Support\Http\Resolver;
+use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
 
 /*
@@ -27,8 +29,34 @@ beforeEach(function () {
         }
     });
 
+    // The proposal assistant (story 42): a key, so "Draft with AI" shows,
+    // and an answer that picks the first two items of the request's own
+    // library (ids differ per sandbox).
+    config(['services.anthropic.key' => 'test-key']);
+
     Http::preventStrayRequests();
-    Http::fake(['*' => Http::response(
+    Http::fake([ProposalAssistant::ENDPOINT => function (HttpRequest $request) {
+        preg_match('~<intake_and_library>(.*)</intake_and_library>~s', (string) $request['messages'][0]['content'], $match);
+        $library = json_decode($match[1] ?? '{}', true)['library'] ?? [];
+
+        return Http::response([
+            'stop_reason' => 'tool_use',
+            'content' => [[
+                'type' => 'tool_use',
+                'id' => 'toolu_tour',
+                'name' => ProposalAssistant::TOOL,
+                'input' => [
+                    'introduction' => 'Thank you for telling us about your seasons.',
+                    'lines' => array_map(fn (array $item) => [
+                        'line_item_id' => $item['id'],
+                        'quantity' => (float) $item['usual_quantity'],
+                        'reason' => 'Intake: '.$item['name'],
+                    ], array_slice($library, 0, 2)),
+                ],
+            ]],
+            'usage' => ['input_tokens' => 2000, 'output_tokens' => 500],
+        ]);
+    }, '*' => Http::response(
         '<!doctype html><html lang="en"><head><title>Online pre-orders</title><meta name="description" content="Order bread ahead."></head><body><h1>Pre-orders</h1></body></html>',
         200,
         ['Content-Type' => 'text/html'],
@@ -86,10 +114,26 @@ test('the :dataset tour runs end to end', function (string $id) {
     'studio' => 'studio',
     'client' => 'client',
     'Scope chapter' => 'chapter-scope',
+    'Draft with AI chapter' => 'chapter-ai',
     'Palette Lab chapter' => 'chapter-palette',
     'Proofmark chapter' => 'chapter-proofmark',
     'Launch Control chapter' => 'chapter-launch',
 ]);
+
+test('the AI chapter really adds the kept lines to v2', function () {
+    [, $bar] = playTour('chapter-ai');
+
+    expect($bar)->toContain('THE END');
+
+    $project = Project::withoutGlobalScopes()->where('name', 'Seasonal menu pages')->latest('id')->firstOrFail();
+    $v2 = Proposal::withoutGlobalScopes()->where('project_id', $project->id)->where('number', 2)->sole();
+    $lines = $v2->lines()->withoutGlobalScopes()->reorder()->orderBy('id')->get();
+
+    // The demo's five lines, then the two from the draft; the first one
+    // with the quantity the tour typed.
+    expect($lines)->toHaveCount(7)
+        ->and($lines[5]->quantity)->toBe(200);
+});
 
 test('a missing target makes the tour lose its way, which fails the check', function () {
     [, $bar] = playTour('chapter-scope', remove: 'changes-request');

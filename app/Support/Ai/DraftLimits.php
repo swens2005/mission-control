@@ -45,16 +45,33 @@ final class DraftLimits
             return 'This demo has used its '.$this->perSandbox().' AI drafts. Start a new demo to try again.';
         }
 
+        if ($this->demoDayUsedUp()) {
+            return 'The demo’s AI drafts for today are used up. Try again tomorrow.';
+        }
+
+        return null;
+    }
+
+    /**
+     * Can a new demo sandbox draft right now? The autopilot only offers its
+     * AI chapter then (story 42).
+     */
+    public function demoAvailable(): bool
+    {
+        return $this->configured()
+            && $this->perSandbox() > 0
+            && $this->monthSpent() < $this->monthlyCap()
+            && ! $this->demoDayUsedUp();
+    }
+
+    private function demoDayUsedUp(): bool
+    {
         $today = AiDraft::query()
             ->where('is_sandbox', true)
             ->where('created_at', '>=', CarbonImmutable::now()->startOfDay())
             ->count();
 
-        if ($today >= $this->demoPerDay()) {
-            return 'The demo’s AI drafts for today are used up. Try again tomorrow.';
-        }
-
-        return null;
+        return $today >= $this->demoPerDay();
     }
 
     /** Drafts left in a sandbox; null for a real studio. */

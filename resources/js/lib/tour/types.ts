@@ -34,6 +34,11 @@ export type Tour = {
     /** Shown on the autopilot page, e.g. "About 3 minutes". */
     duration: string;
     description: string;
+    /**
+     * "ai": the tour makes a real, paid AI call (story 42), so the
+     * autopilot page only offers it while a new demo could draft.
+     */
+    needs?: 'ai';
     steps: Step[];
 };
 

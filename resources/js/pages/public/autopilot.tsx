@@ -11,13 +11,17 @@ import { tours } from '@/tours';
 export default function Autopilot({
     demoEnabled,
     signedInAs,
+    aiDrafts,
 }: {
     demoEnabled: boolean;
     signedInAs: string | null;
+    /** A new demo can draft with AI now (story 42). */
+    aiDrafts: boolean;
 }) {
     const { start } = useTour();
-    const whole = tours.filter((tour) => tour.group === 'tour');
-    const chapters = tours.filter((tour) => tour.group === 'chapter');
+    const offered = tours.filter((tour) => tour.needs !== 'ai' || aiDrafts);
+    const whole = offered.filter((tour) => tour.group === 'tour');
+    const chapters = offered.filter((tour) => tour.group === 'chapter');
 
     return (
         <>

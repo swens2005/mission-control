@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\Ai\DraftLimits;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AutopilotController extends Controller
 {
-    public function show(Request $request): Response
+    public function show(Request $request, DraftLimits $limits): Response
     {
         $user = $request->user();
 
@@ -25,6 +26,9 @@ class AutopilotController extends Controller
             'demoEnabled' => config()->boolean('demo.enabled'),
             // A signed-in visitor is told a tour starts a new demo.
             'signedInAs' => $user instanceof User ? $user->name : null,
+            // The "Draft with AI" chapter makes a real, paid call (story
+            // 42): offered only while a new demo could draft.
+            'aiDrafts' => $limits->demoAvailable(),
         ])->toResponse($request);
     }
 
