@@ -50,8 +50,16 @@ test('the studio drafts with AI, keeps one line with a new quantity and adds it'
         ->assertSee('Review the AI draft')
         ->assertSee('Why: Intake: a page for each season');
 
-    // Focus lands on the first suggestion.
-    expect($page->script('document.activeElement?.id'))->toBe('ai-line-0-keep');
+    // Focus lands on the first suggestion (focusById waits two frames, so
+    // give a slow CI runner a moment).
+    $focused = '';
+
+    for ($i = 0; $i < 20 && $focused !== 'ai-line-0-keep'; $i++) {
+        $focused = (string) $page->script('document.activeElement?.id ?? ""');
+        $focused === 'ai-line-0-keep' || $page->wait(0.1);
+    }
+
+    expect($focused)->toBe('ai-line-0-keep');
 
     $found = axeViolations($page, 'AI draft review');
     expect($found)->toBeEmpty(implode("\n", $found));
