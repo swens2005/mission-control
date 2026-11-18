@@ -1,4 +1,4 @@
-# 42. The proposal assistant
+# 42. Navigator, the proposal assistant
 
 As the studio, I want Claude to draft a proposal from the client's intake
 and our own price list, so a first version takes a minute instead of an
@@ -7,6 +7,26 @@ hour, and I still decide every line before it's sent.
 This is Star Search's first proof project (Star Search story 05): an AI
 feature in a real, live product, with the same tests and guardrails as
 the rest of the app. Meagan approved it on 2026-11-08.
+
+**Name (2026-11-18): Navigator.** A named sub-project inside Mission
+Control, with its own emblem (a brass sextant over a star) and its own
+line on the Switchboard ("Navigator · part of Mission Control"). Its
+review panel is built in the star-chart look from the Studio Redesign
+plan (Claude Doc "Studio Redesign: Visual Plan",
+https://claude.ai/artifact/VDRGUfcs8qgr1HNx1MdRRM). The button text stays
+plain ("Draft with AI") so studios know what it does.
+
+**Redesign (approved 2026-11-18, mock-up
+https://claude.ai/artifact/6sRehQSsWjW7GwFEvo5HTv):** the story is built;
+the redesign restyles the review panel and adds one thing:
+
+- [ ] A draft totals readout (subtotal, VAT, total) for the suggested
+      lines at their drafted quantities, worked out by the presenter with
+      `ProposalTotals` and formatted with `Money::format`. No money math
+      in TypeScript, so it doesn't change when a line is switched off;
+      the proposal's own totals update once the lines are added.
+- [ ] Keep becomes a switch (`role="switch"`), and the hint reads "Keep,
+      change or switch off each line".
 
 ## Acceptance criteria
 
