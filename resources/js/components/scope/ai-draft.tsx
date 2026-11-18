@@ -411,7 +411,12 @@ function Review({
                                             id={`ai-line-${i}-reason`}
                                             className="nv-why text-[0.95rem]"
                                         >
-                                            <em>Why</em>
+                                            <em>
+                                                Why
+                                                <span className="sr-only">
+                                                    :{' '}
+                                                </span>
+                                            </em>
                                             {line.reason || 'no reason given'}
                                         </p>
                                         <div className="flex flex-wrap items-end gap-x-3 gap-y-2">
