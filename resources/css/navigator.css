@@ -1,0 +1,442 @@
+/* Navigator, the proposal assistant (story 42): a star chart framed in
+ * brass, after the approved mock-up (Studio Redesign plan). The panel is
+ * dark in every theme; every color is a --nav-* token from themes.css.
+ * The star band is decoration (aria-hidden); status is always written out.
+ */
+
+@layer components {
+    .nv {
+        /* Shared components (FormField, Label, Input) read these, so they
+           stay legible on the dark panel. */
+        --color-foreground: var(--nav-text);
+        --color-muted-foreground: var(--nav-soft);
+        --color-destructive: var(--nav-coral);
+        --color-input: var(--nav-field-rim);
+        --color-ring: var(--nav-brass);
+
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--nav-frame);
+        border-radius: 20px;
+        background: var(--nav-deep);
+        color: var(--nav-text);
+        box-shadow:
+            0 0 0 4px var(--nav-deep),
+            0 0 0 5px var(--nav-brass),
+            0 14px 30px color-mix(in srgb, var(--nav-deep) 45%, transparent);
+    }
+    .nv :focus-visible {
+        outline: 3px solid var(--nav-brass);
+        outline-offset: 2px;
+    }
+
+    /* The picture band with the stars. */
+    .nv-band {
+        position: relative;
+        height: 150px;
+        border-bottom: 1px solid var(--nav-frame);
+        background: var(--nav-deep) url('../images/navigator/starfield.webp')
+            center 40% / cover no-repeat;
+    }
+    .nv-band::after {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: 50px;
+        background: linear-gradient(transparent, var(--nav-deep));
+    }
+    .nv-band > svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .nv-band[data-dim='cap'] {
+        filter: saturate(0.3) brightness(0.6);
+    }
+    .nv-band[data-dim='demo'] {
+        filter: saturate(0.5) brightness(0.75);
+    }
+    .nv-tag {
+        position: absolute;
+        z-index: 2;
+        top: 14px;
+        left: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 12px 6px 6px;
+        border: 1px solid var(--nav-frame);
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--nav-deep) 88%, transparent);
+    }
+    .nv-tag img {
+        width: 34px;
+        height: 34px;
+    }
+    .nv-tag b {
+        display: block;
+        font: 800 1rem/1 var(--font-portal-display);
+        color: var(--nav-text);
+    }
+    .nv-tag small {
+        display: block;
+        font: 500 10px var(--font-mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--nav-brass);
+    }
+
+    .nv-body {
+        display: grid;
+        gap: 16px;
+        padding: 4px clamp(16px, 2.5vw, 24px) 22px;
+    }
+    .nv-kicker {
+        color: var(--nav-violet);
+    }
+    .nv-title {
+        margin: 4px 0 6px;
+        font: 800 1.45rem/1.15 var(--font-portal-display);
+        color: var(--nav-text);
+    }
+    .nv-soft {
+        color: var(--nav-soft);
+    }
+    .nv-soft strong {
+        font-weight: 600;
+        color: var(--nav-text);
+    }
+    .nv-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px 16px;
+    }
+
+    /* A message with a lamp; the label writes the state out. */
+    .nv-msg {
+        --lamp: var(--nav-violet);
+        display: flex;
+        align-items: start;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid var(--nav-rim);
+        border-radius: 12px;
+        background: var(--nav-deep);
+        color: var(--nav-text);
+    }
+    .nv-msg::before {
+        content: '';
+        flex: none;
+        width: 9px;
+        height: 9px;
+        margin-top: 7px;
+        border-radius: 50%;
+        background: var(--lamp);
+        box-shadow: 0 0 7px var(--lamp);
+    }
+    .nv-msg b {
+        display: block;
+        font: 500 11px var(--font-mono);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--lamp);
+    }
+    .nv-msg[data-lamp='amber'] {
+        --lamp: var(--nav-amber);
+    }
+    .nv-msg[data-lamp='coral'] {
+        --lamp: var(--nav-coral);
+    }
+
+    /* Glossy buttons, like the CV's. */
+    .nv-btn {
+        --c: var(--nav-button);
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 9px 16px 10px;
+        border: 0;
+        border-radius: 13px;
+        cursor: pointer;
+        font: 800 0.98rem/1.1 var(--font-portal-display);
+        color: var(--screen-ink);
+        background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--c) 55%, var(--nav-text)),
+            var(--c) 55%
+        );
+        box-shadow:
+            0 4px 0 color-mix(in srgb, var(--c) 62%, var(--nav-deep)),
+            0 6px 12px color-mix(in srgb, var(--nav-deep) 50%, transparent);
+    }
+    .nv-btn:active {
+        translate: 0 3px;
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--c) 62%, var(--nav-deep));
+    }
+    .nv-btn:disabled {
+        cursor: not-allowed;
+        filter: saturate(0.25) brightness(0.8);
+        translate: none;
+    }
+    .nv-btn[data-tone='go'] {
+        --c: var(--nav-go);
+    }
+    .nv-btn[data-tone='cream'] {
+        --c: var(--secondary);
+    }
+    .nv-btn > svg {
+        width: 14px;
+        height: 14px;
+        flex: none;
+    }
+
+    /* Constellation: one star per suggested line. */
+    .nv-sky line {
+        stroke: var(--nav-brass);
+        stroke-width: 1.4;
+        opacity: 0.85;
+        transition: opacity 0.2s;
+    }
+    .nv-sky line[data-off] {
+        opacity: 0.12;
+        stroke-dasharray: 3 5;
+    }
+    .nv-sky .nv-star path {
+        fill: var(--nav-starlight);
+        filter: drop-shadow(0 0 5px var(--nav-starlight));
+        transform-box: fill-box;
+        transform-origin: center;
+        transition:
+            opacity 0.2s,
+            scale 0.2s;
+    }
+    .nv-sky .nv-star text {
+        font: 500 11px var(--font-mono);
+        fill: var(--nav-violet-soft);
+    }
+    .nv-sky .nv-star[data-off] path {
+        opacity: 0.25;
+        filter: none;
+    }
+    .nv-sky .nv-star[data-off] text {
+        opacity: 0.5;
+    }
+    .nv-sky .nv-star[data-hot] path {
+        scale: 1.45;
+    }
+    .nv-grid {
+        fill: none;
+        stroke: var(--nav-brass);
+        stroke-width: 0.6;
+        opacity: 0.35;
+    }
+
+    /* While drafting: a shooting star crosses the band. */
+    .nv-sweep {
+        position: absolute;
+        z-index: 1;
+        top: 22px;
+        left: -260px;
+        width: 240px;
+        animation: nv-sweep 3.4s cubic-bezier(0.45, 0.05, 0.4, 1) infinite;
+    }
+    @keyframes nv-sweep {
+        0% {
+            transform: translate(0, 50px) rotate(-8deg);
+            opacity: 0;
+        }
+        12%,
+        80% {
+            opacity: 1;
+        }
+        100% {
+            transform: translate(100vw, -20px) rotate(-8deg);
+            opacity: 0;
+        }
+    }
+    .nv-twinkle {
+        animation: nv-twinkle 2.4s ease-in-out infinite alternate;
+    }
+    /* Delays in CSS, not style attributes (CSP). */
+    .nv-star:nth-child(2) .nv-twinkle {
+        animation-delay: 0.6s;
+    }
+    .nv-star:nth-child(3) .nv-twinkle {
+        animation-delay: 1.2s;
+    }
+    @keyframes nv-twinkle {
+        from {
+            opacity: 0.35;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* The suggested lines. */
+    .nv-line {
+        display: grid;
+        grid-template-columns: 40px minmax(0, 1fr);
+        gap: 4px 12px;
+        padding: 14px;
+        border: 1px solid var(--nav-rim);
+        border-radius: 16px;
+        background: linear-gradient(180deg, var(--nav-bay-top), var(--nav-bay));
+        transition:
+            opacity 0.2s,
+            border-color 0.2s;
+    }
+    .nv-line:hover,
+    .nv-line:focus-within {
+        border-color: var(--nav-violet);
+    }
+    .nv-line > * {
+        grid-column: 2;
+        min-width: 0;
+    }
+    .nv-badge {
+        grid-column: 1 !important;
+        grid-row: 1 / span 3;
+        display: grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--nav-deep);
+        box-shadow: inset 0 0 0 1.5px var(--nav-brass);
+        font: 500 12px var(--font-mono);
+        color: var(--nav-violet-soft);
+    }
+    .nv-line-name {
+        font: 800 1.08rem/1.25 var(--font-portal-display);
+        color: var(--nav-text);
+    }
+    .nv-line[data-off] {
+        opacity: 0.62;
+    }
+    .nv-line[data-off] .nv-line-name {
+        text-decoration: line-through;
+        text-decoration-color: var(--nav-soft);
+    }
+    .nv-why em {
+        margin-right: 6px;
+        font: 500 11px var(--font-mono);
+        font-style: normal;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--nav-violet);
+    }
+    .nv-state {
+        font: 500 11px var(--font-mono);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--nav-go);
+    }
+    .nv-line[data-off] .nv-state {
+        color: var(--nav-soft);
+    }
+
+    /* Recessed fields. */
+    .nv-field {
+        border: 1.5px solid var(--nav-field-rim);
+        border-radius: 10px;
+        background: var(--nav-field);
+        color: var(--nav-text);
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+        box-shadow: inset 0 2px 4px
+            color-mix(in srgb, var(--nav-deep) 80%, transparent);
+    }
+
+    /* Keep: a native checkbox with role="switch", drawn as a toggle. */
+    .nv-switch {
+        appearance: none;
+        position: relative;
+        flex: none;
+        width: 46px;
+        height: 26px;
+        margin: 0;
+        border: 1.5px solid var(--nav-field-rim);
+        border-radius: 999px;
+        background: var(--nav-field);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .nv-switch::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 19px;
+        height: 19px;
+        border-radius: 50%;
+        background: var(--nav-text);
+        box-shadow: 0 2px 3px var(--nav-deep);
+        transition: translate 0.2s;
+    }
+    .nv-switch:checked {
+        border-color: var(--nav-go);
+        background: var(--nav-go);
+    }
+    .nv-switch:checked::after {
+        translate: 20px 0;
+    }
+
+    /* Totals readout, formatted by the server. */
+    .nv-totals {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+    @media (max-width: 560px) {
+        .nv-totals {
+            grid-template-columns: 1fr;
+        }
+    }
+    .nv-readout {
+        display: grid;
+        padding: 10px 14px;
+        border: 1px solid var(--nav-rim);
+        border-radius: 14px;
+        background: linear-gradient(
+            180deg,
+            var(--nav-field),
+            var(--nav-field-bottom)
+        );
+    }
+    .nv-readout dt {
+        font: 500 10.5px var(--font-mono);
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--nav-soft);
+    }
+    .nv-readout dd {
+        margin: 0;
+        font: 500 1.45rem/1.2 var(--font-mono);
+        font-variant-numeric: tabular-nums;
+        color: var(--nav-text);
+    }
+    .nv-readout[data-total] dd {
+        color: var(--nav-violet-soft);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .nv-sweep {
+            left: auto;
+            right: 6%;
+            top: 30px;
+            animation: none;
+        }
+        .nv-twinkle {
+            animation: none;
+        }
+        .nv-line,
+        .nv-switch,
+        .nv-switch::after,
+        .nv-sky * {
+            transition: none;
+        }
+    }
+}

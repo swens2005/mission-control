@@ -56,7 +56,7 @@ class ScopeController extends Controller
      * "Draft with AI" (story 42): null hides it (no key, no draft version,
      * or no submitted intake).
      *
-     * @return array{refusal: string|null, remaining: int|null, draft: array<string, mixed>|null}|null
+     * @return array{refusal: string|null, paused: bool, remaining: int|null, draft: array<string, mixed>|null}|null
      */
     private static function assistant(Request $request, ?Proposal $proposal, bool $intakeSubmitted): ?array
     {
@@ -72,6 +72,7 @@ class ScopeController extends Controller
 
         return [
             'refusal' => $limits->refusal($user->workspace),
+            'paused' => $limits->capReached(),
             'remaining' => $limits->remaining($user->workspace),
             'draft' => $draft === null ? null : ProposalDraftController::present($draft),
         ];

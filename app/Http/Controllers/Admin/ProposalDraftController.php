@@ -14,6 +14,7 @@ use App\Support\Ai\AssistantUnavailable;
 use App\Support\Ai\DraftLimits;
 use App\Support\Ai\ProposalAssistant;
 use App\Support\Money\Money;
+use App\Support\Money\ProposalTotals;
 use App\Support\Money\Quantity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -190,13 +191,19 @@ class ProposalDraftController extends Controller
      * The draft as the review screen shows it, with library names and
      * prices.
      *
+     * The totals are for every suggested line at its drafted quantity,
+     * before any discount; they don't follow the Keep switches, because
+     * the page does no money math. The proposal's own totals update once
+     * the lines are added.
+     *
      * @param  Draft  $draft
-     * @return array{introduction: string, dropped: int, lines: list<array{lineItemId: int, name: string, kind: string, unit: string, price: string, quantity: string, reason: string}>}
+     * @return array{introduction: string, dropped: int, lines: list<array{lineItemId: int, name: string, kind: string, unit: string, price: string, quantity: string, reason: string}>, totals: array{subtotal: string, vat: string, total: string}}
      */
     public static function present(array $draft): array
     {
         $items = LineItem::query()->active()->whereKey(array_column($draft['lines'], 'lineItemId'))->get()->keyBy('id');
         $lines = [];
+        $priced = [];
 
         foreach ($draft['lines'] as $line) {
             $item = $items->get($line['lineItemId']);
@@ -214,12 +221,20 @@ class ProposalDraftController extends Controller
                 'quantity' => Quantity::format($line['quantity']),
                 'reason' => $line['reason'],
             ];
+            $priced[] = ['unitCents' => $item->unit_price_cents, 'quantity' => $line['quantity']];
         }
+
+        $totals = ProposalTotals::calculate($priced);
 
         return [
             'introduction' => $draft['introduction'],
             'dropped' => $draft['dropped'],
             'lines' => $lines,
+            'totals' => [
+                'subtotal' => Money::format($totals->subtotal),
+                'vat' => Money::format($totals->vat),
+                'total' => Money::format($totals->total),
+            ],
         ];
     }
 

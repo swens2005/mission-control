@@ -48,7 +48,8 @@ test('the studio drafts with AI, keeps one line with a new quantity and adds it'
         ->assertSee('This demo has 3 AI drafts left.')
         ->press('Draft with AI')
         ->assertSee('Review the AI draft')
-        ->assertSee('Why: Intake: a page for each season');
+        ->assertSee('Intake: a page for each season')
+        ->assertSee('€2,335.30');
 
     // Focus lands on the first suggestion (focusById waits two frames, so
     // give a slow CI runner a moment).

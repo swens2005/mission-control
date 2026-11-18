@@ -76,7 +76,7 @@ function fakeClaude(array $answer, int $status = 200): void
 
 test('the studio sees "Draft with AI" only with a key, a draft version and a submitted intake', function () {
     $this->actingAs($this->admin)->get(route('admin.scope.show', $this->project))
-        ->assertInertia(fn (Assert $page) => $page->where('ai.refusal', null)->where('ai.remaining', null)->where('ai.draft', null));
+        ->assertInertia(fn (Assert $page) => $page->where('ai.refusal', null)->where('ai.paused', false)->where('ai.remaining', null)->where('ai.draft', null));
 
     config(['services.anthropic.key' => null]);
     $this->get(route('admin.scope.show', $this->project))
@@ -147,7 +147,11 @@ test('a draft waits for review; bad ids and quantities are dropped and nothing i
             ->where('ai.draft.lines.0.reason', 'Intake: spring and summer menus')
             ->where('ai.draft.lines.1.quantity', '3.5')
             ->where('ai.draft.dropped', 5)
-            ->where('ai.draft.introduction', 'Thanks for telling us about your seasons.'));
+            ->where('ai.draft.introduction', 'Thanks for telling us about your seasons.')
+            // 2 × €450 + 3.5 × €85 = €1,197.50; VAT €251.475 rounds half up.
+            ->where('ai.draft.totals.subtotal', '€1,197.50')
+            ->where('ai.draft.totals.vat', '€251.48')
+            ->where('ai.draft.totals.total', '€1,448.98'));
 });
 
 test('a fixed-price item can’t come in halves', function () {
@@ -283,7 +287,7 @@ test('at the monthly cap drafting stops for everyone and Meagan gets one email',
     $paused = 'Drafting with AI is paused until next month: this month’s budget is used up.';
     $this->post(route('admin.ai-drafts.store', $this->proposal))->assertSessionHasErrors(['ai' => $paused]);
     $this->get(route('admin.scope.show', $this->project))
-        ->assertInertia(fn (Assert $page) => $page->where('ai.refusal', $paused));
+        ->assertInertia(fn (Assert $page) => $page->where('ai.refusal', $paused)->where('ai.paused', true));
 
     // Even past the cap (a call already under way), one email a month.
     app(DraftLimits::class)->record($this->admin, 1000, 1000, 0);

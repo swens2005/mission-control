@@ -70,6 +70,26 @@
     --edge-warn: #f0a020;
     --edge-fail: #ef5a2a;
     --edge-skip: #c3cad4;
+    /* Navigator (story 42): a star chart framed in brass, dark in every
+       theme. Stars (--nav-starlight) and the frame are decoration. */
+    --nav-deep: #0e1733;
+    --nav-bay: #172d52;
+    --nav-bay-top: #1a3359;
+    --nav-rim: #2c4675;
+    --nav-frame: #3a3470;
+    --nav-field: #0a1628;
+    --nav-field-bottom: #0e1e38;
+    --nav-field-rim: #7d93bd;
+    --nav-text: #eef3ff;
+    --nav-soft: #a9b6c9;
+    --nav-violet: #a98bff;
+    --nav-violet-soft: #d9c9ff;
+    --nav-brass: #c9a24a;
+    --nav-starlight: #fff3c4;
+    --nav-go: #8ac800;
+    --nav-amber: #f0a43a;
+    --nav-coral: #ff8a7a;
+    --nav-button: #c4b2ff;
 
     --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
     --display-stretch: 100%;
@@ -135,6 +155,26 @@
     --edge-warn: #f0a020;
     --edge-fail: #ef5a2a;
     --edge-skip: #c3cad4;
+    /* Navigator (story 42): a star chart framed in brass, dark in every
+       theme. Stars (--nav-starlight) and the frame are decoration. */
+    --nav-deep: #0e1733;
+    --nav-bay: #172d52;
+    --nav-bay-top: #1a3359;
+    --nav-rim: #2c4675;
+    --nav-frame: #3a3470;
+    --nav-field: #0a1628;
+    --nav-field-bottom: #0e1e38;
+    --nav-field-rim: #7d93bd;
+    --nav-text: #eef3ff;
+    --nav-soft: #a9b6c9;
+    --nav-violet: #a98bff;
+    --nav-violet-soft: #d9c9ff;
+    --nav-brass: #c9a24a;
+    --nav-starlight: #fff3c4;
+    --nav-go: #8ac800;
+    --nav-amber: #f0a43a;
+    --nav-coral: #ff8a7a;
+    --nav-button: #c4b2ff;
 
     --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
     --display-stretch: 100%;

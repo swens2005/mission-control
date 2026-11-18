@@ -33,7 +33,7 @@ final class DraftLimits
      */
     public function refusal(Workspace $workspace): ?string
     {
-        if ($this->monthSpent() >= $this->monthlyCap()) {
+        if ($this->capReached()) {
             return 'Drafting with AI is paused until next month: this month’s budget is used up.';
         }
 
@@ -50,6 +50,14 @@ final class DraftLimits
         }
 
         return null;
+    }
+
+    /**
+     * Is this month's budget used up? (Navigator "rests" until next month.)
+     */
+    public function capReached(): bool
+    {
+        return $this->monthSpent() >= $this->monthlyCap();
     }
 
     /**

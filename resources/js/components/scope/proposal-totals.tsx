@@ -2,7 +2,7 @@ import type { Proposal } from '@/types';
 
 /**
  * The proposal's sums as a cockpit readout. Amounts come formatted from the
- * server (ADR 0010); the browser never does money maths.
+ * server (ADR 0010); the browser never does money math.
  */
 export function ProposalTotals({
     proposal,

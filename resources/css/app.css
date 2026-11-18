@@ -6,6 +6,7 @@
 @import './themes.css';
 @import './launch.css';
 @import './proofmark.css';
+@import './navigator.css';
 @import './print.css';
 
 @source '../views';

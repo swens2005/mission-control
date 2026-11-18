@@ -211,7 +211,7 @@ export const chapterTours: Tour[] = [
     chapterTour(
         'chapter-scope',
         'Scope',
-        'Price list, versions, and money maths in whole cents.',
+        'Price list, versions, and money math in whole cents.',
         scope,
     ),
     chapterTour(

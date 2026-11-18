@@ -430,6 +430,8 @@ export type AiDraftLine = {
 export type AiAssistant = {
     /** Why drafting isn't possible now (a limit or the monthly cap). */
     refusal: string | null;
+    /** The monthly cap is reached: Navigator rests until next month. */
+    paused: boolean;
     /** Drafts left in a demo sandbox; null for a real studio. */
     remaining: number | null;
     /** A draft waiting for review. */
@@ -438,6 +440,8 @@ export type AiAssistant = {
         /** Suggestions left out for an unknown item or a bad quantity. */
         dropped: number;
         lines: AiDraftLine[];
+        /** Every suggested line as drafted, formatted by the server. */
+        totals: { subtotal: string; vat: string; total: string };
     } | null;
 };
 

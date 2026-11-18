@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 /**
  * A proposal as plain arrays for Inertia (stories 27 to 29). Amounts are
- * formatted here, once; the browser never does money maths.
+ * formatted here, once; the browser never does money math.
  */
 final class ProposalPresenter
 {
