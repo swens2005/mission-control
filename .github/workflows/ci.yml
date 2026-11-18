@@ -281,11 +281,47 @@ jobs:
 
       # The whole production environment lives in one secret, written to a
       # file next to the app. It never touches the repo or the web root.
+      #
+      # The AI and mail settings (story 42) are separate secrets, set with
+      # scripts\set-ai-secrets.ps1, so adding them never means re-creating
+      # the main secret (a new APP_KEY would log everyone out). Laravel
+      # keeps the FIRST value of a key, so those keys are removed from the
+      # main secret before they're appended. A secret that isn't set is
+      # left out, and the app treats it as missing ("Draft with AI" hidden).
       - name: Write production environment
         if: steps.secrets.outputs.ready == 'true'
         env:
           ENV_FILE: ${{ secrets.ENV_MISSION_CONTROL_PROD }}
-        run: printf '%s\n' "$ENV_FILE" > release/app/.env
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          AI_CAP_EMAIL: ${{ secrets.AI_CAP_EMAIL }}
+          MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+        run: |
+          secret_keys="ANTHROPIC_API_KEY AI_CAP_EMAIL MAIL_HOST MAIL_USERNAME MAIL_PASSWORD"
+          plain_keys="MAIL_MAILER MAIL_PORT MAIL_SCHEME MAIL_FROM_ADDRESS AI_MONTHLY_CAP_DOLLARS"
+          pattern="^[[:space:]]*($(echo $secret_keys $plain_keys | tr ' ' '|'))[[:space:]]*="
+          printf '%s\n' "$ENV_FILE" | { grep -Ev "$pattern" || true; } > release/app/.env
+          {
+            echo ''
+            echo '# Appended by the deploy (story 42)'
+            echo 'MAIL_MAILER=smtp'
+            echo 'MAIL_PORT=465'
+            echo 'MAIL_SCHEME=smtps'
+            echo 'MAIL_FROM_ADDRESS="noreply@codelaunch.nl"'
+            # Below the $5 spend limit in the Anthropic Console, so the app
+            # stops first and the cap email goes out.
+            echo 'AI_MONTHLY_CAP_DOLLARS=4'
+            for key in $secret_keys; do
+              value="${!key}"
+              if [ -n "$value" ]; then
+                case "$value" in
+                  *"'"*|*$'\n'*) echo "::error::$key contains a quote or newline." >&2; exit 1 ;;
+                esac
+                printf "%s='%s'\n" "$key" "$value"
+              fi
+            done
+          } >> release/app/.env
 
       - name: Upload app (outside web root)
         if: steps.secrets.outputs.ready == 'true'

@@ -53,6 +53,31 @@ Until all five secrets exist, the deploy job skips with a warning instead of
 failing. Running the script again replaces `APP_KEY` (it asks first), which
 logs everyone out.
 
+### AI and mail secrets (story 42)
+
+The proposal assistant needs five more secrets. They're separate, so
+setting them never touches `APP_KEY`:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\set-ai-secrets.ps1
+```
+
+| Secret              | Value                                        |
+| ------------------- | -------------------------------------------- |
+| `ANTHROPIC_API_KEY` | From console.anthropic.com (typed hidden)    |
+| `AI_CAP_EMAIL`      | The inbox for the one "AI cap reached" email |
+| `MAIL_HOST`         | `codelaunch.nl`                              |
+| `MAIL_USERNAME`     | `noreply@codelaunch.nl`                      |
+| `MAIL_PASSWORD`     | That mailbox's password (typed hidden)       |
+
+The deploy step "Write production environment" removes these keys (and
+the mail and cap settings) from `ENV_MISSION_CONTROL_PROD` and appends
+them, with `MAIL_MAILER=smtp`, port 465, `smtps`, and
+`AI_MONTHLY_CAP_DOLLARS=4`. The cap stays under the $5 spend limit set in
+the Anthropic Console, so the app stops first and sends its email. A
+secret that isn't set is left out: without `ANTHROPIC_API_KEY`, "Draft
+with AI" stays hidden.
+
 ## 3. First deploy
 
 Push to `main` (or run the workflow by hand: Actions → CI and deploy → Run
