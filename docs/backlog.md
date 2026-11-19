@@ -16,3 +16,7 @@ stories at most; anything extra lands here instead of in the build.
 - Palette Lab: compare the brand kit against the live site's CSS (would reuse SafeFetcher).
 - Scope: mixed VAT rates on one proposal (9% and 21%), with VAT per rate group (ADR 0010 uses one rate per proposal).
 - Accessibility: a listen-through of the five main flows with NVDA (story 36 checked what a screen reader receives, in the accessibility tree, but not how it sounds).
+
+- **Flaky browser test (2026-11-19):** "the full story" tour stopped at
+  step 47 of 56 in CI once and passed on a rerun with the same code.
+  Look at that step's wait if it happens again.
