@@ -1,9 +1,11 @@
 """Story 39: joins the screencast frames from record-media.mjs into the
 README's GIF (docs/media/autopilot.gif), then deletes the frames.
 
-    python scripts/make-gif.py [speed] [width]
+    python scripts/make-gif.py [speed] [width] [file name] [skip]
 
-speed: playback speed-up (default 2); width: GIF width in px (default 800).
+speed: playback speed-up (default 2); width: GIF width in px (default 800);
+file name: the GIF in docs/media/ (default autopilot.gif); skip: seconds
+of recording to leave out at the start, such as the log-in (default 0).
 Needs Pillow (pip install pillow).
 """
 
@@ -22,7 +24,8 @@ width = int(sys.argv[2]) if len(sys.argv) > 2 else 800
 fps = 8
 
 timings = json.loads((frames_dir / "timings.json").read_text())
-start, end = timings[0]["t"], timings[-1]["t"]
+skip = float(sys.argv[4]) if len(sys.argv) > 4 else 0.0
+start, end = timings[0]["t"] + skip, timings[-1]["t"]
 
 # Chrome sends a frame only when something changes; resample to a steady
 # frame rate, holding the last frame through quiet stretches.
@@ -45,7 +48,7 @@ while t <= end:
 palette = images[len(images) // 2].quantize(colors=128, method=Image.Quantize.MEDIANCUT)
 gif = [im.quantize(palette=palette, dither=Image.Dither.NONE) for im in images]
 
-out = media / "autopilot.gif"
+out = media / (sys.argv[3] if len(sys.argv) > 3 else "autopilot.gif")
 gif[0].save(
     out,
     save_all=True,

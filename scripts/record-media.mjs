@@ -3,6 +3,14 @@
 //   node scripts/record-media.mjs http://127.0.0.1:8133 [--screenshots-only]
 //   python scripts/make-gif.py
 //
+// For another chapter's GIF (the "Draft with AI" clip for Star Search):
+//
+//   node scripts/record-media.mjs https://codelaunch.nl/mission-control --gif-only --chapter=ai
+//   python scripts/make-gif.py 2 800 navigator.gif
+//
+// The AI chapter needs a server with an API key, so record it on the
+// live demo; it makes one real draft (a few cents).
+//
 // Run against a local server with the demo enabled (CLAUDE.md, "Local
 // server without .env"). It uses the Playwright that the browser tests
 // already install, and Chrome's own screencast for smooth frames; Pillow
@@ -20,6 +28,11 @@ const frames = new URL(
     pathToFileURL(`${tmpdir()}/`),
 );
 const viewport = { width: 1280, height: 800 };
+const options = process.argv.slice(3);
+const screenshotsOnly = options.includes('--screenshots-only');
+const gifOnly = options.includes('--gif-only');
+const chapter =
+    options.find((o) => o.startsWith('--chapter='))?.slice(10) ?? 'palette';
 
 await mkdir(media, { recursive: true });
 await rm(frames, { recursive: true, force: true });
@@ -32,7 +45,7 @@ const hook = (page, name, text) =>
         : page.locator(`[data-tour="${name}"]`, { hasText: text }).first();
 
 // --- Screenshots: one per module, in a fresh sandbox ----------------------
-{
+if (!gifOnly) {
     const page = await browser.newPage({ viewport });
     await page.goto(`${base}/login`);
     await hook(page, 'take-the-controls').click();
@@ -110,7 +123,7 @@ const hook = (page, name, text) =>
 }
 
 // --- GIF frames: the Palette Lab chapter, as a visitor sees it ------------
-if (process.argv[3] !== '--screenshots-only') {
+if (!screenshotsOnly) {
     const page = await browser.newPage({ viewport });
     await page.goto(`${base}/autopilot`);
 
@@ -134,7 +147,7 @@ if (process.argv[3] !== '--screenshots-only') {
         maxHeight: viewport.height,
     });
 
-    await hook(page, 'start-chapter-palette').click();
+    await hook(page, `start-chapter-${chapter}`).click();
     await page
         .locator('[aria-label="Autopilot"]', { hasText: 'THE END' })
         .waitFor({ timeout: 180_000 });

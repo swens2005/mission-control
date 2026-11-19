@@ -50,15 +50,15 @@ own demo studio, no sign-up, deleted after 24 hours.
 ## How it was built
 
 - **Stories first.** Every feature started as a user story with
-  acceptance criteria ([`docs/stories/`](docs/stories/), 00–40), built
+  acceptance criteria ([`docs/stories/`](docs/stories/), 00–42), built
   one at a time with tests, reviewed for correctness, security and
   accessibility, and recorded in the commit message.
-- **Decisions on record.** Twelve ADRs ([`docs/decisions/`](docs/decisions/)):
+- **Decisions on record.** Fourteen ADRs ([`docs/decisions/`](docs/decisions/)):
   hosting in a subfolder on shared hosting with no SSH, a demo sandbox per
   visitor, delivering a strict CSP, SSRF rules, uploads, money and VAT,
-  the tour engine.
+  the tour engine, the AI proposal assistant.
 - **CI on every push.** Secret scan; Pint, Larastan (level 7), Oxlint and
-  TypeScript; 760+ Pest tests on MariaDB and 70 Vitest tests; every
+  TypeScript; 830+ Pest tests on MariaDB and 77 Vitest tests; every
   autopilot tour run end to end in headless Chromium, plus axe on every
   page; then deploy, and a browser smoke test that clicks through
   production.
