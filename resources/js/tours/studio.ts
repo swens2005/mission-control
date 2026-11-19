@@ -90,7 +90,7 @@ export const aiDraft: Step[] = [
     waitFor('ai-draft-review', undefined, 45_000),
     moveTo('ai-draft-review'),
     caption(
-        'Every suggestion says which intake answer it covers. Nothing is added yet: the studio keeps, changes or unticks each line.',
+        'Every suggestion says which intake answer it covers. Nothing is added yet: the studio keeps, changes or switches off each line.',
     ),
     type('ai-line-quantity', '2', { nth: 0 }),
     caption(
