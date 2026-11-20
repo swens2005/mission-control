@@ -39,7 +39,7 @@
             );
         box-shadow:
             0 8px 0 var(--console-edge),
-            0 22px 36px color-mix(in srgb, var(--screen-ink) 22%, transparent),
+            0 22px 36px color-mix(in srgb, var(--ink) 22%, transparent),
             inset 0 2px 0 var(--console);
     }
 
@@ -100,7 +100,7 @@
             var(--lamp) 60%
         );
         box-shadow: inset 0 -2px 3px
-            color-mix(in srgb, var(--screen-ink) 25%, transparent);
+            color-mix(in srgb, var(--ink) 25%, transparent);
     }
     .lc-lamp-go {
         --lamp: var(--lamp-go);
@@ -117,8 +117,7 @@
     .lc-lamp-lit {
         box-shadow:
             0 0 10px color-mix(in srgb, var(--lamp) 70%, transparent),
-            inset 0 -2px 3px
-                color-mix(in srgb, var(--screen-ink) 20%, transparent);
+            inset 0 -2px 3px color-mix(in srgb, var(--ink) 20%, transparent);
     }
     .lc-lamp-big {
         width: 64px;
@@ -133,8 +132,7 @@
         box-shadow:
             0 0 0 5px var(--console-shade),
             0 0 0 7px var(--console-edge),
-            inset 0 -4px 8px
-                color-mix(in srgb, var(--screen-ink) 18%, transparent);
+            inset 0 -4px 8px color-mix(in srgb, var(--ink) 18%, transparent);
         animation: none;
     }
 
@@ -165,12 +163,12 @@
             color-mix(in srgb, var(--console) 25%, var(--lamp-go)),
             var(--lamp-go)
         );
-        color: var(--screen-ink);
+        color: var(--ink);
         font-family: var(--font-portal-display);
         font-weight: 700;
         box-shadow:
-            0 5px 0 color-mix(in srgb, var(--lamp-go) 55%, var(--screen-ink)),
-            0 8px 16px color-mix(in srgb, var(--screen-ink) 18%, transparent),
+            0 5px 0 color-mix(in srgb, var(--lamp-go) 55%, var(--ink)),
+            0 8px 16px color-mix(in srgb, var(--ink) 18%, transparent),
             inset 0 2px 0 color-mix(in srgb, var(--console) 55%, transparent);
         transition:
             translate 0.12s,
@@ -181,11 +179,10 @@
     }
     .lc-pill:active {
         translate: 0 4px;
-        box-shadow: 0 1px 0
-            color-mix(in srgb, var(--lamp-go) 55%, var(--screen-ink));
+        box-shadow: 0 1px 0 color-mix(in srgb, var(--lamp-go) 55%, var(--ink));
     }
     .lc-pill:focus-visible {
-        outline: 3px solid var(--screen-ink);
+        outline: 3px solid var(--ink);
         outline-offset: 3px;
     }
     .lc-pill:disabled {
@@ -201,8 +198,7 @@
         border-top: 4px solid var(--edge);
         border-radius: 18px;
         background: var(--card);
-        box-shadow: 0 10px 30px
-            color-mix(in srgb, var(--screen-ink) 8%, transparent);
+        box-shadow: 0 10px 30px color-mix(in srgb, var(--ink) 8%, transparent);
     }
     .lc-edge-pass {
         --edge: var(--edge-pass);

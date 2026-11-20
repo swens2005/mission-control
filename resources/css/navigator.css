@@ -161,7 +161,7 @@
         border-radius: 13px;
         cursor: pointer;
         font: 800 0.98rem/1.1 var(--font-portal-display);
-        color: var(--screen-ink);
+        color: var(--ink);
         background: linear-gradient(
             180deg,
             color-mix(in srgb, var(--c) 55%, var(--nav-text)),

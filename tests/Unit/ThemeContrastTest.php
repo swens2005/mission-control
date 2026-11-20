@@ -87,7 +87,10 @@ dataset('theme pairs', function () {
         ['nav-amber', 'nav-deep'],
         ['nav-coral', 'nav-deep'],
         ['nav-coral', 'nav-bay-top'],
-        ['screen-ink', 'nav-button'],
+        // Dark ink on lamp-colored buttons (lc-pill, Navigator's button).
+        ['ink', 'nav-button'],
+        ['ink', 'brand-accent'],
+        ['ink', 'lamp-go'],
     ];
 
     $ui = [
@@ -124,12 +127,19 @@ test('theme color pairs meet WCAG 2.2 AA', function (string $portal, string $fg,
     );
 })->with('theme pairs');
 
-test('ink text on the brand accent shape color passes AA', function (string $portal) {
+test('the light portals keep ink-colored text on the brand accent', function (string $portal) {
     $theme = themeTokens()[$portal];
 
     expect(Contrast::ratio($theme['foreground'], $theme['brand-accent']))
         ->toBeGreaterThanOrEqual(Contrast::AA_TEXT);
-})->with(['admin', 'client']);
+})->with(['client', 'guest']);
+
+test('the control room is dark: light text on a dark page', function () {
+    $admin = themeTokens()['admin'];
+
+    expect(Contrast::ratio($admin['background'], '#000000'))->toBeLessThan(2.0)
+        ->and(Contrast::ratio($admin['foreground'], $admin['background']))->toBeGreaterThanOrEqual(Contrast::AAA_TEXT);
+});
 
 test('the client theme defines every admin token', function () {
     $themes = themeTokens();
