@@ -111,3 +111,193 @@
         translate: none;
     }
 }
+
+/* The flight deck (story 45): the admin's home page. */
+@layer components {
+    .fd-hero {
+        display: grid;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        background: var(--sidebar);
+    }
+    .fd-hero-copy {
+        padding: 24px clamp(16px, 3vw, 30px);
+        align-self: center;
+    }
+    .fd-hero-art {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-height: 240px;
+        object-fit: cover;
+        object-position: center 40%;
+    }
+    @media (min-width: 900px) {
+        .fd-hero {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            min-height: 220px;
+        }
+        .fd-hero-art {
+            max-height: none;
+        }
+    }
+
+    .fd-readout {
+        display: grid;
+        gap: 2px;
+        padding: 12px 14px;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: linear-gradient(
+            180deg,
+            var(--screen-top),
+            var(--screen-bottom)
+        );
+        box-shadow: inset 0 2px 4px
+            color-mix(in srgb, var(--console-edge) 70%, transparent);
+    }
+    .fd-readout dd {
+        margin: 0;
+    }
+
+    /* The phase rail: five bars from Scope to Launched. */
+    .fd-rail {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 6px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .fd-rail li {
+        display: grid;
+        gap: 5px;
+        min-width: 0;
+        font-family: var(--font-mono);
+        font-size: 10.5px;
+        line-height: 1.2;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--muted-foreground);
+        overflow-wrap: anywhere;
+    }
+    .fd-rail .fd-bar {
+        height: 6px;
+        border-radius: 6px;
+        background: var(--screen-top);
+        box-shadow: inset 0 1px 2px var(--console-edge);
+    }
+    .fd-rail .fd-done .fd-bar {
+        background: var(--edge-pass);
+    }
+    .fd-rail .fd-now .fd-bar {
+        background: linear-gradient(90deg, var(--edge-pass), var(--edge-warn));
+        box-shadow: 0 0 8px
+            color-mix(in srgb, var(--edge-warn) 50%, transparent);
+    }
+    .fd-rail .fd-now {
+        color: var(--foreground);
+    }
+    .fd-rail-now {
+        display: none;
+        margin: 6px 0 0;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--foreground);
+    }
+    @media (max-width: 560px) {
+        .fd-rail .fd-step-label {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+            white-space: nowrap;
+        }
+        .fd-rail-now {
+            display: block;
+        }
+    }
+
+    .fd-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 3px 10px;
+        border: 1px solid var(--border);
+        border-radius: 9999px;
+        background: var(--screen-top);
+        font-family: var(--font-mono);
+        font-size: 11.5px;
+        letter-spacing: 0.04em;
+    }
+    .fd-pill::before {
+        content: '';
+        flex-shrink: 0;
+        width: 8px;
+        height: 8px;
+        border-radius: 9999px;
+        background: currentColor;
+        box-shadow: 0 0 6px currentColor;
+    }
+    .fd-pill-wait {
+        color: var(--status-warn);
+    }
+    .fd-pill-go {
+        color: var(--status-pass);
+    }
+
+    .fd-station {
+        display: grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: var(--screen-top);
+        box-shadow: inset 0 0 0 1px var(--border);
+    }
+    .fd-station:hover {
+        box-shadow: inset 0 0 0 1px var(--brand-accent);
+    }
+    .fd-station img {
+        width: 30px;
+        height: 30px;
+        object-fit: contain;
+    }
+
+    .fd-waiting {
+        display: grid;
+        gap: 2px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--screen-top);
+    }
+
+    .fd-edge-violet {
+        --edge: var(--nav-violet);
+    }
+    .fd-violet {
+        display: inline-flex;
+        align-items: center;
+        padding: 7px 14px 8px;
+        border-radius: 12px;
+        background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--nav-button) 55%, var(--mark-body)),
+            var(--nav-button) 55%
+        );
+        color: var(--ink);
+        font-family: var(--font-display);
+        font-weight: 800;
+        box-shadow: 0 3px 0
+            color-mix(in srgb, var(--nav-button) 60%, var(--ink));
+    }
+    .fd-violet:active {
+        translate: 0 2px;
+        box-shadow: 0 1px 0
+            color-mix(in srgb, var(--nav-button) 60%, var(--ink));
+    }
+}

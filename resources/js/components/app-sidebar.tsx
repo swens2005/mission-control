@@ -30,7 +30,7 @@ export function AppSidebar() {
 
     const mainNavItems: NavItem[] = [
         {
-            title: portal === 'client' ? 'Launchpad' : 'Mission Control',
+            title: portal === 'client' ? 'Launchpad' : 'Flight deck',
             href: homeUrl,
             icon: LayoutGrid,
             exact: true,

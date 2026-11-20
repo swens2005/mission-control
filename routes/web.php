@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CheckWaiverController;
 use App\Http\Controllers\Admin\ColorController;
 use App\Http\Controllers\Admin\CommentResolutionController;
 use App\Http\Controllers\Admin\ContactController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DesignController;
 use App\Http\Controllers\Admin\KitSharingController;
 use App\Http\Controllers\Admin\LaunchController;
@@ -69,7 +70,7 @@ Route::get('style-guide/{token}', PublicStyleGuideController::class)->middleware
 
 // Mission Control: the studio's portal.
 Route::middleware(['auth', 'portal:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::inertia('/', 'admin/dashboard')->name('dashboard');
+    Route::get('/', DashboardController::class)->name('dashboard');
 
     Route::resource('organizations', OrganizationController::class)->except('destroy');
     Route::post('organizations/{organization}/archive', [OrganizationController::class, 'archive'])->name('organizations.archive');

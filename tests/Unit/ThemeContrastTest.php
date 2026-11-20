@@ -83,6 +83,7 @@ dataset('theme pairs', function () {
         ['nav-violet', 'nav-bay-top'],
         ['nav-violet-soft', 'nav-field-bottom'],
         ['nav-brass', 'nav-deep'],
+        ['nav-brass', 'sidebar'],
         ['nav-go', 'nav-bay-top'],
         ['nav-amber', 'nav-deep'],
         ['nav-coral', 'nav-deep'],

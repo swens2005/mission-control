@@ -2,6 +2,7 @@
 
 namespace App\Support\Waiting;
 
+use App\Models\Organization;
 use App\Models\User;
 use Closure;
 
@@ -27,6 +28,27 @@ final class WaitingOnClient
     public function register(Closure $provider): void
     {
         $this->providers[] = $provider;
+    }
+
+    /**
+     * What a whole client organization owes the studio: the same list each
+     * of its contacts sees, for the flight deck (story 45).
+     *
+     * Providers only read the client's workspace_id and organization_id
+     * (every item belongs to the organization, not to one person), so an
+     * unsaved user carrying those two stands in for any contact.
+     * WaitingOnClientTest checks that the two views match.
+     *
+     * @return list<WaitingItem>
+     */
+    public function forOrganization(Organization $organization): array
+    {
+        $client = (new User)->forceFill([
+            'workspace_id' => $organization->workspace_id,
+            'organization_id' => $organization->id,
+        ]);
+
+        return $this->for($client);
     }
 
     /**
