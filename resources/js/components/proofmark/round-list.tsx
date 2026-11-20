@@ -40,7 +40,7 @@ export function RoundList({
                                 preserveScroll
                                 aria-current={current ? 'page' : undefined}
                                 className={cn(
-                                    'lc-card flex min-w-36 items-baseline gap-3 px-4 py-3 hover:bg-muted focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring',
+                                    'lc-card lc-card-plain flex min-w-36 items-baseline gap-3 px-4 py-3 hover:bg-muted focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring',
                                     roundEdge[round.status],
                                     current &&
                                         'ring-2 ring-foreground ring-offset-2 ring-offset-background',

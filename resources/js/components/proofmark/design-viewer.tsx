@@ -138,7 +138,7 @@ export function DesignViewer({
                     role="region"
                     aria-label={`${design.title}, scrollable`}
                     tabIndex={0}
-                    className="lc-card lc-edge-ink max-h-[80vh] overflow-auto bg-muted p-3 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className="lc-card lc-card-plain lc-edge-ink max-h-[80vh] overflow-auto bg-muted p-3 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-ring"
                 >
                     <div
                         className="relative mx-auto"

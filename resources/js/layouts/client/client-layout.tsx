@@ -49,7 +49,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                         href={homeUrl}
                         className="flex items-center gap-3 rounded-lg font-display text-xl font-extrabold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sidebar-ring"
                     >
-                        <span className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
+                        <span className="flex size-9 items-center justify-center rounded-xl bg-[var(--mark-tile)] ring-1 ring-[var(--mark-rim)]">
                             <AppLogoIcon className="size-5" />
                         </span>
                         Launchpad

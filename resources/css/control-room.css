@@ -1,0 +1,113 @@
+/* The control room (story 44): the admin portal's frame, instrument bays and
+ * glossy buttons, from the approved Studio Redesign mock-up. Everything is
+ * scoped to [data-portal='admin'] and colored only with themes.css tokens.
+ * Screws, glows and gradients are decoration; text sits on solid colors.
+ */
+
+@layer components {
+    /* The room: a faint lime glow behind the content, and a console gradient
+       down the sidebar. */
+    [data-portal='admin'] [data-slot='sidebar-inset'] {
+        background:
+            radial-gradient(
+                900px 520px at 100% 0%,
+                color-mix(in srgb, var(--brand-accent) 5%, transparent),
+                transparent 65%
+            ),
+            var(--background);
+    }
+
+    [data-portal='admin'] [data-slot='sidebar'] [data-sidebar='sidebar'] {
+        background: linear-gradient(
+            180deg,
+            var(--sidebar),
+            color-mix(in srgb, var(--sidebar) 82%, var(--background))
+        );
+    }
+
+    /* The current page: the lit bay plus a lime edge, like the mock-up. */
+    [data-portal='admin'] [data-sidebar='menu-button'][data-active='true'] {
+        box-shadow: inset 3px 0 0 var(--brand-accent);
+    }
+
+    /* Instrument bays: lc-card in the control room. A card that sets its
+       own background (a hover state, the Proofmark light table) opts out
+       with lc-card-plain. */
+    [data-portal='admin'] .lc-card:not(.lc-card-plain) {
+        background: linear-gradient(180deg, var(--nav-bay-top), var(--card));
+        border-color: var(--border);
+        border-top-color: var(--edge);
+        box-shadow:
+            inset 0 1px 0 color-mix(in srgb, var(--foreground) 6%, transparent),
+            0 10px 24px color-mix(in srgb, var(--console-edge) 60%, transparent);
+    }
+    /* The neutral edge: light ink would be a stark white line here. */
+    [data-portal='admin'] .lc-edge-ink {
+        --edge: var(--input);
+    }
+
+    [data-portal='admin'] .lc-card:not(.lc-card-plain)::before,
+    [data-portal='admin'] .lc-card:not(.lc-card-plain)::after {
+        content: '';
+        position: absolute;
+        top: 8px;
+        width: 7px;
+        height: 7px;
+        border-radius: 9999px;
+        background: radial-gradient(
+            circle at 35% 35%,
+            var(--brass-hi),
+            var(--brass) 55%,
+            var(--brass-lo)
+        );
+        pointer-events: none;
+    }
+    [data-portal='admin'] .lc-card:not(.lc-card-plain)::before {
+        left: 8px;
+    }
+    [data-portal='admin'] .lc-card:not(.lc-card-plain)::after {
+        right: 8px;
+    }
+}
+
+/* Unlayered on purpose: it must beat the button's own shadow-xs utility. */
+/* Glossy buttons with the darker bottom lip (the CV's controls). Only the
+   default variant: it is the main action on a page. */
+[data-portal='admin'] [data-slot='button'][data-variant='default'] {
+    background: linear-gradient(
+        180deg,
+        color-mix(in srgb, var(--primary) 55%, var(--mark-body)),
+        var(--primary) 55%
+    );
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-weight: 800;
+    border-radius: 12px;
+    box-shadow:
+        0 3px 0 color-mix(in srgb, var(--primary) 60%, var(--ink)),
+        0 6px 12px color-mix(in srgb, var(--console-edge) 50%, transparent);
+    transition:
+        translate 0.12s,
+        box-shadow 0.12s,
+        filter 0.12s;
+}
+[data-portal='admin'] [data-slot='button'][data-variant='default']:hover {
+    filter: brightness(1.05);
+}
+[data-portal='admin']
+    [data-slot='button'][data-variant='default']:active:not(:disabled) {
+    translate: 0 2px;
+    box-shadow: 0 1px 0 color-mix(in srgb, var(--primary) 60%, var(--ink));
+}
+[data-portal='admin']
+    [data-slot='button'][data-variant='default']:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    [data-portal='admin']
+        [data-slot='button'][data-variant='default']:active:not(:disabled) {
+        translate: none;
+    }
+}

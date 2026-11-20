@@ -20,7 +20,7 @@ export default function AuthSimpleLayout({
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col items-center gap-4 text-center">
                         <div className="flex flex-col items-center gap-2">
-                            <span className="flex size-11 items-center justify-center rounded-full bg-foreground text-brand-accent">
+                            <span className="flex size-11 items-center justify-center rounded-full bg-[var(--mark-tile)]">
                                 <AppLogoIcon className="size-6" />
                             </span>
                             <p className="hud-label text-muted-foreground">

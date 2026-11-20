@@ -97,6 +97,17 @@
     --font-portal-display: 'Bricolage Grotesque', ui-sans-serif, sans-serif;
     --display-stretch: 100%;
     --radius: 0.75rem;
+
+    /* Shared by every portal (set on :root, so they inherit): the rocket
+       mark on its dark tile, and brass for screws (story 44). Decoration. */
+    --mark-body: #fffdf8;
+    --mark-ink: #10233a;
+    --mark-flame: #f0a43a;
+    --mark-tile: #0c1a30;
+    --mark-rim: #2c4675;
+    --brass: #c9a24a;
+    --brass-hi: #f3dc9a;
+    --brass-lo: #6e5419;
 }
 
 /* Mission Control: the control room (story 43). A dark navy console room

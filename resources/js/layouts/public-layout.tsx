@@ -16,7 +16,7 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
             </a>
             <header className="bg-sidebar text-sidebar-foreground">
                 <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-3 font-display text-xl font-extrabold tracking-tight">
-                    <span className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground">
+                    <span className="flex size-9 items-center justify-center rounded-xl bg-[var(--mark-tile)] ring-1 ring-[var(--mark-rim)]">
                         <AppLogoIcon className="size-5" />
                     </span>
                     {component === 'public/autopilot'
