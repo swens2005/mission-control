@@ -1,5 +1,5 @@
 import { Form } from '@inertiajs/react';
-import { Rocket } from 'lucide-react';
+import { LaunchIcon } from '@/components/mission-icons';
 import { focusFirstError } from '@/components/form-field';
 import { cn } from '@/lib/utils';
 import type { GoBoardState } from '@/types';
@@ -220,7 +220,7 @@ export function MissionConsole({
                         className="lc-pill text-lg"
                         data-tour="mark-launched"
                     >
-                        <Rocket aria-hidden="true" className="size-5" />
+                        <LaunchIcon aria-hidden="true" className="size-5" />
                         Mark as launched
                     </button>
                 </Form>

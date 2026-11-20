@@ -1,5 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { ClipboardList, Palette, PenTool, Rocket } from 'lucide-react';
+import { LaunchIcon } from '@/components/mission-icons';
+import { ClipboardList, Palette, PenTool } from 'lucide-react';
 import ClientPaletteController from '@/actions/App/Http/Controllers/Client/PaletteController';
 import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
 import ClientScopeController from '@/actions/App/Http/Controllers/Client/ScopeController';
@@ -94,7 +95,7 @@ export default function ShowProject({
                         className="lc-pill w-fit"
                         data-tour="open-launch-control"
                     >
-                        <Rocket aria-hidden="true" className="size-5" />
+                        <LaunchIcon aria-hidden="true" className="size-5" />
                         Open Launch Control
                     </Link>
                 )}

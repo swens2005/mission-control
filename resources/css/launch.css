@@ -230,6 +230,15 @@
         stroke: var(--edge-pass);
     }
 
+    /* Mission Control's icons (story 47): the one lime dot per icon. On a
+       lime button it turns ink, or it would vanish. */
+    .mc-icon-dot {
+        fill: var(--icon-dot, var(--brand-accent));
+    }
+    .lc-pill {
+        --icon-dot: var(--ink);
+    }
+
     /* The phase rail: five bars from Scope to Launched, shared by the
        flight deck and Launchpad (PhaseRail). */
     .phase-rail {

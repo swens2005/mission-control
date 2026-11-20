@@ -1,12 +1,12 @@
 import { Link } from '@inertiajs/react';
-import {
-    Activity,
-    Building2,
-    FolderKanban,
-    LayoutGrid,
-    ReceiptText,
-} from 'lucide-react';
 import AppLogo from '@/components/app-logo';
+import {
+    ActivityIcon,
+    ClientsIcon,
+    FlightDeckIcon,
+    LibraryIcon,
+    ProjectsIcon,
+} from '@/components/mission-icons';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -32,25 +32,29 @@ export function AppSidebar() {
         {
             title: portal === 'client' ? 'Launchpad' : 'Flight deck',
             href: homeUrl,
-            icon: LayoutGrid,
+            icon: FlightDeckIcon,
             exact: true,
         },
         ...(portal === 'admin'
             ? [
-                  { title: 'Clients', href: organizations(), icon: Building2 },
+                  {
+                      title: 'Clients',
+                      href: organizations(),
+                      icon: ClientsIcon,
+                  },
                   {
                       title: 'Projects',
                       href: projects(),
-                      icon: FolderKanban,
+                      icon: ProjectsIcon,
                       tour: 'nav-projects',
                   },
                   {
                       title: 'Scope library',
                       href: lineItems(),
-                      icon: ReceiptText,
+                      icon: LibraryIcon,
                       tour: 'scope-library',
                   },
-                  { title: 'Activity', href: activity(), icon: Activity },
+                  { title: 'Activity', href: activity(), icon: ActivityIcon },
               ]
             : []),
     ];

@@ -103,6 +103,9 @@ dataset('theme pairs', function () {
         ['ring', 'background'],
         ['ring', 'card'],
         ['sidebar-ring', 'sidebar'],
+        // The lime dot in every navigation icon (story 47).
+        ['brand-accent', 'sidebar'],
+        ['brand-accent', 'sidebar-accent'],
     ];
 
     foreach (['admin', 'client'] as $portal) {

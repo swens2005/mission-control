@@ -1,5 +1,6 @@
 import { Form, Head, Link } from '@inertiajs/react';
-import { ImagePlus, Rocket, Send } from 'lucide-react';
+import { LaunchIcon } from '@/components/mission-icons';
+import { ImagePlus, Send } from 'lucide-react';
 import { useState } from 'react';
 import DesignController from '@/actions/App/Http/Controllers/Admin/DesignController';
 import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
@@ -94,7 +95,7 @@ export default function ShowProofmark({
                                                     disabled={processing}
                                                     data-tour="move-to-launch"
                                                 >
-                                                    <Rocket
+                                                    <LaunchIcon
                                                         aria-hidden="true"
                                                         className="size-5"
                                                     />

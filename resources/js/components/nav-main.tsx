@@ -27,6 +27,8 @@ export function NavMain({ items }: { items: NavItem[] }) {
                                 asChild
                                 isActive={active}
                                 tooltip={{ children: item.title }}
+                                // Story 47's icons need 20 px to read.
+                                className="group-data-[collapsible=icon]:p-1.5! [&>svg]:size-5"
                             >
                                 <Link
                                     href={item.href}
