@@ -113,7 +113,7 @@ final class ImageProcessor
                 : 'This image could not be read. It may be damaged; try exporting it again.');
         }
 
-        // Palette PNGs become true colour, so scaling and alpha behave.
+        // Palette PNGs become true color, so scaling and alpha behave.
         imagepalettetotruecolor($image);
         imagealphablending($image, false);
         imagesavealpha($image, true);

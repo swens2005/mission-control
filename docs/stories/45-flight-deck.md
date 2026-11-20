@@ -14,7 +14,7 @@ here"). The flight deck uses only data Mission Control already has.
 
 ## Acceptance criteria
 
-- [x] A hero with a greeting ("Good morning, Sam", by the app's clock) and
+- [x] A hero with a greeting ("Good morning, Sam", by the viewer's clock; the app runs on UTC) and
       the date, one plain sentence about the studio, and the launch-site
       art beside it. Text sits on a solid panel, never on the art.
 - [x] Four readouts: missions in flight (active, not launched), things

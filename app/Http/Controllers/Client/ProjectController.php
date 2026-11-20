@@ -38,7 +38,7 @@ class ProjectController extends Controller
         return Inertia::render('client/home', [
             'organizationName' => $client->organization?->name,
             'projects' => $projects->map(fn (Project $project) => $this->present($project))->values(),
-            'steps' => self::steps(),
+            'steps' => ProjectPhase::options(),
             'waiting' => array_map(fn (WaitingItem $item) => $item->toArray(), $waiting->for($client)),
         ]);
     }
@@ -49,7 +49,7 @@ class ProjectController extends Controller
 
         return Inertia::render('client/projects/show', [
             'project' => $this->present($project),
-            'steps' => self::steps(),
+            'steps' => ProjectPhase::options(),
             'hasScope' => $project->intake()->exists() || $project->proposals()->whereNotNull('sent_at')->exists(),
             'hasLaunch' => $project->launch()->exists(),
             'hasPalette' => $project->brandKit()->whereNotNull('shared_at')->exists(),
@@ -79,25 +79,8 @@ class ProjectController extends Controller
             'phase' => $project->phase->value,
             'phaseLabel' => $project->phase->label(),
             'step' => $project->phase->step(),
+            'summary' => $project->phase->clientSummary(),
             'targetLaunchOn' => $project->target_launch_on?->toDateString(),
         ];
-    }
-
-    /**
-     * The four module phases, in order, for the step indicator.
-     *
-     * @return list<array{value: string, label: string}>
-     */
-    public static function steps(): array
-    {
-        $steps = [];
-
-        foreach (ProjectPhase::cases() as $phase) {
-            if ($phase !== ProjectPhase::Launched) {
-                $steps[] = ['value' => $phase->value, 'label' => $phase->label()];
-            }
-        }
-
-        return $steps;
     }
 }

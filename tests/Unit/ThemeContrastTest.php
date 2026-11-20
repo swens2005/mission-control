@@ -147,3 +147,21 @@ test('the client theme defines every admin token', function () {
 
     expect(array_diff(array_keys($themes['admin']), array_keys($themes['client'])))->toBeEmpty();
 });
+
+test('the viewing stand keeps text readable down the whole sky', function (string $fg, string $bg) {
+    $client = themeTokens()['client'];
+
+    expect(Contrast::ratio($client[$fg], $client[$bg]))->toBeGreaterThanOrEqual(Contrast::AA_TEXT);
+})->with([
+    ['foreground', 'sky-2'],
+    ['muted-foreground', 'sky-2'],
+    ['primary', 'sky-2'],
+    ['foreground', 'card'],
+]);
+
+test('the viewing stand focus ring shows on the sky', function () {
+    $client = themeTokens()['client'];
+
+    expect(Contrast::ratio($client['ring'], $client['sky']))->toBeGreaterThanOrEqual(Contrast::AA_LARGE)
+        ->and(Contrast::ratio($client['ring'], $client['sky-2']))->toBeGreaterThanOrEqual(Contrast::AA_LARGE);
+});

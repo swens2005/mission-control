@@ -1,7 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
+import { PhaseRail } from '@/components/phase-rail';
 import { formatDate, formatDateTime } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { dashboard } from '@/routes/admin';
+import type { Option } from '@/types';
 import { index as activityIndex } from '@/routes/admin/activity';
 import { create as createProject } from '@/routes/admin/projects';
 import launchBadge from '../../../images/mission-control/badges/launch.webp';
@@ -49,6 +51,7 @@ type LogEntry = {
 
 type Props = {
     firstName: string;
+    steps: Option[];
     readouts: {
         inFlight: number;
         waiting: number;
@@ -59,14 +62,6 @@ type Props = {
     waiting: WaitingEntry[];
     log: LogEntry[];
 };
-
-const PHASES = [
-    'Scope',
-    'Palette Lab',
-    'Proofmark',
-    'Launch Control',
-    'Launched',
-];
 
 const STATIONS = [
     { key: 'scope', label: 'Scope', badge: scopeBadge },
@@ -119,6 +114,7 @@ function logTime(createdAt: string): string {
 
 export default function Dashboard({
     firstName,
+    steps,
     readouts,
     missions,
     waiting,
@@ -230,7 +226,10 @@ export default function Dashboard({
                             <ul className="flex flex-col gap-3">
                                 {missions.map((mission) => (
                                     <li key={mission.id}>
-                                        <MissionCard mission={mission} />
+                                        <MissionCard
+                                            mission={mission}
+                                            steps={steps}
+                                        />
                                     </li>
                                 ))}
                             </ul>
@@ -369,7 +368,13 @@ function Readout({
     );
 }
 
-function MissionCard({ mission }: { mission: Mission }) {
+function MissionCard({
+    mission,
+    steps,
+}: {
+    mission: Mission;
+    steps: Option[];
+}) {
     const waiting = mission.waiting.length > 0;
 
     return (
@@ -411,30 +416,12 @@ function MissionCard({ mission }: { mission: Mission }) {
                 </p>
             </div>
 
-            <ol
-                className="fd-rail mt-4"
-                aria-label={`Phase: ${mission.phaseLabel}, step ${mission.step} of ${PHASES.length}`}
-            >
-                {PHASES.map((phase, index) => (
-                    <li
-                        key={phase}
-                        className={cn(
-                            index + 1 < mission.step && 'fd-done',
-                            index + 1 === mission.step && 'fd-now',
-                        )}
-                        aria-current={
-                            index + 1 === mission.step ? 'step' : undefined
-                        }
-                    >
-                        <span aria-hidden="true" className="fd-bar" />
-                        <span className="fd-step-label">{phase}</span>
-                    </li>
-                ))}
-            </ol>
-            {/* Phones: one line instead of five squeezed labels. */}
-            <p aria-hidden="true" className="fd-rail-now">
-                {mission.phaseLabel} · step {mission.step} of {PHASES.length}
-            </p>
+            <PhaseRail
+                className="mt-4"
+                steps={steps}
+                step={mission.step}
+                label={`${mission.name} progress`}
+            />
 
             {mission.navigator && (
                 <div className="mt-4 flex items-center gap-4">

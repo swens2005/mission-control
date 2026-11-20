@@ -15,8 +15,8 @@ import { cn } from '@/lib/utils';
 import { edit as editProfile } from '@/routes/profile';
 
 /**
- * Launchpad: the client portal. Same codelaunch.nl look as Mission Control
- * (ADR 0008): a navy bar with the rocket, and a day sky over the page.
+ * Launchpad: the client portal, the viewing stand (story 46). One day sky
+ * behind the header and the page, the rocket on a cream tile, pill links.
  */
 export default function ClientLayout({ children }: { children: ReactNode }) {
     const { auth } = usePage().props;
@@ -24,7 +24,11 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     const { isCurrentUrl, isCurrentOrParentUrl } = useCurrentUrl();
 
     const navItems = [
-        { title: 'Projects', href: homeUrl, active: isCurrentUrl(homeUrl) },
+        {
+            title: 'Your projects',
+            href: homeUrl,
+            active: isCurrentUrl(homeUrl),
+        },
         {
             title: 'Account',
             href: editProfile.url(),
@@ -33,21 +37,18 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     ];
 
     return (
-        <div className="min-h-svh bg-background">
+        <div className="viewing-stand min-h-svh">
             <a href="#main" className="skip-link">
                 Skip to content
             </a>
 
             <SandboxBanner />
 
-            <header
-                className="bg-sidebar text-sidebar-foreground"
-                data-print="hide"
-            >
+            <header className="text-foreground" data-print="hide">
                 <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3">
                     <Link
                         href={homeUrl}
-                        className="flex items-center gap-3 rounded-lg font-display text-xl font-extrabold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-sidebar-ring"
+                        className="flex items-center gap-3 rounded-lg font-display text-xl font-extrabold tracking-tight focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
                     >
                         <span className="flex size-9 items-center justify-center rounded-xl bg-[var(--mark-tile)] ring-1 ring-[var(--mark-rim)]">
                             <AppLogoIcon className="size-5" />
@@ -59,7 +60,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                         aria-label="Main"
                         className="order-last w-full sm:order-none sm:w-auto"
                     >
-                        <ul className="flex gap-1">
+                        <ul className="flex flex-wrap gap-1.5">
                             {navItems.map((item) => (
                                 <li key={item.title}>
                                     <Link
@@ -69,9 +70,9 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                                             item.active ? 'page' : undefined
                                         }
                                         className={cn(
-                                            'block rounded-lg px-3 py-2 text-sm font-semibold text-sidebar-foreground hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-sidebar-ring',
+                                            'vs-pill block rounded-full px-3.5 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring',
                                             item.active &&
-                                                'bg-sidebar-accent text-sidebar-accent-foreground shadow-[inset_0_-3px_0_var(--sidebar-primary)]',
+                                                'bg-card text-foreground',
                                         )}
                                     >
                                         {item.title}
@@ -84,7 +85,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                     {auth.user && (
                         <div className="ml-auto">
                             <DropdownMenu>
-                                <DropdownMenuTrigger className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-semibold hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-sidebar-ring">
+                                <DropdownMenuTrigger className="vs-pill flex items-center gap-1 rounded-full px-3.5 py-2 text-sm font-semibold text-muted-foreground hover:bg-card hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
                                     <span className="max-w-[18ch] truncate">
                                         {auth.user.name}
                                     </span>
@@ -105,15 +106,13 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                 </div>
             </header>
 
-            <div className="sky-fade">
-                <main
-                    id="main"
-                    tabIndex={-1}
-                    className="mx-auto max-w-5xl px-4 py-10 focus:outline-none"
-                >
-                    {children}
-                </main>
-            </div>
+            <main
+                id="main"
+                tabIndex={-1}
+                className="mx-auto max-w-5xl px-4 pt-4 pb-16 focus:outline-none"
+            >
+                {children}
+            </main>
         </div>
     );
 }

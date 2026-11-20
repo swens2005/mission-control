@@ -34,6 +34,8 @@ test('shows the missions in flight, soonest launch first', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->component('admin/dashboard')
             ->where('firstName', 'Sam')
+            ->has('steps', 5)
+            ->where('steps.0', ['value' => 'scope', 'label' => 'Scope'])
             ->where('readouts.inFlight', 3)
             ->where('readouts.nextLaunch', ['on' => '2026-12-01', 'project' => 'Sooner'])
             ->has('missions', 3)

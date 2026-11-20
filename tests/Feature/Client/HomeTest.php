@@ -33,8 +33,10 @@ test('lists only the client\'s own active projects, soonest launch first', funct
             ->where('projects.0.name', 'Sooner')
             ->where('projects.0.step', 2)
             ->where('projects.0.phaseLabel', 'Palette Lab')
+            ->where('projects.0.summary', "We're choosing your colors and type.")
             ->where('projects.1.name', 'Later')
-            ->has('steps', 4)
+            ->has('steps', 5)
+            ->where('steps.4', ['value' => 'launched', 'label' => 'Launched'])
             ->where('waiting', []));
 });
 

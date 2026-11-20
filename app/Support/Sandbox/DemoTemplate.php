@@ -72,7 +72,7 @@ final class DemoTemplate
                 ['Extra page', 'A standard content page in the existing templates.', LineItemKind::Fixed, 35000, 100],
                 ['Online pre-order form', 'Pick-up day, items and a confirmation email.', LineItemKind::Fixed, 65000, 100],
                 ['Content and copywriting', 'Writing and editing the text with you.', LineItemKind::Hourly, 8500, 400],
-                ['Photo editing', 'Cropping and colour-correcting your product photos.', LineItemKind::Hourly, 6500, 200],
+                ['Photo editing', 'Cropping and color-correcting your product photos.', LineItemKind::Hourly, 6500, 200],
                 ['Hosting setup and launch', 'Domain, SSL, backups and going live.', LineItemKind::Fixed, 25000, 100],
                 ['Training: updating the site yourself', 'A session on changing menus and photos each season.', LineItemKind::Hourly, 8500, 150],
             ],

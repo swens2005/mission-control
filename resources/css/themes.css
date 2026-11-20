@@ -46,6 +46,7 @@
     --brand-accent: #8ac800;
     /* Pale day sky at the top of Launchpad pages (text-safe, see test). */
     --sky: #d4edfa;
+    --sky-2: #eaf6fd;
     /* Launch check results: text-safe on background and card. */
     --status-pass: #4a7300;
     --status-warn: #8a5300;
@@ -66,6 +67,8 @@
     --lamp-nogo: #ef5a2a;
     --lamp-clear: #f4f7ff;
     --lamp-off: #c3cad4;
+    --rail-track: #e9e2d2;
+    --stage: #f7efe0;
     --edge-pass: #8ac800;
     --edge-warn: #f0a020;
     --edge-fail: #ef5a2a;
@@ -165,6 +168,8 @@
     --lamp-nogo: #ef5a2a;
     --lamp-clear: #f4f7ff;
     --lamp-off: #3a4f72;
+    --rail-track: #0a1628;
+    --stage: #13274a;
     --edge-pass: #8ac800;
     --edge-warn: #f0a43a;
     --edge-fail: #ff8a7a;
@@ -199,6 +204,9 @@
    replacing the riso theme of ADR 0005). Kept as its own block so the two
    portals can diverge again without touching markup. */
 [data-portal='client'] {
+    /* The viewing stand: the cream mark tile sits on the day sky. */
+    --mark-tile: #fffdf8;
+    --mark-rim: #c8dcea;
     --background: #f5f2ea;
     --foreground: #10233a;
     --card: #fffdf8;
@@ -230,6 +238,7 @@
     --brand-accent: #8ac800;
     /* Pale day sky at the top of Launchpad pages (text-safe, see test). */
     --sky: #d4edfa;
+    --sky-2: #eaf6fd;
     /* Launch check results: text-safe on background and card. */
     --status-pass: #4a7300;
     --status-warn: #8a5300;
@@ -250,6 +259,9 @@
     --lamp-nogo: #ef5a2a;
     --lamp-clear: #f4f7ff;
     --lamp-off: #c3cad4;
+    /* Phase rail track and the cream plinth behind the rocket stages. */
+    --rail-track: #e9e2d2;
+    --stage: #f7efe0;
     --edge-pass: #8ac800;
     --edge-warn: #f0a020;
     --edge-fail: #ef5a2a;

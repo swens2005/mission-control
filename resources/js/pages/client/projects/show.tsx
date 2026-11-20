@@ -4,7 +4,7 @@ import ClientPaletteController from '@/actions/App/Http/Controllers/Client/Palet
 import ClientProofmarkController from '@/actions/App/Http/Controllers/Client/ProofmarkController';
 import ClientScopeController from '@/actions/App/Http/Controllers/Client/ScopeController';
 import { ActivityList } from '@/components/activity-list';
-import { PhaseSteps } from '@/components/phase-steps';
+import { PhaseRail } from '@/components/phase-rail';
 import { formatDate } from '@/lib/format';
 import { home } from '@/routes/client';
 import { show as showLaunch } from '@/routes/client/launch';
@@ -99,7 +99,8 @@ export default function ShowProject({
                     </Link>
                 )}
 
-                <PhaseSteps
+                <PhaseRail
+                    className="max-w-2xl"
                     steps={steps}
                     step={project.step}
                     label="Project progress"

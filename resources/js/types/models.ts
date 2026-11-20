@@ -52,8 +52,10 @@ export type ClientProject = {
     description: string | null;
     phase: ProjectPhase;
     phaseLabel: string;
-    /** 1-based position in the four phases; 5 means launched. */
+    /** 1-based position in the five phases; 5 means launched. */
     step: number;
+    /** One plain sentence about what's happening now (ProjectPhase). */
+    summary: string;
     targetLaunchOn: string | null;
 };
 

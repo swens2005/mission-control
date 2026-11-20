@@ -61,6 +61,7 @@ final class FlightDeck
         return [
             // The greeting and the date come from the viewer's own clock.
             'firstName' => self::firstName($user),
+            'steps' => ProjectPhase::options(),
             'readouts' => [
                 'inFlight' => $missions->count(),
                 'waiting' => $waiting->count(),

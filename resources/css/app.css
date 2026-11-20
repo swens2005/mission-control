@@ -8,6 +8,7 @@
 @import './proofmark.css';
 @import './navigator.css';
 @import './control-room.css';
+@import './viewing-stand.css';
 @import './print.css';
 
 @source '../views';
