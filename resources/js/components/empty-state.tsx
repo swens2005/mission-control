@@ -39,7 +39,11 @@ export function EmptyArt({ art, className }: { art: Art; className?: string }) {
             decoding="async"
             className={cn(
                 'mx-auto mb-4 h-auto max-w-full',
-                art.width === art.height ? 'w-32' : 'w-48',
+                // The aspect ratio is explicit so a lazy image reserves its
+                // space before it loads (no layout shift).
+                art.width === art.height
+                    ? 'aspect-square w-32'
+                    : 'aspect-[3/2] w-48',
                 className,
             )}
         />
