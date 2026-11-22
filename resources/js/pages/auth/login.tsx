@@ -6,6 +6,7 @@ import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { badges } from '@/lib/mission-art';
 import { Spinner } from '@/components/ui/spinner';
 import { store } from '@/routes/login';
 import { request } from '@/routes/password';
@@ -150,10 +151,20 @@ export default function Login({
                 >
                     {({ processing }) => (
                         <>
-                            <p className="text-sm text-muted-foreground">
-                                Just looking around? Get your own demo studio,
-                                no sign-up needed.
-                            </p>
+                            <div className="flex items-center gap-3 text-left">
+                                <img
+                                    src={badges.simulator}
+                                    width={256}
+                                    height={256}
+                                    alt=""
+                                    decoding="async"
+                                    className="size-12 shrink-0"
+                                />
+                                <p className="text-sm text-muted-foreground">
+                                    Just looking around? Get your own demo
+                                    studio, no sign-up needed.
+                                </p>
+                            </div>
                             <Button
                                 type="submit"
                                 variant="secondary"

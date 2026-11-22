@@ -114,10 +114,43 @@
         @apply not-sr-only fixed top-3 left-3 z-50 rounded-md border-2 border-foreground bg-card px-4 py-2 font-semibold text-foreground shadow-lg;
     }
 
-    /* Login background: the codelaunch.nl climb from day sky to space. */
-    .sky {
-        background: #9ed3f0
-            linear-gradient(#9ed3f0, #4a7fc4 45%, #14286a 80%, #03050e 100%);
+    /* Guest pages (story 48): the launch tower at dawn. Narrow screens get
+       the scene as a band with the card overlapping it; wide, landscape
+       screens get it full-bleed with the card in the open sky on the left
+       (the rocket and tower sit in the right third of the picture). */
+    .auth-stage {
+        position: relative;
+        min-height: 100svh;
+        background: var(--background);
+    }
+    .auth-hero {
+        display: block;
+        width: 100%;
+        height: clamp(12rem, 56vw, 22rem);
+        object-fit: cover;
+        object-position: 80% 75%;
+    }
+    .auth-stand {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        margin-top: -1.5rem;
+        padding: 0 1rem 2.5rem;
+    }
+    @media (min-width: 1024px) and (min-aspect-ratio: 4/3) {
+        .auth-hero {
+            position: absolute;
+            inset: 0;
+            height: 100%;
+            object-position: 85% 80%;
+        }
+        .auth-stand {
+            width: 50%;
+            min-height: 100svh;
+            align-items: center;
+            margin: 0;
+            padding: 2.5rem;
+        }
     }
 
     /* Mission Control HUD readouts. */

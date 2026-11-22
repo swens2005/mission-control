@@ -14,6 +14,7 @@ import { Checklist } from '@/components/launch/checklist';
 import { LaunchReadouts } from '@/components/launch/launch-readouts';
 import { MissionConsole } from '@/components/launch/mission-console';
 import { PageHeader } from '@/components/page-header';
+import { badges } from '@/lib/mission-art';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
@@ -45,6 +46,7 @@ export default function ShowLaunch({ project, launch, isSandbox }: Props) {
             <div className="space-y-8 p-4 md:p-6">
                 <PageHeader
                     title="Launch Control"
+                    emblem={badges.launch}
                     description={
                         <>
                             Pre-flight for{' '}

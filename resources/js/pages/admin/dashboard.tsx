@@ -6,10 +6,8 @@ import { dashboard } from '@/routes/admin';
 import type { Option } from '@/types';
 import { index as activityIndex } from '@/routes/admin/activity';
 import { create as createProject } from '@/routes/admin/projects';
-import launchBadge from '../../../images/mission-control/badges/launch.webp';
-import paletteBadge from '../../../images/mission-control/badges/palette.webp';
-import proofmarkBadge from '../../../images/mission-control/badges/proofmark.webp';
-import scopeBadge from '../../../images/mission-control/badges/scope.webp';
+import { EmptyArt } from '@/components/empty-state';
+import { badges, emptyArt } from '@/lib/mission-art';
 import launchSite from '../../../images/mission-control/login-hero.webp';
 import navigatorEmblem from '../../../images/navigator/emblem.webp';
 
@@ -64,10 +62,10 @@ type Props = {
 };
 
 const STATIONS = [
-    { key: 'scope', label: 'Scope', badge: scopeBadge },
-    { key: 'palette', label: 'Palette Lab', badge: paletteBadge },
-    { key: 'proofmark', label: 'Proofmark', badge: proofmarkBadge },
-    { key: 'launch', label: 'Launch Control', badge: launchBadge },
+    { key: 'scope', label: 'Scope', badge: badges.scope },
+    { key: 'palette', label: 'Palette Lab', badge: badges.palette },
+    { key: 'proofmark', label: 'Proofmark', badge: badges.proofmark },
+    { key: 'launch', label: 'Launch Control', badge: badges.launch },
 ] as const;
 
 function greeting(now: Date): string {
@@ -213,7 +211,8 @@ export default function Dashboard({
                         </div>
 
                         {missions.length === 0 ? (
-                            <div className="lc-card p-6">
+                            <div className="lc-card p-6 text-center">
+                                <EmptyArt art={emptyArt.projects} />
                                 <p>No missions in flight right now.</p>
                                 <Link
                                     href={createProject()}
@@ -253,9 +252,15 @@ export default function Dashboard({
                                 </span>
                             </div>
                             {waiting.length === 0 ? (
-                                <p className="text-sm text-muted-foreground">
-                                    Nothing. Every client is up to date.
-                                </p>
+                                <div className="text-center">
+                                    <EmptyArt
+                                        art={emptyArt.allClear}
+                                        className="w-40"
+                                    />
+                                    <p className="text-sm text-muted-foreground">
+                                        Nothing. Every client is up to date.
+                                    </p>
+                                </div>
                             ) : (
                                 <ul className="flex flex-col gap-2">
                                     {waiting.map((item) => (

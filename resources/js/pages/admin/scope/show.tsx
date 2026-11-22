@@ -4,6 +4,7 @@ import ProposalController from '@/actions/App/Http/Controllers/Admin/ProposalCon
 import ScopeController from '@/actions/App/Http/Controllers/Admin/ScopeController';
 import { focusById } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
+import { badges, landmarks } from '@/lib/mission-art';
 import { AiDraftPanel } from '@/components/scope/ai-draft';
 import { IntakeAnswers } from '@/components/scope/intake-answers';
 import { ProposalBuilder } from '@/components/scope/proposal-builder';
@@ -81,6 +82,8 @@ export default function ShowScope({
                 <div data-print="hide">
                     <PageHeader
                         title="Scope"
+                        emblem={badges.scope}
+                        landmark={landmarks.scope}
                         description={
                             <>
                                 Intake and proposal for{' '}

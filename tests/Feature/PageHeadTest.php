@@ -28,3 +28,27 @@ test('the login page and the autopilot can be indexed', function (string $url) {
     'login' => '/login',
     'autopilot' => '/autopilot',
 ]);
+
+test('every page has a share image with its title, size and alt text (story 48)', function (string $url) {
+    $image = asset('images/og.jpg');
+
+    $this->get($url)
+        ->assertOk()
+        ->assertSee('<meta property="og:title" content="Mission Control', false)
+        ->assertSee('<meta property="og:description" content="Mission Control runs a small web studio', false)
+        ->assertSee('<meta property="og:image" content="'.$image.'">', false)
+        ->assertSee('<meta property="og:image:width" content="1200">', false)
+        ->assertSee('<meta property="og:image:height" content="630">', false)
+        ->assertSee('<meta property="og:image:alt" content="', false)
+        ->assertSee('<meta name="twitter:card" content="summary_large_image">', false);
+})->with([
+    'login' => '/login',
+    'autopilot' => '/autopilot',
+]);
+
+test('the share image exists at 1200 by 630', function () {
+    $size = getimagesize(public_path('images/og.jpg'));
+
+    expect($size)->not->toBeFalse()
+        ->and([$size[0], $size[1], $size['mime']])->toBe([1200, 630, 'image/jpeg']);
+});

@@ -297,7 +297,7 @@ test('Esc ends a tour without losing focus', function () {
 
 test('the sweep catches a planted issue', function () {
     $page = visit('/login');
-    $page->script("document.body.append(Object.assign(document.createElement('img'), { src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=' }))");
+    $page->script("document.body.append(Object.assign(document.createElement('img'), { id: 'planted', src: 'data:image/gif;base64,R0lGODlhAQABAAAAACw=' }))");
 
-    expect(axeViolations($page, 'login'))->toContain('[login] image-alt: Images must have alternative text -> img');
+    expect(axeViolations($page, 'login'))->toContain('[login] image-alt: Images must have alternative text -> #planted');
 });

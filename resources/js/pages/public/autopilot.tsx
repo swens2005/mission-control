@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { Plane, PlayCircle } from 'lucide-react';
 import { useTour } from '@/components/tour/tour-provider';
+import { badges } from '@/lib/mission-art';
 import type { Tour } from '@/lib/tour/types';
 import { tours } from '@/tours';
 
@@ -28,12 +29,24 @@ export default function Autopilot({
             <Head title="Autopilot" />
             <div className="max-w-3xl space-y-10">
                 <div className="space-y-3">
-                    <p className="lc-label text-muted-foreground">
-                        Mission 05 · Autopilot
-                    </p>
-                    <h1 className="text-4xl font-extrabold tracking-tight">
-                        Watch it fly
-                    </h1>
+                    <div className="flex items-center gap-4">
+                        <img
+                            src={badges.simulator}
+                            width={256}
+                            height={256}
+                            alt=""
+                            decoding="async"
+                            className="size-16 shrink-0 sm:size-20"
+                        />
+                        <div className="space-y-1">
+                            <p className="lc-label text-muted-foreground">
+                                Mission 05 · Autopilot
+                            </p>
+                            <h1 className="text-4xl font-extrabold tracking-tight">
+                                Watch it fly
+                            </h1>
+                        </div>
+                    </div>
                     <p className="text-lg">
                         Mission Control runs a small web studio from the first
                         conversation to launch day. Pick a tour and the

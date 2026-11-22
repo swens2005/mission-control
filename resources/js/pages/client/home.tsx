@@ -2,6 +2,7 @@ import { Head, Link } from '@inertiajs/react';
 import { ArrowRight } from 'lucide-react';
 import ProjectController from '@/actions/App/Http/Controllers/Client/ProjectController';
 import { EmptyState } from '@/components/empty-state';
+import { emptyArt } from '@/lib/mission-art';
 import { PhaseRail } from '@/components/phase-rail';
 import { formatDate } from '@/lib/format';
 import type { ClientProject, Option, WaitingItem } from '@/types';
@@ -134,6 +135,7 @@ export default function Home({
                     {projects.length === 0 ? (
                         <EmptyState
                             title="No projects yet"
+                            art={emptyArt.projects}
                             description="Your studio will add your project here."
                         />
                     ) : (

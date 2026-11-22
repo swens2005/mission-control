@@ -1,6 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import OrganizationController from '@/actions/App/Http/Controllers/Admin/OrganizationController';
 import { EmptyState } from '@/components/empty-state';
+import { emptyArt } from '@/lib/mission-art';
 import { PageHeader } from '@/components/page-header';
 import { Pagination } from '@/components/pagination';
 import { Button } from '@/components/ui/button';
@@ -80,6 +81,7 @@ export default function OrganizationsIndex({ organizations, filters }: Props) {
                     ) : (
                         <EmptyState
                             title="Add your first client"
+                            art={emptyArt.clients}
                             description="Clients hold their projects and the contacts who log in to Launchpad."
                             action={
                                 <Button asChild>

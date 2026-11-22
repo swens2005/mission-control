@@ -3,6 +3,8 @@ import { useState } from 'react';
 import LineItemController from '@/actions/App/Http/Controllers/Admin/LineItemController';
 import { focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
+import { EmptyArt } from '@/components/empty-state';
+import { badges, emptyArt } from '@/lib/mission-art';
 import { LineItemFields } from '@/components/scope/line-item-fields';
 import { Button } from '@/components/ui/button';
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs';
@@ -28,6 +30,7 @@ export default function Library({ items, archived, kinds }: Props) {
             <div className="space-y-8 p-4 md:p-6">
                 <PageHeader
                     title="Scope library"
+                    emblem={badges.scope}
                     description="Your price list for proposals. Prices exclude VAT. A proposal keeps its own copy of each item, so changes here never change a proposal."
                 />
 
@@ -46,10 +49,13 @@ export default function Library({ items, archived, kinds }: Props) {
                     </div>
 
                     {items.length === 0 ? (
-                        <p className="max-w-3xl rounded-2xl border border-dashed border-input bg-card px-6 py-10 text-center text-muted-foreground">
-                            No line items yet. Add the things you usually sell
-                            below.
-                        </p>
+                        <div className="max-w-3xl rounded-2xl border border-dashed border-input bg-card px-6 py-10 text-center text-muted-foreground">
+                            <EmptyArt art={emptyArt.library} />
+                            <p>
+                                No line items yet. Add the things you usually
+                                sell below.
+                            </p>
+                        </div>
                     ) : (
                         <ol
                             aria-labelledby="items-heading"

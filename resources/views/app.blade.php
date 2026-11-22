@@ -9,6 +9,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Mission Control runs a small web studio from first conversation to launch day: proposals, brand kits, design review and go/no-go launch checks, with a portal for clients. A portfolio project by Meagan Swenson.">
 
+        {{-- Share image (story 48): og-base.jpg with its title added from docs/art/og.html. --}}
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="Mission Control">
+        <meta property="og:title" content="Mission Control — Meagan Swenson">
+        <meta property="og:description" content="Mission Control runs a small web studio from first conversation to launch day: proposals, brand kits, design review and launch checks, with a portal for clients.">
+        <meta property="og:image" content="{{ asset('images/og.jpg') }}">
+        <meta property="og:image:width" content="1200">
+        <meta property="og:image:height" content="630">
+        <meta property="og:image:alt" content="Mission Control: a white and lime green rocket lifting off from its launch pad at dawn">
+        <meta property="og:locale" content="en_US">
+        <meta name="twitter:card" content="summary_large_image">
+
         {{-- Found early instead of after the CSS, so text doesn't jump when they swap in (story 37). --}}
         @foreach (['figtree-latin', 'bricolage-grotesque-latin', 'jetbrains-mono-latin'] as $font)
             <link rel="preload" href="{{ Vite::asset("resources/fonts/{$font}.woff2") }}" as="font" type="font/woff2" crossorigin>

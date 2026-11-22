@@ -1,6 +1,8 @@
 import { Form, Head } from '@inertiajs/react';
 import ActivityController from '@/actions/App/Http/Controllers/Admin/ActivityController';
 import { ActivityList } from '@/components/activity-list';
+import { EmptyState } from '@/components/empty-state';
+import { emptyArt } from '@/lib/mission-art';
 import { selectClassName } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { Pagination } from '@/components/pagination';
@@ -53,9 +55,21 @@ export default function ActivityIndex({ entries, filters, projects }: Props) {
                     </Button>
                 </Form>
 
-                <div className="rounded-lg border bg-card p-4">
-                    <ActivityList entries={entries.data} showProject />
-                </div>
+                {entries.data.length === 0 ? (
+                    <EmptyState
+                        title={
+                            filters.project
+                                ? 'Nothing logged for this project yet'
+                                : 'Nothing logged yet'
+                        }
+                        description="Proposals, brand kits, design rounds and launch checks show up here as they happen."
+                        art={emptyArt.activity}
+                    />
+                ) : (
+                    <div className="rounded-lg border bg-card p-4">
+                        <ActivityList entries={entries.data} showProject />
+                    </div>
+                )}
 
                 <Pagination page={entries} />
             </div>

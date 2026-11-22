@@ -6,6 +6,8 @@ import DesignController from '@/actions/App/Http/Controllers/Admin/DesignControl
 import ProofmarkController from '@/actions/App/Http/Controllers/Admin/ProofmarkController';
 import { FormField, focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
+import { EmptyArt } from '@/components/empty-state';
+import { badges, emptyArt } from '@/lib/mission-art';
 import { DesignCard } from '@/components/proofmark/design-card';
 import { RoundList } from '@/components/proofmark/round-list';
 import { PinnedReview } from '@/components/proofmark/pinned-review';
@@ -68,6 +70,7 @@ export default function ShowProofmark({
             <div className="space-y-8 p-4 md:p-6">
                 <PageHeader
                     title="Proofmark"
+                    emblem={badges.proofmark}
                     description={
                         <>
                             Design review for{' '}
@@ -121,6 +124,10 @@ export default function ShowProofmark({
 
                 {round === null ? (
                     <section className="lc-card lc-edge-ink max-w-xl space-y-4 p-6">
+                        <EmptyArt
+                            art={emptyArt.designs}
+                            className="mx-0 mb-2 w-40"
+                        />
                         <p className="lc-label text-muted-foreground">
                             Light table · empty
                         </p>
@@ -180,9 +187,10 @@ function RoundDetail({
                         Designs in {round.label}
                     </h3>
                     {round.designs.length === 0 ? (
-                        <p className="rounded-2xl border border-dashed border-input bg-card px-6 py-10 text-center text-muted-foreground">
-                            No designs in this round yet.
-                        </p>
+                        <div className="rounded-2xl border border-dashed border-input bg-card px-6 py-10 text-center text-muted-foreground">
+                            <EmptyArt art={emptyArt.designs} />
+                            <p>No designs in this round yet.</p>
+                        </div>
                     ) : (
                         <ol
                             aria-labelledby="designs-heading"

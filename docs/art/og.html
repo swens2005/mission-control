@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Mission Control OG image</title>
+        <!--
+  Template for public/images/og.jpg (story 48). Serve the repo root
+  (python -m http.server), open /docs/art/og.html at 1200x630, screenshot the
+  viewport and save it as JPG, quality 85. Colors are Launchpad's tokens from
+  resources/css/themes.css; the plate is a viewing-stand card (lc-card, lime
+  top edge) so the title never sits on raw art.
+-->
+        <style>
+            @font-face {
+                font-family: 'Bricolage Grotesque';
+                src: url(../../resources/fonts/bricolage-grotesque-latin.woff2)
+                    format('woff2');
+                font-weight: 200 800;
+            }
+            @font-face {
+                font-family: 'Figtree';
+                src: url(../../resources/fonts/figtree-latin.woff2)
+                    format('woff2');
+                font-weight: 300 900;
+            }
+            @font-face {
+                font-family: 'JetBrains Mono';
+                src: url(../../resources/fonts/jetbrains-mono-latin.woff2)
+                    format('woff2');
+                font-weight: 100 800;
+            }
+            :root {
+                --card: #fffdf8;
+                --foreground: #10233a;
+                --muted: #4a5a6c;
+                --primary: #4a7300;
+                --lime: #8ac800;
+                --rim: #c8dcea;
+            }
+            html,
+            body {
+                margin: 0;
+                width: 1200px;
+                height: 630px;
+                overflow: hidden;
+            }
+            .og {
+                position: relative;
+                width: 1200px;
+                height: 630px;
+                background: url(../../resources/images/mission-control/og-base.jpg)
+                    0 0 / 1200px 630px no-repeat;
+            }
+            .plate {
+                position: absolute;
+                left: 56px;
+                top: 64px;
+                width: 470px;
+                padding: 30px 34px 32px;
+                background: var(--card);
+                border-top: 7px solid var(--lime);
+                border-radius: 26px;
+                box-shadow:
+                    0 0 0 2px var(--rim),
+                    0 24px 50px rgb(16 35 58 / 28%);
+            }
+            .k {
+                font:
+                    600 15px/1.4 'JetBrains Mono',
+                    monospace;
+                letter-spacing: 0.14em;
+                text-transform: uppercase;
+                color: var(--primary);
+                margin: 0 0 14px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .k i {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background: var(--lime);
+                box-shadow: 0 0 8px var(--lime);
+            }
+            h1 {
+                font:
+                    800 66px/0.98 'Bricolage Grotesque',
+                    sans-serif;
+                color: var(--foreground);
+                margin: 0 0 18px;
+                letter-spacing: -0.01em;
+            }
+            p {
+                font:
+                    400 23px/1.38 'Figtree',
+                    sans-serif;
+                color: var(--foreground);
+                margin: 0;
+            }
+            .by {
+                margin-top: 18px;
+                font:
+                    500 15px/1.4 'JetBrains Mono',
+                    monospace;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--muted);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="og">
+            <div class="plate">
+                <p class="k"><i></i>codelaunch.nl/mission-control</p>
+                <h1>Mission Control</h1>
+                <p>
+                    Runs a small web studio from the first conversation to
+                    launch day.
+                </p>
+                <p class="by">A project by Meagan Swenson</p>
+            </div>
+        </div>
+    </body>
+</html>

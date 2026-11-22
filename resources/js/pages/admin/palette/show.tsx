@@ -5,6 +5,7 @@ import ColorController from '@/actions/App/Http/Controllers/Admin/ColorControlle
 import PaletteController from '@/actions/App/Http/Controllers/Admin/PaletteController';
 import { focusById, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
+import { badges } from '@/lib/mission-art';
 import { ColorFields } from '@/components/palette/color-fields';
 import { ContrastMatrix } from '@/components/palette/contrast-matrix';
 import { ExportSection } from '@/components/palette/export-section';
@@ -49,6 +50,7 @@ export default function ShowPalette({
             <div className="space-y-8 p-4 md:p-6">
                 <PageHeader
                     title="Palette Lab"
+                    emblem={badges.palette}
                     description={
                         <>
                             Brand kit for{' '}

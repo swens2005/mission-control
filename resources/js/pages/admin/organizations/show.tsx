@@ -3,6 +3,7 @@ import ContactController from '@/actions/App/Http/Controllers/Admin/ContactContr
 import OrganizationController from '@/actions/App/Http/Controllers/Admin/OrganizationController';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
 import { EmptyState } from '@/components/empty-state';
+import { emptyArt } from '@/lib/mission-art';
 import { FormField, focusFirstError } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { PhaseBadge } from '@/components/phase-badge';
@@ -119,6 +120,7 @@ export default function ShowOrganization({
                     {projects.length === 0 ? (
                         <EmptyState
                             title="No projects yet"
+                            art={emptyArt.projects}
                             description="Start one when the first conversation turns into work."
                         />
                     ) : (

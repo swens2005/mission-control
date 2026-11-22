@@ -2,6 +2,7 @@ import { Head } from '@inertiajs/react';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
 import { ProjectForm } from '@/components/admin/project-form';
 import { EmptyState } from '@/components/empty-state';
+import { emptyArt } from '@/lib/mission-art';
 import { PageHeader } from '@/components/page-header';
 import { create, index } from '@/routes/admin/projects';
 import type { Option, OrganizationOption } from '@/types';
@@ -25,6 +26,7 @@ export default function CreateProject({
                 {organizations.length === 0 ? (
                     <EmptyState
                         title="Add a client first"
+                        art={emptyArt.clients}
                         description="Every project belongs to a client."
                     />
                 ) : (

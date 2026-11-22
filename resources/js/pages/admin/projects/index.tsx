@@ -1,6 +1,7 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import ProjectController from '@/actions/App/Http/Controllers/Admin/ProjectController';
 import { EmptyState } from '@/components/empty-state';
+import { emptyArt } from '@/lib/mission-art';
 import { selectClassName } from '@/components/form-field';
 import { PageHeader } from '@/components/page-header';
 import { Pagination } from '@/components/pagination';
@@ -121,6 +122,7 @@ export default function ProjectsIndex({
                     ) : (
                         <EmptyState
                             title="No projects yet"
+                            art={emptyArt.projects}
                             description="Add a client first, then start their project."
                             action={
                                 <Button asChild>
