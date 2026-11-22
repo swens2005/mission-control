@@ -184,7 +184,7 @@ All of these must pass before committing. CI runs the same set.
   reads any long hex string (a hash too) as a secret. To allow one,
   add a narrow `.gitleaks.toml` exception and touch the flagged line in
   the same commit, or the scan proves nothing.
-- **Local port:** 8123 may already be serving another local app (Jobby);
+- **Local port:** 8123 may already be serving another local app (Trajectory, formerly Jobby);
   check the page title, or pick another port.
 - **OneDrive and `bootstrap/cache`:** OneDrive once set the folder
   read-only; PHP could still write files but `is_writable()` said no, so
