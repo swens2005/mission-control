@@ -20,3 +20,6 @@ stories at most; anything extra lands here instead of in the build.
 - **Flaky browser test (2026-11-19):** "the full story" tour stopped at
   step 47 of 56 in CI once and passed on a rerun with the same code.
   Look at that step's wait if it happens again.
+- The "full story" autopilot tour failed once in CI with "Lost my way"
+  (24 Nov 2026, the Vite+ 1.8.0 push) and passed on a rerun. If it
+  happens again, find the step that races and make it wait.

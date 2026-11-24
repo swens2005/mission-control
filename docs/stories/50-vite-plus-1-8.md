@@ -25,7 +25,7 @@ site. Vite+ 1.8.0 is clean.
       `npm run build` pass, locally and in CI.
 - [x] Pest, Larastan, Pint and the browser tours
       (`composer test:browser`) still pass.
-- [ ] After the deploy, the live site works in a browser at desktop
+- [x] After the deploy, the live site works in a browser at desktop
       width and at 320 px, with a clean console.
 - [x] CLAUDE.md says how to upgrade Vite+ next time (three entries
       move together).
