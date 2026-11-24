@@ -153,6 +153,11 @@ All of these must pass before committing. CI runs the same set.
   dates); Larastan fails otherwise.
 - **Factories** must set `workspace_id` from the parent record, never rely on
   the signed-in user (see `ProjectFactory`).
+- **Upgrading Vite+** (story 50): three entries in `package.json` move
+  together. `vite-plus` (exact), the `vite` alias (the value of
+  `npm view vite-plus@<version> dependencies.vite`, both as a dependency
+  and under `overrides`) and `overrides.vitest` (`npx vp toolchain
+  vitest`). Tests import from `vite-plus/test`, never from `vitest`.
 - **Shell:** a local hook blocks any command whose text contains `.env`
   (including `import.meta.env`); edit such files with the file editor. Long
   heredocs with quotes break in Git Bash; write files with the editor.
