@@ -22,7 +22,7 @@ never ignores a click or hides the page I asked for.
       Settings) closes the menu. It stayed open over the new page.
 - [x] The autopilot tours still pass: they visit pages while the tour's
       layer is open.
-- [ ] Checked on the live site at desktop and 320 px, console clean.
+- [x] Checked on the live site at desktop and 320 px, console clean.
 
 ## Tests
 
