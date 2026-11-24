@@ -18,13 +18,20 @@ class HandleInertiaRequests extends Middleware
     protected $rootView = 'app';
 
     /**
-     * Determines the current asset version.
+     * Determines the current asset version: the build's manifest.
+     *
+     * Inertia's default uses the asset URL when one is set, as production
+     * does for its subfolder. That URL never changes, so a tab left open
+     * across a deploy was never told to reload and asked for files that
+     * were gone (story 49).
      *
      * @see https://inertiajs.com/asset-versioning
      */
     public function version(Request $request): ?string
     {
-        return parent::version($request);
+        $manifest = public_path('build/manifest.json');
+
+        return is_file($manifest) ? (hash_file('xxh128', $manifest) ?: null) : parent::version($request);
     }
 
     /**

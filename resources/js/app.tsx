@@ -16,6 +16,29 @@ setNonce(
     document.querySelector<HTMLScriptElement>('script[nonce]')?.nonce ?? '',
 );
 
+// Story 49: a tab left open across a deploy can ask for a page file the
+// deploy replaced, and the click then does nothing. Reload once to get the
+// new build; at most once a minute, so a truly missing file can't loop.
+window.addEventListener('vite:preloadError', (event) => {
+    const key = 'mission-control-reloaded-at';
+
+    try {
+        const last = Number(window.sessionStorage.getItem(key) ?? 0);
+
+        if (Date.now() - last < 60_000) {
+            return;
+        }
+
+        window.sessionStorage.setItem(key, String(Date.now()));
+    } catch {
+        // No storage (private window): better a dead click than a loop.
+        return;
+    }
+
+    event.preventDefault();
+    window.location.reload();
+});
+
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     layout: (name) => {

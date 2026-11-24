@@ -1,4 +1,5 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
+import { useEffect } from 'react';
 import AppLogo from '@/components/app-logo';
 import {
     ActivityIcon,
@@ -17,6 +18,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from '@/components/ui/sidebar';
 import { usePortal } from '@/hooks/use-portal';
 import { index as activity } from '@/routes/admin/activity';
@@ -27,6 +29,15 @@ import type { NavItem } from '@/types';
 
 export function AppSidebar() {
     const { portal, homeUrl } = usePortal();
+    const { setOpenMobile } = useSidebar();
+
+    // On a phone the menu is a sheet over the page, and the layout survives
+    // a visit: without this it stayed open over the page just picked
+    // (story 49). One listener covers the logo, the pages and Settings.
+    useEffect(
+        () => router.on('navigate', () => setOpenMobile(false)),
+        [setOpenMobile],
+    );
 
     const mainNavItems: NavItem[] = [
         {
